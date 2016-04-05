@@ -26,16 +26,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         super.tearDown();
     }
 
-    public void testStartNavigationBtn() {
+    public void testButtons() {
         mySolo.clickOnButton("Start Navigating");
-    }
-
-    public void testEditLocationsBtn() {
+        mySolo.goBack();
         mySolo.clickOnButton("Edit Locations");
+
     }
-
-
-
-
-
 }
