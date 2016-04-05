@@ -1,8 +1,10 @@
 package com.example.andrea.littewhale.uitest;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.view.View;
 
 import com.example.andrea.littewhale.EditLocations;
+import com.example.andrea.littewhale.R;
 import com.robotium.solo.Solo;
 
 import junit.framework.TestCase;
@@ -28,6 +30,9 @@ public class EditLocationsTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void testPlus(){
-        mySolo.clickOnButton("btnAdd");
+        View fab = getActivity().findViewById(R.id.fabAdd);
+        mySolo.clickOnView(fab);
     }
+
+
 }
