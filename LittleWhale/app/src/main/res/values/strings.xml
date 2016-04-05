@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">Litte Whale</string>
     <string name="title_activity_edit_locations">EditLocations</string>
+
+    <string-array name="longitude">
+        <item>E</item>
+        <item>W</item>
+    </string-array>
+
+    <string-array name="latitude">
+        <item>N</item>
+        <item>S</item>
+    </string-array>
 </resources>
