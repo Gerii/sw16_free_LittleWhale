@@ -30,6 +30,5 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         mySolo.clickOnButton("Start Navigating");
         mySolo.goBack();
         mySolo.clickOnButton("Edit Locations");
-
     }
 }
