@@ -39,6 +39,13 @@ public class EnterCoordinatesTest extends ActivityInstrumentationTestCase2 {
         super.tearDown();
     }
 
+
+    public void testStartNavigation() {
+        mySolo.clickOnButton("Start Navigating");
+        mySolo.waitForActivity("");
+
+    }
+
     public void testDecimalToTime() {
         mySolo.clickOnRadioButton(1);
         mySolo.enterText((EditText) mySolo.getView(R.id.editTextDegreeDecimalLongitude), "12.234");

@@ -19,7 +19,13 @@
             android:name=".EditLocations"
             android:label="@string/title_activity_edit_locations"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".EnterCoordinates"></activity>
+        <activity android:name=".EnterCoordinates" />
+        <activity
+            android:name=".NavigationActivity"
+            android:label="@string/title_activity_navigation"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
 </manifest>

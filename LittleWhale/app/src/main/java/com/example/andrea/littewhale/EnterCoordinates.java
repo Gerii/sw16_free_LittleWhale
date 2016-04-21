@@ -1,6 +1,7 @@
 package com.example.andrea.littewhale;
 
 import android.content.Intent;
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 public class EnterCoordinates extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,23 @@ public class EnterCoordinates extends AppCompatActivity {
 
                 decimalLayout.setVisibility(LinearLayout.VISIBLE);
                 timeLayout.setVisibility(LinearLayout.GONE);
+            }
+        });
+
+
+
+        Button startNavigationButton = (Button) findViewById(R.id.buttonStartNavigating);
+        startNavigationButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                Intent myIntent = new Intent(EnterCoordinates.this, NavigationActivity.class);
+                double[] target = new double[2];
+                double targetLatitude = 0;
+                double targetLongitude = 0;
+
+                target[0] = targetLatitude;
+                target[1] = targetLongitude;
+                myIntent.putExtra("TargetCoords", target);
+                EnterCoordinates.this.startActivity(myIntent);
             }
         });
     }
