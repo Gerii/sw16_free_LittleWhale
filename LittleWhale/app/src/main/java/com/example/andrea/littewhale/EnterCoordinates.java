@@ -22,6 +22,9 @@ public class EnterCoordinates extends AppCompatActivity {
             public void onClick(View v) {
                 LinearLayout decimalLayout = (LinearLayout) findViewById(R.id.linearLayoutDecimalCoords);
                 decimalLayout.setVisibility(LinearLayout.GONE);
+
+                setViewDecimalToTime();
+
                 LinearLayout timeLayout = (LinearLayout) findViewById(R.id.linearLayoutTimeCoords);
                 timeLayout.setVisibility(LinearLayout.VISIBLE);
             }
@@ -33,8 +36,7 @@ public class EnterCoordinates extends AppCompatActivity {
             public void onClick(View v) {
                 LinearLayout decimalLayout = (LinearLayout) findViewById(R.id.linearLayoutDecimalCoords);
                 LinearLayout timeLayout = (LinearLayout) findViewById(R.id.linearLayoutTimeCoords);
-
-
+                setViewTimeToDecimal();
 
                 decimalLayout.setVisibility(LinearLayout.VISIBLE);
                 timeLayout.setVisibility(LinearLayout.GONE);
@@ -42,24 +44,27 @@ public class EnterCoordinates extends AppCompatActivity {
         });
     }
 
-    private void setViewTimeToDecimal() {
-        int degreesLatitude = 0;
+    private int convertToInt(String numberString) {
 
-        String degreesLatitudeString = ((TextView) findViewById(R.id.editTextDegreeTimeLatitude)).getText().toString();
-        if (degreesLatitudeString != "") {
-            degreesLatitude = Integer.parseInt(degreesLatitudeString);
+        try{
+            return Integer.parseInt(numberString);
+        } catch(Exception e) {
+            return -1;
         }
-        Integer.parseInt(((TextView) findViewById(R.id.editTextDegreeTimeLatitude)).getText().toString());
+    }
 
+    private void setViewTimeToDecimal() {
+        int degreesLatitude = convertToInt(((TextView) findViewById(R.id.editTextDegreeTimeLatitude)).getText().toString());
+        int minutesLatitude = convertToInt(((TextView) findViewById(R.id.editTextMinuteLatitude)).getText().toString());
+        int secondsLatitude = convertToInt(((TextView) findViewById(R.id.editTextSecondLatitude)).getText().toString());
 
-        int minutesLatitude = Integer.parseInt(((TextView) findViewById(R.id.editTextMinuteLatitude)).getText().toString());
-        int secondsLatitude = Integer.parseInt(((TextView) findViewById(R.id.editTextSecondLatitude)).getText().toString());
+        int degreesLongitude = convertToInt(((TextView) findViewById(R.id.editTextDegreeTimeLongitude)).getText().toString());
+        int minutesLongitude = convertToInt(((TextView) findViewById(R.id.editTextMinuteLatitude)).getText().toString());
+        int secondsLongitude = convertToInt(((TextView) findViewById(R.id.editTextSecondLatitude)).getText().toString());
+
         double decimalLatitude = timeToDecimalConversion(degreesLatitude, minutesLatitude, secondsLatitude);
         ((TextView) findViewById(R.id.editTextDegreeDecimalLatitude)).setText(Double.toString(decimalLatitude));
 
-        int degreesLongitude = Integer.parseInt(((TextView) findViewById(R.id.editTextDegreeTimeLongitude)).getText().toString());
-        int minutesLongitude = Integer.parseInt(((TextView) findViewById(R.id.editTextMinuteLatitude)).getText().toString());
-        int secondsLongitude = Integer.parseInt(((TextView) findViewById(R.id.editTextSecondLatitude)).getText().toString());
         double decimalLongitude = timeToDecimalConversion(degreesLongitude, minutesLongitude, secondsLongitude);
         ((TextView) findViewById(R.id.editTextDegreeDecimalLongitude)).setText(Double.toString(decimalLongitude));
 
@@ -68,6 +73,26 @@ public class EnterCoordinates extends AppCompatActivity {
     private double timeToDecimalConversion(int degree, int minute, int second) {
 
         return degree + ((double)minute / 60) + ((double) second / 3600);
+    }
+
+
+
+    private void setViewDecimalToTime() {
+
+    }
+
+
+    private int[] decimalToTimeConversion(double degree) {
+        int[] result = new int[3];
+        result[0] = (int) Math.floor(degree);
+        degree -= result[0];
+        degree *= 60;
+        result[1] = (int) Math.floor(degree);
+        degree -= result[1];
+        degree *= 3600;
+        result[2] = (int) Math.floor(degree);
+
+        return result;
     }
 
 }
