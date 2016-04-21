@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class EnterCoordinates extends AppCompatActivity {
@@ -49,7 +50,7 @@ public class EnterCoordinates extends AppCompatActivity {
         try{
             return Integer.parseInt(numberString);
         } catch(Exception e) {
-            return -1;
+            return 0;
         }
     }
 
@@ -59,14 +60,20 @@ public class EnterCoordinates extends AppCompatActivity {
         int secondsLatitude = convertToInt(((TextView) findViewById(R.id.editTextSecondLatitude)).getText().toString());
 
         int degreesLongitude = convertToInt(((TextView) findViewById(R.id.editTextDegreeTimeLongitude)).getText().toString());
-        int minutesLongitude = convertToInt(((TextView) findViewById(R.id.editTextMinuteLatitude)).getText().toString());
-        int secondsLongitude = convertToInt(((TextView) findViewById(R.id.editTextSecondLatitude)).getText().toString());
+        int minutesLongitude = convertToInt(((TextView) findViewById(R.id.editTextMinuteLongitude)).getText().toString());
+        int secondsLongitude = convertToInt(((TextView) findViewById(R.id.editTextSecondLongitude)).getText().toString());
 
         double decimalLatitude = timeToDecimalConversion(degreesLatitude, minutesLatitude, secondsLatitude);
         ((TextView) findViewById(R.id.editTextDegreeDecimalLatitude)).setText(Double.toString(decimalLatitude));
 
         double decimalLongitude = timeToDecimalConversion(degreesLongitude, minutesLongitude, secondsLongitude);
         ((TextView) findViewById(R.id.editTextDegreeDecimalLongitude)).setText(Double.toString(decimalLongitude));
+
+        int longitudeSelectionIndex = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLongitude)).getSelectedItemPosition();
+        int latitudeSelectionIndex = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLatitude)).getSelectedItemPosition();
+        ((Spinner) findViewById(R.id.spinnerCardinalDirectionDecimalLatitude)).setSelection(latitudeSelectionIndex);
+        ((Spinner) findViewById(R.id.spinnerCardinalDirectionDecimalLongitude)).setSelection(longitudeSelectionIndex);
+
 
     }
 
@@ -78,6 +85,30 @@ public class EnterCoordinates extends AppCompatActivity {
 
 
     private void setViewDecimalToTime() {
+        double longitude = 0;
+        double latitude = 0;
+        try {
+            longitude = Double.parseDouble(((TextView) findViewById(R.id.editTextDegreeDecimalLongitude)).getText().toString());
+            latitude = Double.parseDouble(((TextView) findViewById(R.id.editTextDegreeDecimalLatitude)).getText().toString());
+        }catch (Exception e) {
+
+        }
+        int[] longitudeArray = decimalToTimeConversion(longitude);
+        int[] latitudeArray = decimalToTimeConversion(latitude);
+
+        ((TextView) findViewById(R.id.editTextDegreeTimeLatitude)).setText(Integer.toString(latitudeArray[0]));
+        ((TextView) findViewById(R.id.editTextMinuteLatitude)).setText(Integer.toString(latitudeArray[1]));
+        ((TextView) findViewById(R.id.editTextSecondLatitude)).setText(Integer.toString(latitudeArray[2]));
+
+        ((TextView) findViewById(R.id.editTextDegreeTimeLongitude)).setText(Integer.toString(longitudeArray[0]));
+        ((TextView) findViewById(R.id.editTextMinuteLongitude)).setText(Integer.toString(longitudeArray[1]));
+        ((TextView) findViewById(R.id.editTextSecondLongitude)).setText(Integer.toString(longitudeArray[2]));
+
+        int longitudeSelectionIndex = ((Spinner) findViewById(R.id.spinnerCardinalDirectionDecimalLongitude)).getSelectedItemPosition();
+        int latitudeSelectionIndex = ((Spinner) findViewById(R.id.spinnerCardinalDirectionDecimalLatitude)).getSelectedItemPosition();
+        ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLatitude)).setSelection(latitudeSelectionIndex);
+        ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLongitude)).setSelection(longitudeSelectionIndex);
+
 
     }
 
@@ -89,7 +120,7 @@ public class EnterCoordinates extends AppCompatActivity {
         degree *= 60;
         result[1] = (int) Math.floor(degree);
         degree -= result[1];
-        degree *= 3600;
+        degree *= 60;
         result[2] = (int) Math.floor(degree);
 
         return result;

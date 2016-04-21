@@ -7,12 +7,16 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.andrea.littewhale.EditLocations;
 import com.example.andrea.littewhale.EnterCoordinates;
 import com.example.andrea.littewhale.MainActivity;
 import com.example.andrea.littewhale.R;
 import com.robotium.solo.Solo;
+
+import org.w3c.dom.Text;
 
 /**
  * Created by clemens on 05.04.16.
@@ -51,7 +55,13 @@ public class EnterCoordinatesTest extends ActivityInstrumentationTestCase2 {
         mySolo.enterText((EditText) mySolo.getView(R.id.editTextDegreeTimeLatitude), "12");
         mySolo.enterText((EditText) mySolo.getView(R.id.editTextMinuteLatitude), "12");
         mySolo.enterText((EditText) mySolo.getView(R.id.editTextSecondLatitude), "12");
+
+        mySolo.pressSpinnerItem(1, 1);
+
         mySolo.clickOnRadioButton(1);
+
+     //   assertEquals(1, ((Spinner) mySolo.getView(R.id.spinnerCardinalDirectionDecimalLatitude)).getSelectedItemPosition());
+       // assertEquals(1, ((Spinner) mySolo.getView(R.id.spinnerCardinalDirectionDecimalLongitude)).getSelectedItemPosition());
 
     }
 }
