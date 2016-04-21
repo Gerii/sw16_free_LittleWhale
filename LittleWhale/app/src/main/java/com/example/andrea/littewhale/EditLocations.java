@@ -1,5 +1,8 @@
 package com.example.andrea.littewhale;
 
+import com.example.andrea.model.LocationDbHelper;
+
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 public class EditLocations extends AppCompatActivity {
 
@@ -61,6 +65,10 @@ public class EditLocations extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.w("fab", "fab pressed");
+                LocationDbHelper dbHelper = new LocationDbHelper(getApplicationContext());
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+
             }
         });
     }
