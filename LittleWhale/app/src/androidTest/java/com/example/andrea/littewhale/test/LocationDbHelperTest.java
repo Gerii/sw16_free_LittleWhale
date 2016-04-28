@@ -1,15 +1,18 @@
 package com.example.andrea.littewhale.test;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 import android.util.Log;
 
 import com.example.andrea.model.LocationContract;
 import com.example.andrea.model.LocationDbHelper;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import java.util.Objects;
@@ -18,18 +21,20 @@ import java.util.Objects;
 /**
  * Created by andrea on 21.04.16.
  */
-public class LocationDbHelperTest extends TestCase {
+public class LocationDbHelperTest extends AndroidTestCase {
 
     private LocationDbHelper dbHelper;
     protected Context mContext;
 
+    @Override
     public void setUp() throws Exception {
         super.setUp();
-        RenamingDelegatingContext context = new RenamingDelegatingContext(mContext, "test_");
+        RenamingDelegatingContext context = new RenamingDelegatingContext(getContext(), "test_");
         dbHelper = new LocationDbHelper(context);
 
     }
 
+    @Override
     public void tearDown() throws Exception {
         dbHelper.close();
         super.tearDown();
@@ -56,8 +61,7 @@ public class LocationDbHelperTest extends TestCase {
                 values);
 
 
-        /*String[] whereValues = new String[] { Long.toString(newRowId) };
-        String[] whereCondition;
+        String[] whereValues = new String[] { Long.toString(newRowId) };
 
         SQLiteDatabase readDb = dbHelper.getReadableDatabase();
 
@@ -71,6 +75,8 @@ public class LocationDbHelperTest extends TestCase {
 
         };
 
+        String whereId = LocationContract.LocationEntry._ID + " like ?";
+
         // How you want the results sorted in the resulting Cursor
         String sortOrder =
                 LocationContract.LocationEntry.COLUMN_NAME_NAME + " DESC";
@@ -78,7 +84,7 @@ public class LocationDbHelperTest extends TestCase {
         Cursor c = readDb.query(
                 LocationContract.LocationEntry.TABLE_NAME,  // The table to query
                 projection,                               // The columns to return
-                null,                                // The columns for the WHERE clause
+                whereId,                                // The columns for the WHERE clause
                 whereValues,                            // The values for the WHERE clause
                 null,                                     // don't group the rows
                 null,                                     // don't filter by row groups
@@ -86,10 +92,9 @@ public class LocationDbHelperTest extends TestCase {
         );
 
         while(c.moveToNext()){
-            Log.w("STURM", "ID: " + c.getString(0));
-            Log.w("STURM", "Name: " + c.getString(1));
-            Log.w("STURM", "Lat: " + c.getString(2));
-            Log.w("STURM", "Lon: " + c.getString(3));
-        }*/
+            assertEquals(c.getString(1), "test");
+            assertEquals(c.getDouble(2), 12.0);
+            assertEquals(c.getDouble(3), 15.0);
+        }
     }
 }
