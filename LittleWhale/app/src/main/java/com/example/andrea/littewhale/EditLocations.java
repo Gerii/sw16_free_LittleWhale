@@ -1,25 +1,18 @@
 package com.example.andrea.littewhale;
 
-import com.example.andrea.model.LocationContract;
-import com.example.andrea.model.LocationDbHelper;
+import com.example.andrea.model.Location;
+import com.example.andrea.model.LocationDb;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-
-import com.example.andrea.littewhale.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +22,11 @@ import java.util.Map;
 
 public class EditLocations extends AppCompatActivity {
 
-    List<Map<String, String>> valueList = new ArrayList<Map<String, String>>();
+    private List<Map<String, String>> valueListLocations = new ArrayList<Map<String, String>>();
+    private HashMap<Long, Long> listIdToDbId = new HashMap<>();
+
+    private static String line1 = "line1";
+    private static String line2 = "line2";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,17 +35,21 @@ public class EditLocations extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //listview
-        for(int i = 0; i < 10; i++){
+        ArrayList<Location> locationList = LocationDb.getInstance().getAllLocations(getApplicationContext());
+
+        for(int i = 0; i < locationList.size(); i++){
+            Location l = locationList.get(i);
             Map<String, String> tmp = new HashMap<String, String>(2);
-            tmp.put("line1", "line" + (i + 1));
-            tmp.put("line2", "value of second line" + (i + 1));
-            valueList.add(tmp);
+            tmp.put(line1, l.placeName);
+            tmp.put(line2, l.latitude.toString() + " " + l.longitude.toString() + " " + l.id.toString());
+
+            listIdToDbId.put(Long.valueOf(i), l.id);
+            valueListLocations.add(tmp);
         }
 
-        final ListAdapter adapter = new SimpleAdapter(this, valueList,
+        final ListAdapter adapter = new SimpleAdapter(this, valueListLocations,
                 android.R.layout.simple_list_item_2,
-                new String[] {"line1", "line2" },
+                new String[] {line1, line2 },
                 new int[] {android.R.id.text1, android.R.id.text2 });
 
         final ListView lv = (ListView)findViewById(R.id.listView);
@@ -60,73 +61,43 @@ public class EditLocations extends AppCompatActivity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 String blub = lv.getAdapter().getItem(arg2).toString();
                 Log.w("w", blub + " " + arg3);
+                Log.w("w", listIdToDbId.get(arg3).toString());
             }
         });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAdd);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.w("fab", "fab pressed");
 
-                try {
+        if(fab != null){
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.w("fab", "fab pressed");
 
+                    try {
+                        LocationDb.getInstance().addLocation(getApplicationContext(), "blub", 12.0, 15.3);
 
-                    LocationDbHelper dbHelper = new LocationDbHelper(getApplicationContext());
-                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                        /*ArrayList<Location> locationList = LocationDb.getInstance().getAllLocations(getApplicationContext());
 
-                    ContentValues values = new ContentValues();
-                    values.put(LocationContract.LocationEntry.COLUMN_NAME_NAME, "test");
-                    values.put(LocationContract.LocationEntry.COLUMN_NAME_LADITUDE, 12.0);
-                    values.put(LocationContract.LocationEntry.COLUMN_NAME_LONGITUDE, 15.0);
+                        for(Location l : locationList){
+                            Log.w("id", l.id.toString());
+                            Log.w("name", l.placeName);
+                            Log.w("lat", l.latitude.toString());
+                            Log.w("lon", l.longitude.toString());
+                        }*/
 
-                    long newRowId;
-                    newRowId = db.insert(
-                            LocationContract.LocationEntry.TABLE_NAME,
-                            "null",
-                            values);
+                        /*Location tmpLoc = LocationDb.getInstance().getLocation(getApplicationContext(), Long.valueOf(2));
 
-
-                    SQLiteDatabase db2 = dbHelper.getReadableDatabase();
-
-                    // Define a projection that specifies which columns from the database
-                    // you will actually use after this query.
-                    String[] projection = {
-                            LocationContract.LocationEntry._ID,
-                            LocationContract.LocationEntry.COLUMN_NAME_NAME,
-                            LocationContract.LocationEntry.COLUMN_NAME_LADITUDE,
-                            LocationContract.LocationEntry.COLUMN_NAME_LONGITUDE,
-
-                    };
-
-                    // How you want the results sorted in the resulting Cursor
-                    String sortOrder =
-                            LocationContract.LocationEntry.COLUMN_NAME_NAME + " DESC";
-
-                    Cursor c = db.query(
-                            LocationContract.LocationEntry.TABLE_NAME,  // The table to query
-                            projection,                               // The columns to return
-                            null,                                // The columns for the WHERE clause
-                            null,                            // The values for the WHERE clause
-                            null,                                     // don't group the rows
-                            null,                                     // don't filter by row groups
-                            sortOrder                                 // The sort order
-                    );
-
-                    while(c.moveToNext()){
-                        Log.w("STURM", "ID: " + c.getString(0));
-                        Log.w("STURM", "Name: " + c.getString(1));
-                        Log.w("STURM", "Lat: " + c.getString(2));
-                        Log.w("STURM", "Lon: " + c.getString(3));
+                        Log.w("id", tmpLoc.id.toString());
+                        Log.w("name", tmpLoc.placeName);
+                        Log.w("lat", tmpLoc.latitude.toString());
+                        Log.w("lon", tmpLoc.longitude.toString());*/
+                    }
+                    catch (Exception e)
+                    {
+                        Log.w("graz", e);
                     }
                 }
-                catch (Exception e)
-                {
-                    Log.w("graz", e);
-                }
-
-            }
-        });
+            });
+        }
     }
-
 }
