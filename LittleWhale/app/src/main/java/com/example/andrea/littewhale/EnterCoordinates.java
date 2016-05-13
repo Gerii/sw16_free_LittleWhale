@@ -21,12 +21,13 @@ public class EnterCoordinates extends AppCompatActivity {
         setContentView(R.layout.activity_enter_coordinates);
 
         RadioButton button = (RadioButton) findViewById(R.id.rbtnTimeNotation);
+        if(button != null)
         button.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 LinearLayout decimalLayout = (LinearLayout) findViewById(R.id.linearLayoutDecimalCoords);
                 decimalLayout.setVisibility(LinearLayout.GONE);
 
-                setViewDecimalToTime();
+                setViewDecimalToTime(false, 0 ,0);
 
                 LinearLayout timeLayout = (LinearLayout) findViewById(R.id.linearLayoutTimeCoords);
                 timeLayout.setVisibility(LinearLayout.VISIBLE);
@@ -35,6 +36,7 @@ public class EnterCoordinates extends AppCompatActivity {
 
 
         RadioButton button2 = (RadioButton) findViewById(R.id.rbtnDecimalNotation);
+        if(button2 != null)
         button2.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 LinearLayout decimalLayout = (LinearLayout) findViewById(R.id.linearLayoutDecimalCoords);
@@ -49,6 +51,7 @@ public class EnterCoordinates extends AppCompatActivity {
 
 
         Button startNavigationButton = (Button) findViewById(R.id.buttonStartNavigating);
+        if (startNavigationButton != null)
         startNavigationButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 Intent myIntent = new Intent(EnterCoordinates.this, NavigationActivity.class);
@@ -58,19 +61,19 @@ public class EnterCoordinates extends AppCompatActivity {
                 RadioButton button = (RadioButton) findViewById(R.id.rbtnTimeNotation);
                 RadioButton button2 = (RadioButton) findViewById(R.id.rbtnDecimalNotation);
 
-                if(button.isChecked()) {
+                if (button.isChecked()) {
                     double[] decimal = readTimeFormat();
                     targetLatitude = decimal[0];
                     targetLongitude = decimal[1];
 
-                }else if(button2.isChecked()){
+                } else if (button2.isChecked()) {
                     String latitude = ((TextView) findViewById(R.id.editTextDegreeDecimalLatitude)).getText().toString();
                     String longitude = ((TextView) findViewById(R.id.editTextDegreeDecimalLongitude)).getText().toString();
 
                     targetLatitude = Double.parseDouble(latitude);
                     targetLongitude = Double.parseDouble(longitude);
 
-                }else {
+                } else {
                     Log.e("ERROR", "WTF?!?!?!");
                 }
 
@@ -91,6 +94,42 @@ public class EnterCoordinates extends AppCompatActivity {
                 EnterCoordinates.this.startActivity(myIntent);
             }
         });
+
+        Button useExistingLocationBtn = (Button) findViewById(R.id.useExistingLocation);
+        if(useExistingLocationBtn != null)
+        {
+            useExistingLocationBtn.setOnClickListener(new Button.OnClickListener() {
+                public void onClick(View v) {
+                    Intent myIntent = new Intent(EnterCoordinates.this, EditLocations.class);
+                    myIntent.putExtra("Caller", "enterCoordinates");
+                    EnterCoordinates.this.startActivityForResult(myIntent, 1);
+                }
+            });
+        }
+
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Log.w("ON ACTIVITY", "method called");
+
+        if(requestCode == 1)
+        {
+            if(resultCode == RESULT_OK) {
+                Bundle extras = data.getExtras();
+                if (extras != null)
+                {
+                    Log.w("ON ACTIVITY","set lon and lat");
+                    Double lon = extras.getDouble("LocationLongitude");
+                    Double lat = extras.getDouble("LocationLatitude");
+                    setViewDecimalToTime(true, lon, lat);
+                }
+            }
+        }
+
     }
 
     private int convertToInt(String numberString) {
@@ -142,15 +181,23 @@ public class EnterCoordinates extends AppCompatActivity {
 
 
 
-    private void setViewDecimalToTime() {
+    private void setViewDecimalToTime(boolean parameters, double lon, double lat) {
         double longitude = 0;
         double latitude = 0;
-        try {
-            longitude = Double.parseDouble(((TextView) findViewById(R.id.editTextDegreeDecimalLongitude)).getText().toString());
-            latitude = Double.parseDouble(((TextView) findViewById(R.id.editTextDegreeDecimalLatitude)).getText().toString());
-        }catch (Exception e) {
 
+        if(!parameters) {
+            try {
+                longitude = Double.parseDouble(((TextView) findViewById(R.id.editTextDegreeDecimalLongitude)).getText().toString());
+                latitude = Double.parseDouble(((TextView) findViewById(R.id.editTextDegreeDecimalLatitude)).getText().toString());
+            }catch (Exception e) {
+
+            }
+        } else {
+            longitude = Math.abs(lon);
+            latitude = Math.abs(lat);
         }
+
+
         int[] longitudeArray = decimalToTimeConversion(longitude);
         int[] latitudeArray = decimalToTimeConversion(latitude);
 
@@ -164,6 +211,16 @@ public class EnterCoordinates extends AppCompatActivity {
 
         int longitudeSelectionIndex = ((Spinner) findViewById(R.id.spinnerCardinalDirectionDecimalLongitude)).getSelectedItemPosition();
         int latitudeSelectionIndex = ((Spinner) findViewById(R.id.spinnerCardinalDirectionDecimalLatitude)).getSelectedItemPosition();
+
+        if (parameters) {
+            if(lon < 0) {
+                longitudeSelectionIndex = 1;
+            }
+            if(lat < 0) {
+                latitudeSelectionIndex = 1;
+            }
+        }
+
         ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLatitude)).setSelection(latitudeSelectionIndex);
         ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLongitude)).setSelection(longitudeSelectionIndex);
 

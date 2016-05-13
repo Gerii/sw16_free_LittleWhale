@@ -44,6 +44,30 @@ public class LocationDb {
         return newRowId;
     }
 
+    public long editLocation(Context context, Long id, String name, Double lat, Double lon){
+        LocationDbHelper dbHelper = new LocationDbHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(LocationContract.LocationEntry.COLUMN_NAME_NAME, name);
+        values.put(LocationContract.LocationEntry.COLUMN_NAME_LADITUDE, lat);
+        values.put(LocationContract.LocationEntry.COLUMN_NAME_LONGITUDE, lon);
+
+        String whereId = LocationContract.LocationEntry._ID + "=" + id.toString();
+
+
+        int c = db.update(
+                LocationContract.LocationEntry.TABLE_NAME,
+                values,
+                whereId,
+                null
+        );
+
+        db.close();
+
+        return id;
+    }
+
     public Location getLocation(Context context, Long id){
         LocationDbHelper dbHelper = new LocationDbHelper(context);
 
