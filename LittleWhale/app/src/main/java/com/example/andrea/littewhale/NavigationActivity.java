@@ -74,8 +74,6 @@ public class NavigationActivity extends AppCompatActivity {
         }
 
 
-
-
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         final LocationListener locationListener = new LocationListener() {
             @Override
@@ -86,8 +84,8 @@ public class NavigationActivity extends AppCompatActivity {
                 double targetLat = target[0];
                 double targetLon = target[1];
 
-                Log.e("TargetLatitude", Double.toString(targetLat) );
-                Log.e("TargetLongitude", Double.toString(targetLon) );
+                Log.e("TargetLatitude", Double.toString(targetLat));
+                Log.e("TargetLongitude", Double.toString(targetLon));
                 Log.e("CurrentLatitude", String.valueOf(curLat));
                 Log.e("CurrentLongitude", String.valueOf(curLon));
                 Log.e("Speed", Float.toString(location.getSpeed()));
@@ -95,6 +93,13 @@ public class NavigationActivity extends AppCompatActivity {
                         distanceInKm(curLat, curLon, targetLat, targetLon)));
                 double angle = angleToTarget(curLat, curLon, targetLat, targetLon);
                 Log.e("Angle", Double.toString(angle));
+
+                ((TextView) findViewById(R.id.editTextSpeed)).setText("Distance: " + Double.toString(distanceInKm(curLat, curLon, targetLat, targetLon)));
+                ((TextView) findViewById(R.id.editTextCourseAngle)).setText("Course Angel: " + Double.toString(angle));
+                ((TextView) findViewById(R.id.editTextCurrLongitude)).setText("Longitude: " + Double.toString(curLon));
+                ((TextView) findViewById(R.id.editTextCurrLatitude)).setText("Latitude: " + Double.toString(curLat));
+
+
             }
 
 
@@ -114,7 +119,7 @@ public class NavigationActivity extends AppCompatActivity {
             }
         };
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10 ,10, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
     }
 
 
@@ -214,13 +219,17 @@ public class NavigationActivity extends AppCompatActivity {
 
     public static double distanceInKm(double lat1, double lon1, double lat2, double lon2) {
         double lat = Math.toRadians(lat2 - lat1);
-        double lon = Math.toRadians(lon2- lon1);
+        double lon = Math.toRadians(lon2 - lon1);
 
         double a = Math.sin(lat / 2) * Math.sin(lat / 2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(lon / 2) * Math.sin(lon / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double d = RADIUS * c;
 
         return Math.abs(d);
+    }
+
+    public static double convertToNauticalMiles(double lat1, double lon1, double lat2, double lon2) {
+        return distanceInKm(lat1, lon1, lat2, lon2) / 1.852;
     }
 
     public static double angleToTarget(double lat1, double lon1, double lat2, double lon2) {
@@ -230,8 +239,8 @@ public class NavigationActivity extends AppCompatActivity {
         double deltagamma = Math.toRadians(lon2 - lon1);
 
         double y = Math.sin(deltagamma) * Math.cos(phi2);
-        double x = Math.cos(phi1)*Math.sin(phi2) -
-                Math.sin(phi1)*Math.cos(phi2)*Math.cos(deltagamma);
+        double x = Math.cos(phi1) * Math.sin(phi2) -
+                Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltagamma);
         double theta = Math.atan2(y, x);
 
         return (Math.toDegrees(theta) + 360) % 360;

@@ -13,4 +13,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Placeholder"
+        android:id="@+id/editTextSpeed"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/editTextCourseAngle"
+        android:layout_below="@+id/editTextSpeed"
+        android:layout_alignLeft="@+id/editTextCurrLongitude"
+        android:layout_alignStart="@+id/editTextCurrLongitude" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/editTextCurrLongitude"
+        android:layout_below="@+id/editTextCourseAngle"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/editTextCurrLatitude"
+        android:layout_below="@+id/editTextCurrLongitude"
+        android:layout_alignLeft="@+id/editTextCurrLongitude"
+        android:layout_alignStart="@+id/editTextCurrLongitude" />
+
 </RelativeLayout>
