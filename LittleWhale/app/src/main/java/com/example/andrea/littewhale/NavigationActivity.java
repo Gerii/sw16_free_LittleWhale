@@ -2,17 +2,12 @@ package com.example.andrea.littewhale;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -29,6 +24,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public class NavigationActivity extends AppCompatActivity {
 
@@ -48,6 +46,13 @@ public class NavigationActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private LocationListener locationListener;
+    private LocationManager locationManager;
+
+    //for speed
+    private double oldLat = -1000.0;
+    private double oldLon = -1000.0;
+    private long timestampLastUpdateDecisec = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,14 +73,14 @@ public class NavigationActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            while (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         }
 
 
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        final LocationListener locationListener = new LocationListener() {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(final Location location) {
                 double[] target = getIntent().getExtras().getDoubleArray("TargetCoords");
@@ -83,6 +88,25 @@ public class NavigationActivity extends AppCompatActivity {
                 double curLon = location.getLongitude();
                 double targetLat = target[0];
                 double targetLon = target[1];
+
+                //speed calc
+                double speed = 0;
+                long currentTimeDecisecond = System.currentTimeMillis() / 100;
+
+                if(oldLat > -90.0 && oldLat < 90.0 && oldLon > -180.0 && oldLon < 180.0 && timestampLastUpdateDecisec > 0){
+                    long timeBetweenUpdateSec = (currentTimeDecisecond - timestampLastUpdateDecisec);
+                    double distanceBetweenUpdateMeters = distanceInKm(curLat, curLon, oldLat, oldLon) * 1000;
+
+                    Log.i("update time: ", Long.toString(timeBetweenUpdateSec / 10));
+                    Log.i("distance: ", Double.toString(distanceBetweenUpdateMeters));
+
+                    speed = (distanceBetweenUpdateMeters / timeBetweenUpdateSec) * 36;
+                }
+
+                oldLat = curLat;
+                oldLon = curLon;
+                timestampLastUpdateDecisec = currentTimeDecisecond;
+
 
                 Log.e("TargetLatitude", Double.toString(targetLat));
                 Log.e("TargetLongitude", Double.toString(targetLon));
@@ -94,12 +118,13 @@ public class NavigationActivity extends AppCompatActivity {
                 double angle = angleToTarget(curLat, curLon, targetLat, targetLon);
                 Log.e("Angle", Double.toString(angle));
 
-                ((TextView) findViewById(R.id.editTextSpeed)).setText("Distance: " + Double.toString(distanceInKm(curLat, curLon, targetLat, targetLon)));
-                ((TextView) findViewById(R.id.editTextCourseAngle)).setText("Course Angel: " + Double.toString(angle));
-                ((TextView) findViewById(R.id.editTextCurrLongitude)).setText("Longitude: " + Double.toString(curLon));
-                ((TextView) findViewById(R.id.editTextCurrLatitude)).setText("Latitude: " + Double.toString(curLat));
+                NumberFormat formatter = new DecimalFormat("#0.000");
 
-
+                ((TextView) findViewById(R.id.editTextDistance)).setText("Distance: " + formatter.format(distanceInKm(curLat, curLon, targetLat, targetLon)));
+                ((TextView) findViewById(R.id.editTextSpeed)).setText("Speed: " + formatter.format(speed) + " km/h");
+                ((TextView) findViewById(R.id.editTextCourseAngle)).setText("Course Angle: " + formatter.format(angle));
+                ((TextView) findViewById(R.id.editTextCurrLongitude)).setText("Longitude: " + formatter.format(curLon));
+                ((TextView) findViewById(R.id.editTextCurrLatitude)).setText("Latitude: " + formatter.format(curLat));
             }
 
 
@@ -122,6 +147,16 @@ public class NavigationActivity extends AppCompatActivity {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
     }
 
+    @Override
+    public void onPause(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                locationManager.removeUpdates(locationListener);
+            }
+        }
+
+        super.onPause();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

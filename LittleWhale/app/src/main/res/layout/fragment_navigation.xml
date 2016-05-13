@@ -47,4 +47,12 @@
         android:layout_alignLeft="@+id/editTextCurrLongitude"
         android:layout_alignStart="@+id/editTextCurrLongitude" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/editTextDistance"
+        android:layout_above="@+id/editTextSpeed"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
