@@ -8,9 +8,7 @@ import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 import android.util.Log;
 
-import com.example.andrea.littewhale.NavigationActivity;
-import com.example.andrea.model.LocationContract;
-import com.example.andrea.model.LocationDbHelper;
+import com.example.andrea.utils.NavigationUtils;
 
 /**
  * Created by clemens on 13.05.16.
@@ -35,49 +33,54 @@ public class NavigationTest extends AndroidTestCase{
 
 
     public void testCourse1() {
-        double angle = NavigationActivity.angleToTarget(0, 0, 90, 0);
+        double angle = NavigationUtils.angleToTarget(0, 0, 90, 0);
         assertTrue(assertDelta(0.001, 0.0, angle));
     }
 
 
     public void testCourse2() {
-        double angle = NavigationActivity.angleToTarget(50, 50, 0, 0);
+        double angle = NavigationUtils.angleToTarget(50, 50, 0, 0);
         assertTrue(assertDelta(0.001, 237.26759, angle));
     }
 
     public void testCourse3() {
-        double angle = NavigationActivity.angleToTarget(0, 0, 50, -50);
+        double angle = NavigationUtils.angleToTarget(0, 0, 50, -50);
         assertTrue(assertDelta(0.001, 327.26759, angle));
     }
 
     public void testCourse4() {
-        double angle = NavigationActivity.angleToTarget(46.95279, 15.88784, 47.070714, 15.439504);
+        double angle = NavigationUtils.angleToTarget(46.95279, 15.88784, 47.070714, 15.439504);
         assertTrue(assertDelta(0.001, 291.25821, angle));
     }
 
     public void testCourse5() {
-        double angle = NavigationActivity.angleToTarget(47.070714, 15.439504, 46.95279, 15.88784);
+        double angle = NavigationUtils.angleToTarget(47.070714, 15.439504, 46.95279, 15.88784);
         assertTrue(assertDelta(0.001, 110.93025, angle));
     }
 
     public void testDistance1() {
-        double dist = NavigationActivity.distanceInKm(47.070714, 15.439504, 46.95279, 15.88784);
+        double dist = NavigationUtils.distanceInKm(47.070714, 15.439504, 46.95279, 15.88784);
         assertTrue(assertDelta(0.1, 36.43, dist));
     }
 
     public void testDistance2() {
-        double dist = NavigationActivity.distanceInKm(0, 0, 0, 0);
+        double dist = NavigationUtils.distanceInKm(0, 0, 0, 0);
         assertTrue(assertDelta(0.1, 0.0, dist));
     }
 
     public void testDistance3() {
-        double dist = NavigationActivity.distanceInKm(0, 0, 50, 50);
+        double dist = NavigationUtils.distanceInKm(0, 0, 50, 50);
         assertTrue(assertDelta(0.1, 7302.05, dist));
     }
 
     public void testDistance4() {
-        double dist = NavigationActivity.distanceInKm(0, 0, -50, -50);
+        double dist = NavigationUtils.distanceInKm(0, 0, -50, -50);
         assertTrue(assertDelta(0.1, 7302.05, dist));
+    }
+
+    public void testDistance5() {
+        double dist = NavigationUtils.distanceInKm(45.0, 17.0, 45.0, 17.1);
+        assertTrue(assertDelta(0.1, 7.87, dist));
     }
 
     private boolean assertDelta(double delta, double angle1, double angle2){

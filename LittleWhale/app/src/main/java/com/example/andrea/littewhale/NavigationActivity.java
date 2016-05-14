@@ -28,6 +28,8 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import com.example.andrea.utils.NavigationUtils;
+
 public class NavigationActivity extends AppCompatActivity {
 
     /**
@@ -39,8 +41,6 @@ public class NavigationActivity extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    private final static double RADIUS = 6378.137;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -90,22 +90,7 @@ public class NavigationActivity extends AppCompatActivity {
                 double targetLon = target[1];
 
                 //speed calc
-                double speed = 0;
-                long currentTimeDecisecond = System.currentTimeMillis() / 100;
 
-                if(oldLat > -90.0 && oldLat < 90.0 && oldLon > -180.0 && oldLon < 180.0 && timestampLastUpdateDecisec > 0){
-                    long timeBetweenUpdateSec = (currentTimeDecisecond - timestampLastUpdateDecisec);
-                    double distanceBetweenUpdateMeters = distanceInKm(curLat, curLon, oldLat, oldLon) * 1000;
-
-                    Log.i("update time: ", Long.toString(timeBetweenUpdateSec / 10));
-                    Log.i("distance: ", Double.toString(distanceBetweenUpdateMeters));
-
-                    speed = (distanceBetweenUpdateMeters / timeBetweenUpdateSec) * 36;
-                }
-
-                oldLat = curLat;
-                oldLon = curLon;
-                timestampLastUpdateDecisec = currentTimeDecisecond;
 
 
                 Log.e("TargetLatitude", Double.toString(targetLat));
@@ -114,15 +99,15 @@ public class NavigationActivity extends AppCompatActivity {
                 Log.e("CurrentLongitude", String.valueOf(curLon));
                 Log.e("Speed", Float.toString(location.getSpeed()));
                 Log.e("Distance", Double.toString(
-                        distanceInKm(curLat, curLon, targetLat, targetLon)));
-                double angle = angleToTarget(curLat, curLon, targetLat, targetLon);
+                        NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)));
+                double angle = NavigationUtils.angleToTarget(curLat, curLon, targetLat, targetLon);
                 Log.e("Angle", Double.toString(angle));
 
                 NumberFormat formatter = new DecimalFormat("#0.000");
 
-                ((TextView) findViewById(R.id.editTextDistance)).setText("Distance: " + formatter.format(distanceInKm(curLat, curLon, targetLat, targetLon)));
-                ((TextView) findViewById(R.id.editTextSpeed)).setText("Speed: " + formatter.format(speed) + " km/h");
-                ((TextView) findViewById(R.id.editTextCourseAngle)).setText("Course Angle: " + formatter.format(angle));
+                ((TextView) findViewById(R.id.editTextDistance)).setText("Distance: " + formatter.format(NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)) + " km");
+                ((TextView) findViewById(R.id.editTextSpeed)).setText("Speed: " + formatter.format(getCurrentSpeed(curLat, curLon)) + " km/h");
+                ((TextView) findViewById(R.id.editTextCourseAngle)).setText("Course Angle: " + formatter.format(angle) + " °");
                 ((TextView) findViewById(R.id.editTextCurrLongitude)).setText("Longitude: " + formatter.format(curLon));
                 ((TextView) findViewById(R.id.editTextCurrLatitude)).setText("Latitude: " + formatter.format(curLat));
             }
@@ -252,32 +237,24 @@ public class NavigationActivity extends AppCompatActivity {
         }
     }
 
-    public static double distanceInKm(double lat1, double lon1, double lat2, double lon2) {
-        double lat = Math.toRadians(lat2 - lat1);
-        double lon = Math.toRadians(lon2 - lon1);
+    private double getCurrentSpeed(double curLat, double curLon){
+        double speed = 0;
+        long currentTimeDecisecond = System.currentTimeMillis() / 100;
 
-        double a = Math.sin(lat / 2) * Math.sin(lat / 2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(lon / 2) * Math.sin(lon / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double d = RADIUS * c;
+        if(oldLat > -90.0 && oldLat < 90.0 && oldLon > -180.0 && oldLon < 180.0 && timestampLastUpdateDecisec > 0){
+            long timeBetweenUpdateSec = (currentTimeDecisecond - timestampLastUpdateDecisec);
+            double distanceBetweenUpdateMeters = NavigationUtils.distanceInKm(curLat, curLon, oldLat, oldLon) * 1000;
 
-        return Math.abs(d);
-    }
+            Log.i("update time: ", Long.toString(timeBetweenUpdateSec / 10));
+            Log.i("distance: ", Double.toString(distanceBetweenUpdateMeters));
 
-    public static double convertToNauticalMiles(double lat1, double lon1, double lat2, double lon2) {
-        return distanceInKm(lat1, lon1, lat2, lon2) / 1.852;
-    }
+            speed = (distanceBetweenUpdateMeters / timeBetweenUpdateSec) * 36;
+        }
 
-    public static double angleToTarget(double lat1, double lon1, double lat2, double lon2) {
-        double phi1 = Math.toRadians(lat1);
-        double phi2 = Math.toRadians(lat2);
+        oldLat = curLat;
+        oldLon = curLon;
+        timestampLastUpdateDecisec = currentTimeDecisecond;
 
-        double deltagamma = Math.toRadians(lon2 - lon1);
-
-        double y = Math.sin(deltagamma) * Math.cos(phi2);
-        double x = Math.cos(phi1) * Math.sin(phi2) -
-                Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltagamma);
-        double theta = Math.atan2(y, x);
-
-        return (Math.toDegrees(theta) + 360) % 360;
+        return speed;
     }
 }
