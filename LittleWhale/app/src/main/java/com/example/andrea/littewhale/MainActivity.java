@@ -14,20 +14,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button button = (Button) findViewById(R.id.btnStartNavigate);
-        button.setOnClickListener(new Button.OnClickListener() {
+        Button buttonStartNavigation = (Button) findViewById(R.id.btnStartNavigate);
+        buttonStartNavigation.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 Intent myIntent = new Intent(MainActivity.this, EnterCoordinates.class);
                 MainActivity.this.startActivity(myIntent);
             }
         });
 
-        Button button2 = (Button) findViewById(R.id.btnStartEditLocations);
-        button2.setOnClickListener(new Button.OnClickListener(){
-            public void onClick(View v){
+        Button buttonStartEditLocations = (Button) findViewById(R.id.btnStartEditLocations);
+        buttonStartEditLocations.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
                 Intent myIntent = new Intent(MainActivity.this, EditLocations.class);
                 MainActivity.this.startActivity(myIntent);
             }
         });
+
     }
 }

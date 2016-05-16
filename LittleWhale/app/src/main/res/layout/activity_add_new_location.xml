@@ -1,63 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.andrea.littewhale.EnterCoordinates">
+    tools:context="com.example.andrea.littewhale.AddNewLocation">
 
-    <RadioGroup
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/radioGroup"
-        android:layout_gravity="center"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_height="match_parent"
+        >
 
-        <RadioButton
-            android:layout_width="wrap_content"
+
+        <EditText
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Time (0°0&apos;0&apos;&apos;)"
-            android:id="@+id/rbtnTimeNotation"
-            android:checked="true" />
+            android:id="@+id/newLocation_locationName"
+            android:hint="Name" />
 
-        <RadioButton
-            android:layout_width="wrap_content"
+        <RadioGroup
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Decimal (0.00°)"
-            android:id="@+id/rbtnDecimalNotation"
-            android:checked="false" />
+            android:id="@+id/newLocation_radioGroup"
+            android:layout_gravity="center"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
 
-    </RadioGroup>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Time (0°0&apos;0&apos;&apos;)"
+                android:id="@+id/newLocation_rbtnTimeNotation"
+                android:checked="true" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Decimal (0.00°)"
+                android:id="@+id/newLocation_rbtnDecimalNotation"
+                android:checked="false" />
+
+        </RadioGroup>
+
+    </LinearLayout>
+
 
     <!-- Time format input -->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/linearLayoutTimeCoords">
+        android:id="@+id/newLocation_linearLayoutTimeCoords">
 
         <!-- Time latitude-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="78dp"
-            android:id="@+id/linearLayoutTimeLatitude"
-            android:layout_marginTop="65dp">
+            android:id="@+id/newLocation_linearLayoutTimeLatitude"
+            android:layout_marginTop="110dp">
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:ems="10"
-                android:id="@+id/editTextDegreeTimeLatitude"
+                android:id="@+id/newLocation_editTextDegreeTimeLatitude"
                 android:layout_centerHorizontal="true"
                 android:editable="true"
                 android:layout_weight="1"
-                android:nextFocusForward="@+id/editTextMinuteLatitude"
+                android:nextFocusForward="@+id/newLocation_editTextMinuteLatitude"
                 />
 
             <TextView
@@ -65,18 +81,18 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="°"
-                android:id="@+id/textViewDegreeTimeLatitude" />
+                android:id="@+id/newLocation_textViewDegreeTimeLatitude" />
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:ems="10"
-                android:id="@+id/editTextMinuteLatitude"
+                android:id="@+id/newLocation_editTextMinuteLatitude"
                 android:layout_centerHorizontal="true"
                 android:editable="true"
                 android:layout_weight="1"
-                android:nextFocusForward="@+id/editTextSecondLatitude"
+                android:nextFocusForward="@+id/newLocation_editTextSecondLatitude"
 
                 />
 
@@ -85,18 +101,18 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="'"
-                android:id="@+id/textViewMinuteLatitude" />
+                android:id="@+id/newLocation_textViewMinuteLatitude" />
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:ems="10"
-                android:id="@+id/editTextSecondLatitude"
+                android:id="@+id/newLocation_editTextSecondLatitude"
                 android:layout_centerHorizontal="true"
                 android:editable="true"
                 android:layout_weight="1"
-                android:nextFocusForward="@+id/editTextDegreeTimeLongitude"
+                android:nextFocusForward="@+id/newLocation_editTextDegreeTimeLongitude"
 
                 />
 
@@ -105,7 +121,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="''"
-                android:id="@+id/textViewSecondLatitude"
+                android:id="@+id/newLocation_textViewSecondLatitude"
                 />
 
             <FrameLayout
@@ -117,7 +133,7 @@
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/spinnerCardinalDirectionTimeLatitude"
+                    android:id="@+id/newLocation_spinnerCardinalDirectionTimeLatitude"
                     android:entries="@array/latitude"
                     />
             </FrameLayout>
@@ -128,7 +144,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="78dp"
-            android:id="@+id/linearLayoutTimeLongitude"
+            android:id="@+id/newLocation_linearLayoutTimeLongitude"
             android:layout_marginTop="0dp">
 
             <EditText
@@ -136,11 +152,11 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:ems="10"
-                android:id="@+id/editTextDegreeTimeLongitude"
+                android:id="@+id/newLocation_editTextDegreeTimeLongitude"
                 android:layout_centerHorizontal="true"
                 android:editable="true"
                 android:layout_weight="1"
-                android:nextFocusForward="@+id/editTextMinuteLongitude"
+                android:nextFocusForward="@+id/newLocation_editTextMinuteLongitude"
 
                 />
 
@@ -149,18 +165,18 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="°"
-                android:id="@+id/textViewDegreeTimeLongitude" />
+                android:id="@+id/newLocation_textViewDegreeTimeLongitude" />
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:ems="10"
-                android:id="@+id/editTextMinuteLongitude"
+                android:id="@+id/newLocation_editTextMinuteLongitude"
                 android:layout_centerHorizontal="true"
                 android:editable="true"
                 android:layout_weight="1"
-                android:nextFocusForward="@+id/editTextSecondLongitude"
+                android:nextFocusForward="@+id/newLocation_editTextSecondLongitude"
 
                 />
 
@@ -169,14 +185,14 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="'"
-                android:id="@+id/textViewMinuteLongitude" />
+                android:id="@+id/newLocation_textViewMinuteLongitude" />
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:ems="10"
-                android:id="@+id/editTextSecondLongitude"
+                android:id="@+id/newLocation_editTextSecondLongitude"
                 android:layout_centerHorizontal="true"
                 android:editable="true"
                 android:layout_weight="1"
@@ -187,7 +203,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="''"
-                android:id="@+id/textViewSecondLongitude"
+                android:id="@+id/newLocation_textViewSecondLongitude"
                 />
 
             <FrameLayout
@@ -199,18 +215,14 @@
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/spinnerCardinalDirectionTimeLongitude"
+                    android:id="@+id/newLocation_spinnerCardinalDirectionTimeLongitude"
                     android:entries="@array/longitude"
                     />
             </FrameLayout>
 
         </LinearLayout>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Use Location"
-            android:id="@+id/useExistingLocation" />
+
 
 
     </LinearLayout>
@@ -223,21 +235,21 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/linearLayoutDecimalCoords">
+        android:id="@+id/newLocation_linearLayoutDecimalCoords">
 
         <!-- decimal latitude-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="78dp"
-            android:id="@+id/linearLayoutDecimalLatitude"
-            android:layout_marginTop="65dp" >
+            android:id="@+id/newLocation_linearLayoutDecimalLatitude"
+            android:layout_marginTop="110dp" >
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
                 android:ems="10"
-                android:id="@+id/editTextDegreeDecimalLatitude"
+                android:id="@+id/newLocation_editTextDegreeDecimalLatitude"
                 android:layout_centerHorizontal="true"
                 android:editable="true"
                 android:layout_weight="1"
@@ -248,7 +260,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="°"
-                android:id="@+id/textView3" />
+                android:id="@+id/newLocation_textView3" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -258,7 +270,7 @@
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/spinnerCardinalDirectionDecimalLatitude"
+                    android:id="@+id/newLocation_spinnerCardinalDirectionDecimalLatitude"
                     android:entries="@array/latitude" />
             </FrameLayout>
         </LinearLayout>
@@ -267,7 +279,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/linearLayoutDecimalLongitude"
+            android:id="@+id/newLocation_linearLayoutDecimalLongitude"
             android:layout_marginTop="0dp">
 
             <EditText
@@ -275,7 +287,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
                 android:ems="10"
-                android:id="@+id/editTextDegreeDecimalLongitude"
+                android:id="@+id/newLocation_editTextDegreeDecimalLongitude"
                 android:layout_centerHorizontal="true"
                 android:editable="true"
                 android:layout_weight="1"
@@ -287,7 +299,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="°"
-                android:id="@+id/textViewDegreeDecimalLongitude" />
+                android:id="@+id/newLocation_textViewDegreeDecimalLongitude" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -298,7 +310,7 @@
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/spinnerCardinalDirectionDecimalLongitude"
+                    android:id="@+id/newLocation_spinnerCardinalDirectionDecimalLongitude"
                     android:entries="@array/longitude"
                     />
             </FrameLayout>
@@ -310,10 +322,12 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start Navigating"
-        android:id="@+id/buttonStartNavigating"
+        android:text="Save Location"
+        android:id="@+id/newLocation_buttonAddLocation"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+
 
 </RelativeLayout>
