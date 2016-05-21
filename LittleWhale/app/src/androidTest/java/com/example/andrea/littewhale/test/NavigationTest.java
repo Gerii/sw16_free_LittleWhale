@@ -65,22 +65,22 @@ public class NavigationTest extends AndroidTestCase{
 
     public void testDistance2() {
         double dist = NavigationUtils.distanceInKm(0, 0, 0, 0);
-        assertTrue(assertDelta(0.1, 0.0, dist));
+        assertTrue(assertDelta(0.0001, 0.0, dist));
     }
 
     public void testDistance3() {
         double dist = NavigationUtils.distanceInKm(0, 0, 50, 50);
-        assertTrue(assertDelta(0.1, 7302.05, dist));
+        assertTrue(assertDelta(0.01, 7302.05, dist));
     }
 
     public void testDistance4() {
         double dist = NavigationUtils.distanceInKm(0, 0, -50, -50);
-        assertTrue(assertDelta(0.1, 7302.05, dist));
+        assertTrue(assertDelta(0.01, 7302.05, dist));
     }
 
     public void testDistance5() {
         double dist = NavigationUtils.distanceInKm(45.0, 17.0, 45.0, 17.1);
-        assertTrue(assertDelta(0.1, 7.87, dist));
+        assertTrue(assertDelta(0.01, 7.87, dist));
     }
 
     private boolean assertDelta(double delta, double angle1, double angle2){

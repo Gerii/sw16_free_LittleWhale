@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +28,8 @@ import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import com.example.andrea.utils.NavigationUtils;
 
@@ -52,7 +55,10 @@ public class NavigationActivity extends AppCompatActivity {
     //for speed
     private double oldLat = -1000.0;
     private double oldLon = -1000.0;
-    private long timestampLastUpdateDecisec = 0;
+    private long timestampLastUpdateTimestamp = 0;
+    private ArrayList<Pair<Long, Double>> speedHistory = new ArrayList<>();
+
+    private ArrayList<String> updateLog = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +94,6 @@ public class NavigationActivity extends AppCompatActivity {
                 double curLon = location.getLongitude();
                 double targetLat = target[0];
                 double targetLon = target[1];
-
-                //speed calc
-
-
 
                 Log.e("TargetLatitude", Double.toString(targetLat));
                 Log.e("TargetLongitude", Double.toString(targetLon));
@@ -238,23 +240,55 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     private double getCurrentSpeed(double curLat, double curLon){
-        double speed = 0;
-        long currentTimeDecisecond = System.currentTimeMillis() / 100;
+        double currentSpeed = 0;
+        long currentTimestamp = System.currentTimeMillis();
 
-        if(oldLat > -90.0 && oldLat < 90.0 && oldLon > -180.0 && oldLon < 180.0 && timestampLastUpdateDecisec > 0){
-            long timeBetweenUpdateSec = (currentTimeDecisecond - timestampLastUpdateDecisec);
-            double distanceBetweenUpdateMeters = NavigationUtils.distanceInKm(curLat, curLon, oldLat, oldLon) * 1000;
+        updateLog.add(new SimpleDateFormat("HH:mm:ss").format(currentTimestamp));
 
-            Log.i("update time: ", Long.toString(timeBetweenUpdateSec / 10));
+        if(updateLog.size() > 9){
+            updateLog.remove(0);
+        }
+
+        ((TextView) findViewById(R.id.editTextLogUpdate)).setText("Log\n");
+
+        for(int i = 0; i < updateLog.size(); i++){
+            ((TextView) findViewById(R.id.editTextLogUpdate)).append(updateLog.get(i) + "\n");
+        }
+
+        if(oldLat > -90.0 && oldLat < 90.0 && oldLon > -180.0 && oldLon < 180.0 && timestampLastUpdateTimestamp > 0){
+            long timeBetweenUpdateMilliSec = (currentTimestamp - timestampLastUpdateTimestamp);
+            double distanceBetweenUpdateMeters = NavigationUtils.distanceInM(curLat, curLon, oldLat, oldLon);
+
+            Log.i("update time: ", Double.toString(timeBetweenUpdateMilliSec / 1000.0));
             Log.i("distance: ", Double.toString(distanceBetweenUpdateMeters));
 
-            speed = (distanceBetweenUpdateMeters / timeBetweenUpdateSec) * 36;
+            currentSpeed = distanceBetweenUpdateMeters * 3600 / timeBetweenUpdateMilliSec;
+
+            speedHistory.add(new Pair(timeBetweenUpdateMilliSec, currentSpeed));
+
+            if(speedHistory.size() > 3){
+                speedHistory.remove(0);
+            }
         }
 
         oldLat = curLat;
         oldLon = curLon;
-        timestampLastUpdateDecisec = currentTimeDecisecond;
+        timestampLastUpdateTimestamp = currentTimestamp;
 
-        return speed;
+        //calculate avg speed from last positions
+        long cumulatedTimeSpan = 0;
+        double cumulatedSpeeds = 0;
+
+        for(int i = 0; i < speedHistory.size(); i++){
+            cumulatedTimeSpan += speedHistory.get(i).first;
+            cumulatedSpeeds += speedHistory.get(i).second * speedHistory.get(i).first ;
+            Log.w("speed hist", speedHistory.get(i).first + " " + speedHistory.get(i).second);
+        }
+
+        if(cumulatedTimeSpan > 0){
+            return cumulatedSpeeds / cumulatedTimeSpan;
+        }
+
+        return 0;
     }
 }

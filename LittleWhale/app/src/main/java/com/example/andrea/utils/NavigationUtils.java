@@ -4,9 +4,9 @@ package com.example.andrea.utils;
  * Created by clemens on 14.05.16.
  */
 public class NavigationUtils {
-    private final static double RADIUS = 6378.137;
+    private final static double RADIUS = 6378137;
 
-    public static double distanceInKm(double lat1, double lon1, double lat2, double lon2) {
+    public static double distanceInM(double lat1, double lon1, double lat2, double lon2) {
         double lat = Math.toRadians(lat2 - lat1);
         double lon = Math.toRadians(lon2 - lon1);
 
@@ -14,11 +14,15 @@ public class NavigationUtils {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double d = RADIUS * c;
 
-        return Math.abs(d);
+        return d;
+    }
+
+    public static double distanceInKm(double lat1, double lon1, double lat2, double lon2) {
+        return distanceInM(lat1, lon1, lat2, lon2) / 1000.0;
     }
 
     public static double distanceInNauticalMiles(double lat1, double lon1, double lat2, double lon2) {
-        return distanceInKm(lat1, lon1, lat2, lon2) / 1.852;
+        return distanceInM(lat1, lon1, lat2, lon2) / 1852.0;
     }
 
     public static double angleToTarget(double lat1, double lon1, double lat2, double lon2) {

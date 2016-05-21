@@ -55,4 +55,13 @@
         android:layout_above="@+id/editTextSpeed"
         android:layout_centerHorizontal="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editTextLogUpdate"
+        android:layout_below="@+id/section_label"
+        android:layout_centerHorizontal="true"
+        android:maxLines="10"
+        android:text="Log:\n" />
+
 </RelativeLayout>
