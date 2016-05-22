@@ -103,9 +103,13 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
+
+        if(mViewPager != null)
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+
+        if(tabLayout != null)
         tabLayout.setupWithViewPager(mViewPager);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -128,8 +132,16 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 double[] target = getIntent().getExtras().getDoubleArray("TargetCoords");
                 double curLat = location.getLatitude();
                 double curLon = location.getLongitude();
-                double targetLat = target[0];
-                double targetLon = target[1];
+                double targetLat = 0;
+                double targetLon = 0;
+
+                if(target.length == 2){
+                    targetLat = target[0];
+                    targetLon = target[1];
+                }else{
+                    return;
+                }
+
 
                 Log.e("TargetLatitude", Double.toString(targetLat));
                 Log.e("TargetLongitude", Double.toString(targetLon));
