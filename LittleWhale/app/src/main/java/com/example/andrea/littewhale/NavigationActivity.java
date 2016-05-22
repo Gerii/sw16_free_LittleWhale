@@ -3,6 +3,7 @@ package com.example.andrea.littewhale;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.GeomagneticField;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -10,6 +11,12 @@ import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import android.hardware.GeomagneticField;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -33,7 +40,7 @@ import java.util.ArrayList;
 
 import com.example.andrea.utils.NavigationUtils;
 
-public class NavigationActivity extends AppCompatActivity {
+public class NavigationActivity extends AppCompatActivity implements SensorEventListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -50,13 +57,36 @@ public class NavigationActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private LocationListener locationListener;
-    private LocationManager locationManager;
+
+    LocationManager locationManager;
 
     //for speed
     private double oldLat = -1000.0;
     private double oldLon = -1000.0;
     private long timestampLastUpdateTimestamp = 0;
     private ArrayList<Pair<Long, Double>> speedHistory = new ArrayList<>();
+
+    //for compass orientation
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private Sensor mMagnetic;
+
+    private float[] gravity = new float[3];
+    private float[] geomagnetic = new float[3];
+    private float[] rotation = new float[9];
+    private float[] orientation = new float[3];
+    private GeomagneticField geomagneticField;
+    private double bearing = 0;
+    private final float alpha = 0.8f;
+
+    //textviews
+    /*private TextView tvDistance;
+    private TextView tvSpeed;
+    private TextView tvCourseAngle;
+    private TextView tvCurrlon;
+    private TextView tvCurrlat;
+    private TextView tvBearing;*/
+
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
@@ -84,7 +114,13 @@ public class NavigationActivity extends AppCompatActivity {
             }
         }
 
+        //compass
+        mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mMagnetic = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
+
+        //location
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
             @Override
@@ -107,11 +143,26 @@ public class NavigationActivity extends AppCompatActivity {
 
                 NumberFormat formatter = new DecimalFormat("#0.000");
 
-                ((TextView) findViewById(R.id.editTextDistance)).setText("Distance: " + formatter.format(NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)) + " km");
-                ((TextView) findViewById(R.id.editTextSpeed)).setText("Speed: " + formatter.format(getCurrentSpeed(curLat, curLon)) + " km/h");
-                ((TextView) findViewById(R.id.editTextCourseAngle)).setText("Course Angle: " + formatter.format(angle) + " °");
-                ((TextView) findViewById(R.id.editTextCurrLongitude)).setText("Longitude: " + formatter.format(curLon));
-                ((TextView) findViewById(R.id.editTextCurrLatitude)).setText("Latitude: " + formatter.format(curLat));
+                geomagneticField = new GeomagneticField(
+                        (float) curLat,
+                        (float) curLon,
+                        (float) location.getAltitude(),
+                        System.currentTimeMillis());
+
+                TextView tvDistance = ((TextView) findViewById(R.id.editTextDistance));
+                TextView tvSpeed = ((TextView) findViewById(R.id.editTextSpeed));
+                TextView tvCourseAngle = ((TextView) findViewById(R.id.editTextCourseAngle));
+                TextView tvCurrlon = ((TextView) findViewById(R.id.editTextCurrLongitude));
+                TextView tvCurrlat = ((TextView) findViewById(R.id.editTextCurrLatitude));
+                //TextView tvBearing = ((TextView) findViewById(R.id.editTextBearing));
+
+                if(tvDistance != null && tvSpeed != null && tvCourseAngle != null && tvCurrlon != null && tvCurrlat != null){
+                    tvDistance.setText("Distance: " + formatter.format(NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)) + " km");
+                    tvSpeed.setText("Speed: " + formatter.format(getCurrentSpeed(curLat, curLon)) + " km/h");
+                    tvCourseAngle.setText("Course Angle: " + formatter.format(angle) + " °");
+                    tvCurrlon.setText("Longitude: " + formatter.format(curLon));
+                    tvCurrlat.setText("Latitude: " + formatter.format(curLat));
+                }
             }
 
 
@@ -135,14 +186,79 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
+            }
+        }
+
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mMagnetic, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
     public void onPause(){
+        super.onPause();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 locationManager.removeUpdates(locationListener);
             }
         }
 
-        super.onPause();
+        mSensorManager.unregisterListener(this);
+    }
+
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        Log.i("accuracy", sensor.getName() + " " + accuracy);
+    }
+
+    public void onSensorChanged(SensorEvent event) {
+        //http://www.ssaurel.com/blog/learn-how-to-make-a-compass-application-for-android/
+        boolean accelOrMagnetic = false;
+
+        // get accelerometer data
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
+            gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
+            gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+
+            accelOrMagnetic = true;
+        } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            geomagnetic[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
+            geomagnetic[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
+            geomagnetic[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+
+            accelOrMagnetic = true;
+        }
+
+        SensorManager.getRotationMatrix(rotation, null, gravity, geomagnetic);
+        SensorManager.getOrientation(rotation, orientation);
+        bearing = orientation[0];
+        bearing = Math.toDegrees(bearing);
+
+        if (geomagneticField != null) {
+            bearing += geomagneticField.getDeclination();
+        }
+
+        if (bearing < 0) {
+            bearing += 360;
+        }
+
+        /*if(tvBearing != null){
+            tvBearing.setText("bearing: " + bearing + "°");
+        }*/
+
+        TextView tvBearing = ((TextView) findViewById(R.id.editTextBearing));
+
+        if(tvBearing != null){
+            tvBearing.setText("bearing: " + bearing + "°");
+        }
+
+        //Log.i("bearing", bearing + "°");
     }
 
     @Override
