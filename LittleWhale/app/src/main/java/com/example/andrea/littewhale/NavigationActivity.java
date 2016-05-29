@@ -2,19 +2,21 @@ package com.example.andrea.littewhale;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.GeomagneticField;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import android.hardware.GeomagneticField;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,6 +24,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,7 +33,14 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-public class NavigationActivity extends AppCompatActivity {
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
+import com.example.andrea.utils.NavigationUtils;
+
+public class NavigationActivity extends AppCompatActivity implements SensorEventListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -46,6 +56,39 @@ public class NavigationActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private LocationListener locationListener;
+
+    LocationManager locationManager;
+
+    //for speed
+    private double oldLat = -1000.0;
+    private double oldLon = -1000.0;
+    private long timestampLastUpdateTimestamp = 0;
+    private ArrayList<Pair<Long, Double>> speedHistory = new ArrayList<>();
+
+    //for compass orientation
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private Sensor mMagnetic;
+
+    private float[] gravity = new float[3];
+    private float[] geomagnetic = new float[3];
+    private float[] rotation = new float[9];
+    private float[] orientation = new float[3];
+    private GeomagneticField geomagneticField;
+    private double bearing = 0;
+    private final float alpha = 0.8f;
+
+    //textviews
+    /*private TextView tvDistance;
+    private TextView tvSpeed;
+    private TextView tvCourseAngle;
+    private TextView tvCurrlon;
+    private TextView tvCurrlat;
+    private TextView tvBearing;*/
+
+
+    private ArrayList<String> updateLog = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,39 +103,78 @@ public class NavigationActivity extends AppCompatActivity {
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
+
+        if(mViewPager != null)
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+
+        if(tabLayout != null)
         tabLayout.setupWithViewPager(mViewPager);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            while (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         }
 
+        //compass
+        mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mMagnetic = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
 
-
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        final LocationListener locationListener = new LocationListener() {
+        //location
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(final Location location) {
                 double[] target = getIntent().getExtras().getDoubleArray("TargetCoords");
                 double curLat = location.getLatitude();
                 double curLon = location.getLongitude();
-                double targetLat = target[0];
-                double targetLon = target[1];
+                double targetLat = 0;
+                double targetLon = 0;
 
-                Log.e("TargetLatitude", Double.toString(targetLat) );
-                Log.e("TargetLongitude", Double.toString(targetLon) );
+                if(target.length == 2){
+                    targetLat = target[0];
+                    targetLon = target[1];
+                }else{
+                    return;
+                }
+
+
+                Log.e("TargetLatitude", Double.toString(targetLat));
+                Log.e("TargetLongitude", Double.toString(targetLon));
                 Log.e("CurrentLatitude", String.valueOf(curLat));
                 Log.e("CurrentLongitude", String.valueOf(curLon));
                 Log.e("Speed", Float.toString(location.getSpeed()));
                 Log.e("Distance", Double.toString(
-                        distanceInKm(curLat, curLon, targetLat, targetLon)));
-                double angle = angleToTarget(curLat, curLon, targetLat, targetLon);
+                        NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)));
+                double angle = NavigationUtils.angleToTarget(curLat, curLon, targetLat, targetLon);
                 Log.e("Angle", Double.toString(angle));
+
+                NumberFormat formatter = new DecimalFormat("#0.000");
+
+                geomagneticField = new GeomagneticField(
+                        (float) curLat,
+                        (float) curLon,
+                        (float) location.getAltitude(),
+                        System.currentTimeMillis());
+
+                TextView tvDistance = ((TextView) findViewById(R.id.editTextDistance));
+                TextView tvSpeed = ((TextView) findViewById(R.id.editTextSpeed));
+                TextView tvCourseAngle = ((TextView) findViewById(R.id.editTextCourseAngle));
+                TextView tvCurrlon = ((TextView) findViewById(R.id.editTextCurrLongitude));
+                TextView tvCurrlat = ((TextView) findViewById(R.id.editTextCurrLatitude));
+                //TextView tvBearing = ((TextView) findViewById(R.id.editTextBearing));
+
+                if(tvDistance != null && tvSpeed != null && tvCourseAngle != null && tvCurrlon != null && tvCurrlat != null){
+                    tvDistance.setText("Distance: " + formatter.format(NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)) + " km");
+                    tvSpeed.setText("Speed: " + formatter.format(getCurrentSpeed(curLat, curLon)) + " km/h");
+                    tvCourseAngle.setText("Course Angle: " + formatter.format(angle) + " °");
+                    tvCurrlon.setText("Longitude: " + formatter.format(curLon));
+                    tvCurrlat.setText("Latitude: " + formatter.format(curLat));
+                }
             }
 
 
@@ -112,9 +194,84 @@ public class NavigationActivity extends AppCompatActivity {
             }
         };
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10 ,10, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
+            }
+        }
+
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mMagnetic, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                locationManager.removeUpdates(locationListener);
+            }
+        }
+
+        mSensorManager.unregisterListener(this);
+    }
+
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        Log.i("accuracy", sensor.getName() + " " + accuracy);
+    }
+
+    public void onSensorChanged(SensorEvent event) {
+        //http://www.ssaurel.com/blog/learn-how-to-make-a-compass-application-for-android/
+        boolean accelOrMagnetic = false;
+
+        // get accelerometer data
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
+            gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
+            gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+
+            accelOrMagnetic = true;
+        } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            geomagnetic[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
+            geomagnetic[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
+            geomagnetic[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+
+            accelOrMagnetic = true;
+        }
+
+        SensorManager.getRotationMatrix(rotation, null, gravity, geomagnetic);
+        SensorManager.getOrientation(rotation, orientation);
+        bearing = orientation[0];
+        bearing = Math.toDegrees(bearing);
+
+        if (geomagneticField != null) {
+            bearing += geomagneticField.getDeclination();
+        }
+
+        if (bearing < 0) {
+            bearing += 360;
+        }
+
+        /*if(tvBearing != null){
+            tvBearing.setText("bearing: " + bearing + "°");
+        }*/
+
+        TextView tvBearing = ((TextView) findViewById(R.id.editTextBearing));
+
+        if(tvBearing != null){
+            tvBearing.setText("bearing: " + bearing + "°");
+        }
+
+        //Log.i("bearing", bearing + "°");
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -210,43 +367,56 @@ public class NavigationActivity extends AppCompatActivity {
         }
     }
 
-    private double distanceInKm(double lat1, double lon1, double lat2, double lon2) {
-        int radius = 6371;
+    private double getCurrentSpeed(double curLat, double curLon){
+        double currentSpeed = 0;
+        long currentTimestamp = System.currentTimeMillis();
 
-        double lat = Math.toRadians(lat2 - lat1);
-        double lon = Math.toRadians(lon2- lon1);
+        updateLog.add(new SimpleDateFormat("HH:mm:ss").format(currentTimestamp));
 
-        double a = Math.sin(lat / 2) * Math.sin(lat / 2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(lon / 2) * Math.sin(lon / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double d = radius * c;
+        if(updateLog.size() > 9){
+            updateLog.remove(0);
+        }
 
-        return Math.abs(d);
+        ((TextView) findViewById(R.id.editTextLogUpdate)).setText("Log\n");
+
+        for(int i = 0; i < updateLog.size(); i++){
+            ((TextView) findViewById(R.id.editTextLogUpdate)).append(updateLog.get(i) + "\n");
+        }
+
+        if(oldLat > -90.0 && oldLat < 90.0 && oldLon > -180.0 && oldLon < 180.0 && timestampLastUpdateTimestamp > 0){
+            long timeBetweenUpdateMilliSec = (currentTimestamp - timestampLastUpdateTimestamp);
+            double distanceBetweenUpdateMeters = NavigationUtils.distanceInM(curLat, curLon, oldLat, oldLon);
+
+            Log.i("update time: ", Double.toString(timeBetweenUpdateMilliSec / 1000.0));
+            Log.i("distance: ", Double.toString(distanceBetweenUpdateMeters));
+
+            currentSpeed = distanceBetweenUpdateMeters * 3600 / timeBetweenUpdateMilliSec;
+
+            speedHistory.add(new Pair(timeBetweenUpdateMilliSec, currentSpeed));
+
+            if(speedHistory.size() > 3){
+                speedHistory.remove(0);
+            }
+        }
+
+        oldLat = curLat;
+        oldLon = curLon;
+        timestampLastUpdateTimestamp = currentTimestamp;
+
+        //calculate avg speed from last positions
+        long cumulatedTimeSpan = 0;
+        double cumulatedSpeeds = 0;
+
+        for(int i = 0; i < speedHistory.size(); i++){
+            cumulatedTimeSpan += speedHistory.get(i).first;
+            cumulatedSpeeds += speedHistory.get(i).second * speedHistory.get(i).first ;
+            Log.w("speed hist", speedHistory.get(i).first + " " + speedHistory.get(i).second);
+        }
+
+        if(cumulatedTimeSpan > 0){
+            return cumulatedSpeeds / cumulatedTimeSpan;
+        }
+
+        return 0;
     }
-
-    private double angleToTarget(double lat1, double lon1, double lat2, double lon2) {
-        lat1 *= Math.PI / 180;
-        lon1 *= Math.PI / 180;
-        lat2 *= Math.PI / 180;
-        lon2 *= Math.PI / 180;
-        double e = Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1);
-        //orthodrome *= 180 / Math.PI;
-        e = Math.cos(e);
-        Log.e("e", Double.toString(e));
-
-
-        double numerator = Math.sin(lat2) - Math.sin(lat1) * Math.cos(e);
-        double denominator = Math.cos(lat1) * Math.sin(e);
-
-        Log.e("e", Double.toString(numerator));
-        Log.e("e", Double.toString(denominator));
-
-
-        double angle = Math.acos(numerator / denominator);
-        angle *= 180 / Math.PI;
-
-        Log.e("Angle", Double.toString(angle));
-        return angle;
-    }
-
-
 }
