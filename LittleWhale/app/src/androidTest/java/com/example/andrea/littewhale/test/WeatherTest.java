@@ -4,10 +4,6 @@ import android.test.AndroidTestCase;
 import com.example.andrea.utils.Weather;
 import com.example.andrea.utils.WeatherParsingException;
 
-
-/**
- * Created by gery on 30.05.16.
- */
 public class WeatherTest extends AndroidTestCase{
 
     public void testUpdateWeather() {
@@ -18,7 +14,7 @@ public class WeatherTest extends AndroidTestCase{
             assertTrue(false);
         }
         assertNotNull(testWeather.getDetailedDescription());
-        assertNotNull(testWeather.getId());
+        assertTrue(testWeather.getId() != -1);
         assertNotNull(testWeather.getShortDescription());
     }
 }
