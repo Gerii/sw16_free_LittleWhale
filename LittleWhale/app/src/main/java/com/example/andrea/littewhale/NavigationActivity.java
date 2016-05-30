@@ -3,6 +3,7 @@ package com.example.andrea.littewhale;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.GeomagneticField;
 import android.location.Location;
 import android.location.LocationListener;
@@ -39,6 +40,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import com.example.andrea.utils.NavigationUtils;
+
+import org.osmdroid.tileprovider.MapTileProviderBasic;
+import org.osmdroid.tileprovider.tilesource.ITileSource;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapController;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.TilesOverlay;
 
 public class NavigationActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -79,15 +89,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     private double bearing = 0;
     private final float alpha = 0.8f;
 
-    //textviews
-    /*private TextView tvDistance;
-    private TextView tvSpeed;
-    private TextView tvCourseAngle;
-    private TextView tvCurrlon;
-    private TextView tvCurrlat;
-    private TextView tvBearing;*/
-
-
     private ArrayList<String> updateLog = new ArrayList<>();
 
     @Override
@@ -106,8 +107,9 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         if(mViewPager != null)
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(2);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         if(tabLayout != null)
         tabLayout.setupWithViewPager(mViewPager);
@@ -124,11 +126,14 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         mMagnetic = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
 
+
         //location
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(final Location location) {
+
+
                 double[] target = getIntent().getExtras().getDoubleArray("TargetCoords");
                 double curLat = location.getLatitude();
                 double curLon = location.getLongitude();
@@ -175,6 +180,14 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                     tvCurrlon.setText("Longitude: " + formatter.format(curLon));
                     tvCurrlat.setText("Latitude: " + formatter.format(curLat));
                 }
+
+
+
+              /*  MapView mapView = (MapView) findViewById(R.id.mapView);
+                MapController mMapController = (MapController) mapView.getController();
+
+                GeoPoint gPt = new GeoPoint(curLat * 1E6, curLon * 1E6);
+                mMapController.setCenter(gPt);*/
             }
 
 
@@ -380,7 +393,45 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            Log.w("TEST", "ON CREATE VIEW");
             View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+
+            Context context = getContext();
+            final ITileSource seamarks = new XYTileSource("seamarks",
+                    0,
+                    19,
+                    256,
+                    ".png",
+                    new String[] {"http://t1.openseamap.org/seamark/"});
+            final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context, seamarks);
+            final TilesOverlay seamarksOverlay = new TilesOverlay(tileProvider, context);
+            seamarksOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
+//            seamarksOverlay.setUseSafeCanvas(true);
+
+            MapView mapView = (MapView) rootView.findViewById(R.id.mapView);
+
+            // mapView = new MapView(context, 256);
+            mapView.setMultiTouchControls(true);
+            //  mapView.setUseSafeCanvas(true);
+            mapView.getOverlays().add(seamarksOverlay);
+
+//            mapView.getController().setZoom(7);
+
+            mapView.setTilesScaledToDpi(true);
+            MapController mMapController = (MapController) mapView.getController();
+            mMapController.setZoom(13);
+            GeoPoint gPt = new GeoPoint(51500000, -150000);
+            mMapController.setCenter(gPt);
+/*
+
+            MapView mMapView = (MapView) rootView.findViewById(R.id.mapView);
+            mMapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+            mMapView.setBuiltInZoomControls(true);
+            MapController mMapController = (MapController) mMapView.getController();
+            mMapController.setZoom(13);
+            GeoPoint gPt = new GeoPoint(51500000, -150000);
+            mMapController.setCenter(gPt);
+*/
             return rootView;
         }
     }
@@ -418,11 +469,11 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "SECTION 1";
+                    return "Navigation";
                 case 1:
-                    return "SECTION 2";
+                    return "Weather";
                 case 2:
-                    return "SECTION 3";
+                    return "Map";
             }
             return null;
         }

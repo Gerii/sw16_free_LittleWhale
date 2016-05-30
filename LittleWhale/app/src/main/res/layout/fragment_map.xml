@@ -9,21 +9,11 @@
     tools:context="com.example.andrea.littewhale.NavigationActivity$WeatherFragment">
 
 
-    <TextView
+    <org.osmdroid.views.MapView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="bearing"
-        android:id="@+id/editTextBearing"
-        android:layout_below="@+id/editTextCurrLatitude"
-        android:layout_centerHorizontal="true" />
-
-    <ToggleButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New ToggleButton"
-        android:id="@+id/toggleButton"
+        android:id="@+id/mapView"
         android:layout_centerVertical="true"
-        android:layout_alignRight="@+id/editTextBearing"
-        android:layout_alignEnd="@+id/editTextBearing" />
-
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>
