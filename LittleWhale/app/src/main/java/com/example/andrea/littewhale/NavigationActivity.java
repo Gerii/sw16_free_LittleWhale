@@ -3,7 +3,10 @@ package com.example.andrea.littewhale;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.Drawable;
 import android.hardware.GeomagneticField;
 import android.location.Location;
 import android.location.LocationListener;
@@ -38,6 +41,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.example.andrea.utils.NavigationUtils;
 
@@ -48,7 +52,12 @@ import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.TilesOverlay;
+import org.osmdroid.*;
+
 
 public class NavigationActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -125,10 +134,10 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetic = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-
-
         //location
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(final Location location) {
@@ -183,11 +192,24 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
 
 
-              /*  MapView mapView = (MapView) findViewById(R.id.mapView);
+                MapView mapView = (MapView) findViewById(R.id.mapView);
                 MapController mMapController = (MapController) mapView.getController();
 
-                GeoPoint gPt = new GeoPoint(curLat * 1E6, curLon * 1E6);
-                mMapController.setCenter(gPt);*/
+                Log.e("Map Long", String.valueOf(curLon * 1E6) );
+                Log.e("Map Lat", String.valueOf(curLat * 1E6));
+
+                GeoPoint gPt = new GeoPoint(curLat ,curLon );
+                mMapController.animateTo(gPt);
+
+                GeoPoint curLocation = new GeoPoint(location);
+
+                Marker marker = new Marker(mapView);
+                marker.setPosition(curLocation);
+                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                mapView.getOverlays().clear();
+                mapView.getOverlays().add(marker);
+                mapView.invalidate();
+
             }
 
 
