@@ -142,6 +142,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                     return;
                 }
 
+                double angle = NavigationUtils.angleToTarget(curLat, curLon, targetLat, targetLon);
 
                 Log.e("TargetLatitude", Double.toString(targetLat));
                 Log.e("TargetLongitude", Double.toString(targetLon));
@@ -150,7 +151,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 Log.e("Speed", Float.toString(location.getSpeed()));
                 Log.e("Distance", Double.toString(
                         NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)));
-                double angle = NavigationUtils.angleToTarget(curLat, curLon, targetLat, targetLon);
                 Log.e("Angle", Double.toString(angle));
 
                 NumberFormat formatter = new DecimalFormat("#0.000");
@@ -269,8 +269,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         if(tvBearing != null){
             tvBearing.setText("bearing: " + bearing + "°");
         }
-
-        //Log.i("bearing", bearing + "°");
     }
 
     @Override
@@ -295,25 +293,22 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
+    public static class NavigationFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
-        public PlaceholderFragment() {
+        public NavigationFragment() {
         }
 
         /**
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
+        public static NavigationFragment newInstance(int sectionNumber) {
+            NavigationFragment fragment = new NavigationFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
@@ -330,6 +325,66 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         }
     }
 
+    public static class WeatherFragment extends Fragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
+
+        public WeatherFragment() {
+        }
+
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        public static WeatherFragment newInstance(int sectionNumber) {
+            WeatherFragment fragment = new WeatherFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
+            return rootView;
+        }
+    }
+
+    public static class MapFragment extends Fragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
+
+        public MapFragment() {
+        }
+
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        public static MapFragment newInstance(int sectionNumber) {
+            MapFragment fragment = new MapFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+            return rootView;
+        }
+    }
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -342,9 +397,15 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            switch (position) {
+                case 0:
+                    return NavigationFragment.newInstance(position);
+                case 1:
+                    return WeatherFragment.newInstance(position);
+                case 2:
+                    return MapFragment.newInstance(position);
+            }
+            return null;
         }
 
         @Override
