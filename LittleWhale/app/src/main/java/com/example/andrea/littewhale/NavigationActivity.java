@@ -35,6 +35,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -98,6 +99,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     private double bearing = 0;
     private final float alpha = 0.8f;
 
+    private double angle = 0;
+
     private ArrayList<String> updateLog = new ArrayList<>();
 
     @Override
@@ -156,7 +159,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                     return;
                 }
 
-                double angle = NavigationUtils.angleToTarget(curLat, curLon, targetLat, targetLon);
+                angle = NavigationUtils.angleToTarget(curLat, curLon, targetLat, targetLon);
 
                 Log.e("TargetLatitude", Double.toString(targetLat));
                 Log.e("TargetLongitude", Double.toString(targetLon));
@@ -295,16 +298,60 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             bearing += 360;
         }
 
-        /*if(tvBearing != null){
-            tvBearing.setText("bearing: " + bearing + "°");
-        }*/
-
         TextView tvBearing = ((TextView) findViewById(R.id.editTextBearing));
 
         if(tvBearing != null){
             tvBearing.setText("bearing: " + bearing + "°");
         }
+
+        resetAllArrows();
+
+        double deviation = angle - bearing;
+        if(deviation > -22.5 && deviation < 22.5) {
+            Log.e("DIRECTION", "UP");
+            ImageView arrow = ((ImageView) findViewById(R.id.upArrow));
+            if(arrow != null) {
+                arrow.setAlpha(1f);
+            }
+        } else if(deviation > 22.5 && deviation < 67.5) {
+            Log.e("DIRECTION", "UP RIGHT");
+            ImageView arrow = ((ImageView) findViewById(R.id.upRightArrow));
+            if(arrow != null) {
+                arrow.setAlpha(1f);
+            }
+        } else if(deviation > 67.5 && deviation < 112.5) {
+            Log.e("DIRECTION", "RIGHT");
+            ImageView arrow = ((ImageView) findViewById(R.id.rightArrow));
+            if(arrow != null) {
+                arrow.setAlpha(1f);
+            }
+        }else if(deviation > 112.5 && deviation < 157.5) {
+            Log.e("DIRECTION", "DOWN RIGHT");
+            ImageView arrow = ((ImageView) findViewById(R.id.downRightArrow));
+            if(arrow != null) {
+                arrow.setAlpha(1f);
+            }
+        }
     }
+
+    private void resetArrow(int id) {
+        ImageView arrow = ((ImageView) findViewById(id));
+        if(arrow != null)
+            arrow.setAlpha(0.3f);
+    }
+
+    private void resetAllArrows() {
+        resetArrow(R.id.upArrow);
+        resetArrow(R.id.downArrow);
+        resetArrow(R.id.rightArrow);
+        resetArrow(R.id.leftArrow);
+        resetArrow(R.id.upLeftArrow);
+        resetArrow(R.id.upRightArrow);
+        resetArrow(R.id.downLeftArrow);
+        resetArrow(R.id.downRightArrow);
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
