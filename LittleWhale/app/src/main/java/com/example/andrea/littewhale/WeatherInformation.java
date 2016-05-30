@@ -15,7 +15,7 @@ public class WeatherInformation extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Weather weather = new Weather();
+        Weather weather = new Weather(getApplicationContext());
         try {
             weather.updateWeather(1.11, 2.22);
         } catch (WeatherParsingException e) {

@@ -1,19 +1,27 @@
 package com.example.andrea.utils;
 
+import android.content.Context;
 import android.util.JsonReader;
 import android.util.Log;
+
+import com.example.andrea.littewhale.R;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 import org.apache.commons.io.IOUtils;
 import org.json.*;
 
 public class Weather {
     private static final String API_KEY = "d1db7d9ac0033228ce578944c83ac06a";
+    private static HashMap<Integer, String> WEATHER_CODES;
+
+
     private int id = -1;
+    private String weatherIcon;
 
     public int getId() {
         return id;
@@ -30,8 +38,21 @@ public class Weather {
     private String shortDescription;
     private String detailedDescription;
 
-    public Weather() {
+    private static void loadWeatherIds(Context context) {
+        if (WEATHER_CODES == null) {
+            String[] weatherIconCodes = context.getResources().getStringArray(R.array.weathericoncode);
+            int[] weatherIds = context.getResources().getIntArray(R.array.weatherid);
+            assert (weatherIconCodes.length == weatherIds.length);
 
+            WEATHER_CODES = new HashMap<>();
+            for (int i = 0; i < weatherIconCodes.length; ++i) {
+                WEATHER_CODES.put(weatherIds[i], weatherIconCodes[i]);
+            }
+        }
+    }
+
+    public Weather(Context context) {
+        loadWeatherIds(context);
     }
 
     public void updateWeather(double lat, double lon) throws WeatherParsingException {
@@ -48,11 +69,18 @@ public class Weather {
             this.shortDescription = firstWeatherJSON.get("main").toString();
             this.detailedDescription = firstWeatherJSON.get("description").toString();
 
-            //TODO parse the rest
+
+            this.weatherIcon = WEATHER_CODES.get((id == 800) ? id : id / 100);
+
+            //TODO parse the rest + all icons
 
         } catch (Exception e) {
             Log.e("Weather Parsing", e.toString());
             throw new WeatherParsingException();
         }
+    }
+
+    public String getWeatherIcon() {
+        return weatherIcon;
     }
 }
