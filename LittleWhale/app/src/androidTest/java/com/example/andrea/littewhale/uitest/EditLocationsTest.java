@@ -57,11 +57,11 @@ public class EditLocationsTest extends ActivityInstrumentationTestCase2 {
     public void tearDown() throws Exception {
 
     }
-
+/*
     public void testPlus(){
-        View fab = getActivity().findViewById(R.id.fabAdd);
-        mySolo.clickOnView(fab);
-    }
+     //   View fab = getActivity().findViewById(R.id.fabAdd);
+      //  mySolo.clickOnView(fab);
+    }*/
 
     public  void testList(){
         ListView lv = (ListView) getActivity().findViewById(R.id.listView);

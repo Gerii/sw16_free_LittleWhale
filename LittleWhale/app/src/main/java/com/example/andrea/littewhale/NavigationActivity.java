@@ -3,6 +3,10 @@ package com.example.andrea.littewhale;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.Drawable;
 import android.hardware.GeomagneticField;
 import android.location.Location;
 import android.location.LocationListener;
@@ -31,14 +35,30 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.example.andrea.utils.NavigationUtils;
+
+import org.osmdroid.tileprovider.MapTileProviderBasic;
+import org.osmdroid.tileprovider.tilesource.ITileSource;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapController;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.TilesOverlay;
+import org.osmdroid.*;
+
 
 public class NavigationActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -79,14 +99,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     private double bearing = 0;
     private final float alpha = 0.8f;
 
-    //textviews
-    /*private TextView tvDistance;
-    private TextView tvSpeed;
-    private TextView tvCourseAngle;
-    private TextView tvCurrlon;
-    private TextView tvCurrlat;
-    private TextView tvBearing;*/
-
+    private double angle = 0;
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
@@ -106,8 +119,9 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         if(mViewPager != null)
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(2);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         if(tabLayout != null)
         tabLayout.setupWithViewPager(mViewPager);
@@ -123,12 +137,15 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetic = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-
         //location
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(final Location location) {
+
+
                 double[] target = getIntent().getExtras().getDoubleArray("TargetCoords");
                 double curLat = location.getLatitude();
                 double curLon = location.getLongitude();
@@ -142,7 +159,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                     return;
                 }
 
-                double angle = NavigationUtils.angleToTarget(curLat, curLon, targetLat, targetLon);
+                angle = NavigationUtils.angleToTarget(curLat, curLon, targetLat, targetLon);
 
                 Log.e("TargetLatitude", Double.toString(targetLat));
                 Log.e("TargetLongitude", Double.toString(targetLon));
@@ -175,6 +192,27 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                     tvCurrlon.setText("Longitude: " + formatter.format(curLon));
                     tvCurrlat.setText("Latitude: " + formatter.format(curLat));
                 }
+
+
+
+                MapView mapView = (MapView) findViewById(R.id.mapView);
+                MapController mMapController = (MapController) mapView.getController();
+
+                Log.e("Map Long", String.valueOf(curLon * 1E6) );
+                Log.e("Map Lat", String.valueOf(curLat * 1E6));
+
+                GeoPoint gPt = new GeoPoint(curLat ,curLon );
+                mMapController.animateTo(gPt);
+
+                GeoPoint curLocation = new GeoPoint(location);
+
+                Marker marker = new Marker(mapView);
+                marker.setPosition(curLocation);
+                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                mapView.getOverlays().clear();
+                mapView.getOverlays().add(marker);
+                mapView.invalidate();
+
             }
 
 
@@ -260,16 +298,60 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             bearing += 360;
         }
 
-        /*if(tvBearing != null){
-            tvBearing.setText("bearing: " + bearing + "°");
-        }*/
-
         TextView tvBearing = ((TextView) findViewById(R.id.editTextBearing));
 
         if(tvBearing != null){
             tvBearing.setText("bearing: " + bearing + "°");
         }
+
+        resetAllArrows();
+
+        double deviation = angle - bearing;
+        if(deviation > -22.5 && deviation < 22.5) {
+            Log.e("DIRECTION", "UP");
+            ImageView arrow = ((ImageView) findViewById(R.id.upArrow));
+            if(arrow != null) {
+                arrow.setAlpha(1f);
+            }
+        } else if(deviation > 22.5 && deviation < 67.5) {
+            Log.e("DIRECTION", "UP RIGHT");
+            ImageView arrow = ((ImageView) findViewById(R.id.upRightArrow));
+            if(arrow != null) {
+                arrow.setAlpha(1f);
+            }
+        } else if(deviation > 67.5 && deviation < 112.5) {
+            Log.e("DIRECTION", "RIGHT");
+            ImageView arrow = ((ImageView) findViewById(R.id.rightArrow));
+            if(arrow != null) {
+                arrow.setAlpha(1f);
+            }
+        }else if(deviation > 112.5 && deviation < 157.5) {
+            Log.e("DIRECTION", "DOWN RIGHT");
+            ImageView arrow = ((ImageView) findViewById(R.id.downRightArrow));
+            if(arrow != null) {
+                arrow.setAlpha(1f);
+            }
+        }
     }
+
+    private void resetArrow(int id) {
+        ImageView arrow = ((ImageView) findViewById(id));
+        if(arrow != null)
+            arrow.setAlpha(0.3f);
+    }
+
+    private void resetAllArrows() {
+        resetArrow(R.id.upArrow);
+        resetArrow(R.id.downArrow);
+        resetArrow(R.id.rightArrow);
+        resetArrow(R.id.leftArrow);
+        resetArrow(R.id.upLeftArrow);
+        resetArrow(R.id.upRightArrow);
+        resetArrow(R.id.downLeftArrow);
+        resetArrow(R.id.downRightArrow);
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -319,8 +401,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_navigation, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
     }
@@ -380,7 +460,45 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            Log.w("TEST", "ON CREATE VIEW");
             View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+
+            Context context = getContext();
+            final ITileSource seamarks = new XYTileSource("seamarks",
+                    0,
+                    19,
+                    256,
+                    ".png",
+                    new String[] {"http://t1.openseamap.org/seamark/"});
+            final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context, seamarks);
+            final TilesOverlay seamarksOverlay = new TilesOverlay(tileProvider, context);
+            seamarksOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
+//            seamarksOverlay.setUseSafeCanvas(true);
+
+            MapView mapView = (MapView) rootView.findViewById(R.id.mapView);
+
+            // mapView = new MapView(context, 256);
+            mapView.setMultiTouchControls(true);
+            //  mapView.setUseSafeCanvas(true);
+            mapView.getOverlays().add(seamarksOverlay);
+
+//            mapView.getController().setZoom(7);
+
+            mapView.setTilesScaledToDpi(true);
+            MapController mMapController = (MapController) mapView.getController();
+            mMapController.setZoom(13);
+            GeoPoint gPt = new GeoPoint(51500000, -150000);
+            mMapController.setCenter(gPt);
+/*
+
+            MapView mMapView = (MapView) rootView.findViewById(R.id.mapView);
+            mMapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+            mMapView.setBuiltInZoomControls(true);
+            MapController mMapController = (MapController) mMapView.getController();
+            mMapController.setZoom(13);
+            GeoPoint gPt = new GeoPoint(51500000, -150000);
+            mMapController.setCenter(gPt);
+*/
             return rootView;
         }
     }
@@ -418,11 +536,11 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "SECTION 1";
+                    return "Navigation";
                 case 1:
-                    return "SECTION 2";
+                    return "Weather";
                 case 2:
-                    return "SECTION 3";
+                    return "Map";
             }
             return null;
         }

@@ -8,15 +8,112 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.andrea.littewhale.NavigationActivity$NavigationFragment">
 
-    <TextView
-        android:id="@+id/section_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/editTextDistance"
+        android:layout_below="@+id/editTextLogUpdate"
+        android:columnCount="3"
+        android:rowCount="3">
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_row="1"
+            android:id="@+id/leftArrow"
+            android:alpha="0.3"
+            android:src="@drawable/ic_arrow_left"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="2"
+            android:layout_row="1"
+            android:id="@+id/rightArrow"
+            android:alpha="0.3"
+
+            android:src="@drawable/ic_arrow_right" />
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_row="0"
+            android:id="@+id/upArrow"
+            android:alpha="0.3"
+
+            android:src="@drawable/ic_arrow_up" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_row="2"
+            android:id="@+id/downArrow"
+            android:alpha="0.3"
+
+            android:src="@drawable/ic_arrow_down" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_row="2"
+            android:id="@+id/downLeftArrow"
+            android:rotation="45"
+            android:alpha="0.3"
+
+            android:src="@drawable/ic_arrow_down" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="2"
+            android:layout_row="2"
+            android:id="@+id/downRightArrow"
+            android:rotation="45"
+            android:alpha="0.3"
+
+            android:src="@drawable/ic_arrow_right" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="2"
+            android:layout_row="0"
+            android:id="@+id/upRightArrow"
+            android:rotation="45"
+            android:alpha="0.3"
+            android:src="@drawable/ic_arrow_up" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_row="0"
+            android:id="@+id/upLeftArrow"
+            android:rotation="45"
+            android:alpha="0.3"
+            android:src="@drawable/ic_arrow_left" />
+
+    </GridLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Placeholder"
+        android:text="Distance: N/A"
+        android:id="@+id/editTextDistance"
+        android:layout_above="@+id/editTextSpeed"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Speed: N/A"
         android:id="@+id/editTextSpeed"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
@@ -24,7 +121,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
+        android:text="Course Angle: N/A"
         android:id="@+id/editTextCourseAngle"
         android:layout_below="@+id/editTextSpeed"
         android:layout_alignLeft="@+id/editTextCurrLongitude"
@@ -33,7 +130,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
+        android:text="Longitude: N/A"
         android:id="@+id/editTextCurrLongitude"
         android:layout_below="@+id/editTextCourseAngle"
         android:layout_centerHorizontal="true" />
@@ -41,25 +138,17 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
+        android:text="Latitude: N/A"
         android:id="@+id/editTextCurrLatitude"
         android:layout_below="@+id/editTextCurrLongitude"
         android:layout_alignLeft="@+id/editTextCurrLongitude"
         android:layout_alignStart="@+id/editTextCurrLongitude" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/editTextDistance"
-        android:layout_above="@+id/editTextSpeed"
-        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/editTextLogUpdate"
-        android:layout_below="@+id/section_label"
         android:layout_centerHorizontal="true"
         android:maxLines="10"
         android:text="Log:\n" />
@@ -67,9 +156,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="bearing"
+        android:text="Bearing"
         android:id="@+id/editTextBearing"
         android:layout_below="@+id/editTextCurrLatitude"
         android:layout_centerHorizontal="true" />
+
 
 </RelativeLayout>

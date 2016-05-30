@@ -9,12 +9,4 @@
     tools:context="com.example.andrea.littewhale.NavigationActivity$WeatherFragment">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="bearing"
-        android:id="@+id/editTextBearing"
-        android:layout_below="@+id/editTextCurrLatitude"
-        android:layout_centerHorizontal="true" />
-
 </RelativeLayout>
