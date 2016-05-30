@@ -17,7 +17,8 @@ public class WeatherTest extends AndroidTestCase{
         } catch (WeatherParsingException e) {
             assertTrue(false);
         }
-
-
+        assertNotNull(testWeather.getDetailedDescription());
+        assertNotNull(testWeather.getId());
+        assertNotNull(testWeather.getShortDescription());
     }
 }
