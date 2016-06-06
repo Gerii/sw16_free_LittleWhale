@@ -8,5 +8,74 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.andrea.littewhale.NavigationActivity$WeatherFragment">
 
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnCount="5"
+        android:rowCount="3"
+        android:layout_marginBottom="305dp"
+        android:layout_alignBottom="@+id/followingDaysListView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading Weather"
+            android:id="@+id/editTextCurWeatherIcon"
+            android:layout_centerHorizontal="true" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=": N/A"
+            android:id="@+id/editTextTemp"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=": N/A"
+            android:id="@+id/editTextWindSpeed"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wind dir: N/A"
+            android:id="@+id/editTextWindDir"
+            android:layout_centerHorizontal="true" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=": N/A"
+            android:id="@+id/editTextHumidity"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pressure: N/A"
+            android:id="@+id/editTextPressure"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=": N/A"
+            android:id="@+id/editTextClouds"
+            android:layout_centerHorizontal="true" />
+    </GridLayout>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/followingDaysListView"
+        android:layout_marginTop="213dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+    
 </RelativeLayout>

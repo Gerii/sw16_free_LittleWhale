@@ -80,9 +80,19 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
     LocationManager locationManager;
 
-    //for speed
-    private double oldLat = -1000.0;
-    private double oldLon = -1000.0;
+    public static final double COORD_DEFAULT_VALUE = -1000.0;
+
+    private static double oldLat = COORD_DEFAULT_VALUE;
+    private static double oldLon = COORD_DEFAULT_VALUE;
+
+    public static double getOldLon() {
+        return oldLon;
+    }
+
+    public static double getOldLat() {
+        return oldLat;
+    }
+
     private long timestampLastUpdateTimestamp = 0;
     private ArrayList<Pair<Long, Double>> speedHistory = new ArrayList<>();
 

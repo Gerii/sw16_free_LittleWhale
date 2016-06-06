@@ -57,7 +57,6 @@ public class Weather {
 
     public void updateWeather(double lat, double lon) throws WeatherParsingException {
         final String url = "http://api.openweathermap.org/data/2.5/weather?lat=" + Double.toString(lat) + "&lon=" + Double.toString(lon) + "&appid=" + API_KEY;
-        //String genreJson = IOUtils.toString(new URL(url));
         try {
             String response = IOUtils.toString(new URL(url));
 
@@ -72,7 +71,7 @@ public class Weather {
 
             this.weatherIcon = WEATHER_CODES.get((id == 800) ? id : id / 100);
 
-            //TODO parse the rest + all icons
+            //TODO parse the rest
 
         } catch (Exception e) {
             Log.e("Weather Parsing", e.toString());
