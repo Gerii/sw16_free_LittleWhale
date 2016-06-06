@@ -14,4 +14,17 @@
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
+
+
+    <integer-array name="weatherid">
+        <item>800</item>
+        <item>8</item>
+    </integer-array>
+
+    <string-array translatable="false" name="weathericoncode">
+        <item name="sunny">&#xf00d;</item>
+        <item name="cloudy">&#xf013;</item>
+    </string-array>
+
+
 </resources>
