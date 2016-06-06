@@ -58,6 +58,7 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.*;
+import org.w3c.dom.Text;
 
 
 public class NavigationActivity extends AppCompatActivity implements SensorEventListener {
@@ -297,9 +298,33 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         NumberFormat formatter = new DecimalFormat("#0");
 
         if(tvHeading != null){
-            tvHeading.setText(formatter.format(bearing) + " °");
+            long bearingView = Math.round(bearing) % 360;
+            tvHeading.setText(formatter.format(bearingView) + " °");
         }
 
+        //set text field left-right properly
+        TextView tvTurnLeftRight = ((TextView) findViewById(R.id.editTextTurnDegree));
+
+        double turnLeftRight = angle - bearing;
+        turnLeftRight += (2 * 360);
+        turnLeftRight %= 360;
+
+        String turnDegreeLeftRight = "";
+
+        if(turnLeftRight > -1.0 && turnLeftRight < 1.0){
+            turnDegreeLeftRight = formatter.format(turnLeftRight) + " °\n";
+        }else if(turnLeftRight < 180){
+            turnDegreeLeftRight = formatter.format(turnLeftRight) + " °\nright";
+        }else{
+            double tmpTurnRight = 360 - turnLeftRight;
+            turnDegreeLeftRight = formatter.format(tmpTurnRight) + " °\nleft";
+        }
+
+        if(tvTurnLeftRight != null){
+            tvTurnLeftRight.setText(turnDegreeLeftRight);
+        }
+
+        //set arrows properly
         resetAllArrows();
 
         double deviation = angle - bearing ;
@@ -379,7 +404,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         resetArrow(R.id.downRightArrow);
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
