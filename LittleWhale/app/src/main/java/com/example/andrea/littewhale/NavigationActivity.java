@@ -313,50 +313,50 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         deviation = deviation % 360;
 
         if(deviation > 0 && deviation < 45) {
-            Log.e("DIRECTION", "UP");
+            //Log.e("DIRECTION", "UP");
             ImageView arrow = ((ImageView) findViewById(R.id.upArrow));
             if(arrow != null) {
                 arrow.setAlpha(1f);
             }
         } else if(deviation > 45 && deviation < 90) {
-            Log.e("DIRECTION", "UP RIGHT");
+            //Log.e("DIRECTION", "UP RIGHT");
             ImageView arrow = ((ImageView) findViewById(R.id.upRightArrow));
             if(arrow != null) {
                 arrow.setAlpha(1f);
             }
         } else if(deviation > 90 && deviation < 135) {
-            Log.e("DIRECTION", "RIGHT");
+            //Log.e("DIRECTION", "RIGHT");
             ImageView arrow = ((ImageView) findViewById(R.id.rightArrow));
             if(arrow != null) {
                 arrow.setAlpha(1f);
             }
         }else if(deviation > 135 && deviation < 180) {
-            Log.e("DIRECTION", "DOWN RIGHT");
+            //Log.e("DIRECTION", "DOWN RIGHT");
             ImageView arrow = ((ImageView) findViewById(R.id.downRightArrow));
             if(arrow != null) {
                 arrow.setAlpha(1f);
             }
         }
         else if(deviation > 180 && deviation < 225) {
-            Log.e("DIRECTION", "DOWN");
+            //Log.e("DIRECTION", "DOWN");
             ImageView arrow = ((ImageView) findViewById(R.id.downArrow));
             if(arrow != null) {
                 arrow.setAlpha(1f);
             }
         } else if(deviation > 225 && deviation < 270) {
-            Log.e("DIRECTION", "DOWN LEFT");
+            //Log.e("DIRECTION", "DOWN LEFT");
             ImageView arrow = ((ImageView) findViewById(R.id.downLeftArrow));
             if(arrow != null) {
                 arrow.setAlpha(1f);
             }
         } else if(deviation > 270 && deviation < 315) {
-            Log.e("DIRECTION", "LEFT");
+            //Log.e("DIRECTION", "LEFT");
             ImageView arrow = ((ImageView) findViewById(R.id.leftArrow));
             if(arrow != null) {
                 arrow.setAlpha(1f);
             }
         } else if(deviation > 315 && deviation < 360) {
-            Log.e("DIRECTION", "UP LEFT");
+            //Log.e("DIRECTION", "UP LEFT");
             ImageView arrow = ((ImageView) findViewById(R.id.upLeftArrow));
             if(arrow != null) {
                 arrow.setAlpha(1f);
