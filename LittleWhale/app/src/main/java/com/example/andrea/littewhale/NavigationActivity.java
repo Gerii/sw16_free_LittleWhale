@@ -1,11 +1,13 @@
 package com.example.andrea.littewhale;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.hardware.GeomagneticField;
 import android.location.Location;
@@ -42,9 +44,15 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedList;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.example.andrea.utils.NavigationUtils;
+import com.example.andrea.utils.Weather;
+import com.example.andrea.utils.WeatherParsingException;
 
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
@@ -84,6 +92,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
     private static double oldLat = COORD_DEFAULT_VALUE;
     private static double oldLon = COORD_DEFAULT_VALUE;
+    private static Weather weather = null;
+    private static Calendar weatherAge = null; //TODO implement age
 
     public static double getOldLon() {
         return oldLon;
@@ -109,12 +119,15 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     private double bearing = 0;
     private final float alpha = 0.8f;
 
+    private ProgressDialog waitDialog;
+
     private double angle = 0;
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
@@ -154,7 +167,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(final Location location) {
-
+                waitDialog.dismiss();
 
                 double[] target = getIntent().getExtras().getDoubleArray("TargetCoords");
                 double curLat = location.getLatitude();
@@ -206,23 +219,36 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
 
                 MapView mapView = (MapView) findViewById(R.id.mapView);
-                MapController mMapController = (MapController) mapView.getController();
+                if (mapView != null) {
+                    MapController mMapController = (MapController) mapView.getController();
 
                 Log.e("Map Long", String.valueOf(curLon * 1E6) );
                 Log.e("Map Lat", String.valueOf(curLat * 1E6));
 
-                GeoPoint gPt = new GeoPoint(curLat ,curLon );
-                mMapController.animateTo(gPt);
+                    GeoPoint gPt = new GeoPoint(curLat, curLon);
+                    mMapController.animateTo(gPt);
 
                 GeoPoint curLocation = new GeoPoint(location);
 
-                Marker marker = new Marker(mapView);
-                marker.setPosition(curLocation);
-                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                mapView.getOverlays().clear();
-                mapView.getOverlays().add(marker);
-                mapView.invalidate();
+                    Marker marker = new Marker(mapView);
+                    marker.setPosition(curLocation);
+                    marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                    mapView.getOverlays().clear();
+                    mapView.getOverlays().add(marker);
+                    mapView.invalidate();
+                }
 
+                NavigationActivity.weather = new Weather(getApplicationContext());
+
+                Log.e("TAG", "Updating WEATHER 0");
+
+                double lat = NavigationActivity.getOldLat(); //TODO we have this here
+                double lon = NavigationActivity.getOldLon();
+
+                if (lat != NavigationActivity.COORD_DEFAULT_VALUE && lon != NavigationActivity.COORD_DEFAULT_VALUE) {
+                    Log.e("TAG", "Updating WEATHER");
+                    weather.updateWeather(lat, lon, mSectionsPagerAdapter);
+                }
             }
 
 
@@ -316,29 +342,58 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         resetAllArrows();
 
-        double deviation = angle - bearing;
-        if(deviation > -22.5 && deviation < 22.5) {
-            Log.e("DIRECTION", "UP");
+        double deviation = angle - bearing ;
+
+        deviation += 22.5;
+        deviation += (2*360);
+        deviation = deviation % 360;
+
+        if(deviation > 0 && deviation < 45) {
+            //Log.e("DIRECTION", "UP");
             ImageView arrow = ((ImageView) findViewById(R.id.upArrow));
             if(arrow != null) {
                 arrow.setAlpha(1f);
             }
-        } else if(deviation > 22.5 && deviation < 67.5) {
-            Log.e("DIRECTION", "UP RIGHT");
+        } else if(deviation > 45 && deviation < 90) {
+            //Log.e("DIRECTION", "UP RIGHT");
             ImageView arrow = ((ImageView) findViewById(R.id.upRightArrow));
             if(arrow != null) {
                 arrow.setAlpha(1f);
             }
-        } else if(deviation > 67.5 && deviation < 112.5) {
-            Log.e("DIRECTION", "RIGHT");
+        } else if(deviation > 90 && deviation < 135) {
+            //Log.e("DIRECTION", "RIGHT");
             ImageView arrow = ((ImageView) findViewById(R.id.rightArrow));
             if(arrow != null) {
                 arrow.setAlpha(1f);
             }
-        }else if(deviation > 112.5 && deviation < 157.5) {
-            Log.e("DIRECTION", "DOWN RIGHT");
+        }else if(deviation > 135 && deviation < 180) {
+            //Log.e("DIRECTION", "DOWN RIGHT");
             ImageView arrow = ((ImageView) findViewById(R.id.downRightArrow));
             if(arrow != null) {
+                arrow.setAlpha(1f);
+            }
+        } else if (deviation > 180 && deviation < 225) {
+            //Log.e("DIRECTION", "DOWN");
+            ImageView arrow = ((ImageView) findViewById(R.id.downArrow));
+            if (arrow != null) {
+                arrow.setAlpha(1f);
+            }
+        } else if (deviation > 225 && deviation < 270) {
+            //Log.e("DIRECTION", "DOWN LEFT");
+            ImageView arrow = ((ImageView) findViewById(R.id.downLeftArrow));
+            if (arrow != null) {
+                arrow.setAlpha(1f);
+            }
+        } else if (deviation > 270 && deviation < 315) {
+            //Log.e("DIRECTION", "LEFT");
+            ImageView arrow = ((ImageView) findViewById(R.id.leftArrow));
+            if (arrow != null) {
+                arrow.setAlpha(1f);
+            }
+        } else if (deviation > 315 && deviation < 360) {
+            //Log.e("DIRECTION", "UP LEFT");
+            ImageView arrow = ((ImageView) findViewById(R.id.upLeftArrow));
+            if (arrow != null) {
                 arrow.setAlpha(1f);
             }
         }
@@ -421,6 +476,10 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private final DecimalFormat decimalFormat = new DecimalFormat("0.00");
+
+        static Typeface weatherFont;
+        View rootView;
 
         public WeatherFragment() {
         }
@@ -432,15 +491,51 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         public static WeatherFragment newInstance(int sectionNumber) {
             WeatherFragment fragment = new WeatherFragment();
             Bundle args = new Bundle();
+            Log.e("new instance", "new instance");
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
             return fragment;
         }
 
+        public void updateWeather(Weather weath) {
+            Log.e("TAG", "SETTING WEATHER");
+            weather = weath;
+            Calendar cal = weather.getDate();
+            String date = cal.get(Calendar.DAY_OF_MONTH) + "." + cal.get(Calendar.MONTH) + "." + cal.get(Calendar.YEAR);
+            ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText(weather.getWeatherIcon());
+            ((TextView) rootView.findViewById(R.id.editTextDate)).setText(date);
+            ((TextView) rootView.findViewById(R.id.editTextPressureValue)).setText(decimalFormat.format(weather.getPressure()) + "hPa");
+            ((TextView) rootView.findViewById(R.id.editTextHumidityValue)).setText(decimalFormat.format(weather.getHumidity()) + "%");
+            ((TextView) rootView.findViewById(R.id.editTextTemperatureValue)).setText(decimalFormat.format(weather.getTemperature()) + "°C");
+            ((TextView) rootView.findViewById(R.id.editTextCloudsValue)).setText(decimalFormat.format(weather.getClouds()) + "%");
+            ((TextView) rootView.findViewById(R.id.editTextWindDirValue)).setText(decimalFormat.format(weather.getWindDirection()) + "°");
+            ((TextView) rootView.findViewById(R.id.editTextWindSpeedValue)).setText(decimalFormat.format(weather.getWindSpeed()) + "m/s");
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
+            this.rootView = inflater.inflate(R.layout.fragment_weather, container, false);
+            Log.e("ROOT", "ROOT VIEW set");
+            weatherFont = Typeface.createFromAsset(rootView.getContext().getAssets(), "fonts/weathericons.ttf");
+
+            ArrayList<TextView> textViews = new ArrayList<TextView>();
+
+            textViews.add((TextView) rootView.findViewById(R.id.editTextClouds));
+            textViews.add((TextView) rootView.findViewById(R.id.editTextWindDir));
+            textViews.add((TextView) rootView.findViewById(R.id.editTextWindSpeed));
+            textViews.add((TextView) rootView.findViewById(R.id.editTextTemperature));
+            textViews.add((TextView) rootView.findViewById(R.id.editTextHumidity));
+            textViews.add((TextView) rootView.findViewById(R.id.editTextPressure));
+            textViews.add((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon));
+
+            for (TextView curTextView : textViews) {
+                if (curTextView != null) {
+                    curTextView.setTypeface(weatherFont);
+                }
+            }
+
+            super.onCreate(savedInstanceState);
             return rootView;
         }
     }
@@ -470,7 +565,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            Log.w("TEST", "ON CREATE VIEW");
             View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
             Context context = getContext();
@@ -523,13 +617,16 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             super(fm);
         }
 
+        public WeatherFragment weatherFragment; //TODO this is probably maybe not best practice
+
         @Override
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
                     return NavigationFragment.newInstance(position);
                 case 1:
-                    return WeatherFragment.newInstance(position);
+                    weatherFragment = WeatherFragment.newInstance(position);
+                    return weatherFragment;
                 case 2:
                     return MapFragment.newInstance(position);
             }
