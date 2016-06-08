@@ -129,6 +129,16 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
@@ -153,6 +163,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            } else {
+                startLocationParameters();
             }
         } else {
             startLocationParameters();
@@ -186,6 +198,14 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             @Override
             public void onLocationChanged(final Location location) {
                 waitDialog.dismiss();
+                //waitDialog.dismiss();
+                //waitDialog.dismiss();
+                //waitDialog.dismiss();
+                //waitDialog.dismiss();
+                //waitDialog.dismiss();
+                //waitDialog.dismiss();
+                //waitDialog.dismiss();
+                //waitDialog.dismiss();
 
                 double[] target = getIntent().getExtras().getDoubleArray("TargetCoords");
                 double curLat = location.getLatitude();
@@ -293,9 +313,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
     }
 
-
-
-
     @Override
     public void onResume(){
         super.onResume();
@@ -325,7 +342,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        Log.i("accuracy", sensor.getName() + " " + accuracy);
+
     }
 
     public void onSensorChanged(SensorEvent event) {
