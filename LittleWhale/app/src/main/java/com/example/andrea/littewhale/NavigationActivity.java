@@ -184,11 +184,16 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 TextView tvCourseAngle = ((TextView) findViewById(R.id.editTextBearing));
 
                 if(tvDistance != null && tvSpeed != null && tvCourseAngle != null && tvCurrlon != null && tvCurrlat != null){
-                    tvSpeed.setText(formatter.format(getCurrentSpeedNm(curLat, curLon)) + " kts");
-                    tvDistance.setText(formatter.format(NavigationUtils.distanceInNauticalMiles(curLat, curLon, targetLat, targetLon)) + " NM");
-                    tvCurrlon.setText(formatter.format(curLon) + " °");
-                    tvCurrlat.setText(formatter.format(curLat) + " °");
-                    tvCourseAngle.setText(formatter.format(angle) + " °");
+                    String tvSpeedStr = formatter.format(getCurrentSpeedNm(curLat, curLon)) + " kts";
+                    String tvDistanceStr = formatter.format(NavigationUtils.distanceInNauticalMiles(curLat, curLon, targetLat, targetLon)) + " NM";
+                    String tvCurrlonStr = formatter.format(curLon) + " °";
+                    String tvCurrlatStr = formatter.format(curLat) + " °";
+                    String tvCourseAngleStr = formatter.format(angle) + " °";
+                    tvSpeed.setText(tvSpeedStr);
+                    tvDistance.setText(tvDistanceStr);
+                    tvCurrlon.setText(tvCurrlonStr);
+                    tvCurrlat.setText(tvCurrlatStr);
+                    tvCourseAngle.setText(tvCourseAngleStr);
                 }
 
                 MapView mapView = (MapView) findViewById(R.id.mapView);
@@ -299,7 +304,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         if(tvHeading != null){
             long bearingView = Math.round(bearing) % 360;
-            tvHeading.setText(formatter.format(bearingView) + " °");
+            String tvHeadingText = formatter.format(bearingView) + " °";
+            tvHeading.setText(tvHeadingText);
         }
 
         //set text field left-right properly
