@@ -68,6 +68,7 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.*;
+import org.w3c.dom.Text;
 
 
 public class NavigationActivity extends AppCompatActivity implements SensorEventListener {
@@ -124,8 +125,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     private ProgressDialog waitDialog;
 
     private double angle = 0;
-
-    private ArrayList<String> updateLog = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,22 +219,24 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                         (float) location.getAltitude(),
                         System.currentTimeMillis());
 
+                TextView tvSpeed = ((TextView) findViewById(R.id.editTextSpeedKts));
                 TextView tvDistance = ((TextView) findViewById(R.id.editTextDistance));
-                TextView tvSpeed = ((TextView) findViewById(R.id.editTextSpeed));
-                TextView tvCourseAngle = ((TextView) findViewById(R.id.editTextCourseAngle));
-                TextView tvCurrlon = ((TextView) findViewById(R.id.editTextCurrLongitude));
-                TextView tvCurrlat = ((TextView) findViewById(R.id.editTextCurrLatitude));
-                //TextView tvBearing = ((TextView) findViewById(R.id.editTextBearing));
+                TextView tvCurrlat = ((TextView) findViewById(R.id.editTextLat));
+                TextView tvCurrlon = ((TextView) findViewById(R.id.editTextLon));
+                TextView tvCourseAngle = ((TextView) findViewById(R.id.editTextBearing));
 
                 if(tvDistance != null && tvSpeed != null && tvCourseAngle != null && tvCurrlon != null && tvCurrlat != null){
-                    tvDistance.setText("Distance: " + formatter.format(NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)) + " km");
-                    tvSpeed.setText("Speed: " + formatter.format(getCurrentSpeed(curLat, curLon)) + " km/h");
-                    tvCourseAngle.setText("Course Angle: " + formatter.format(angle) + " °");
-                    tvCurrlon.setText("Longitude: " + formatter.format(curLon));
-                    tvCurrlat.setText("Latitude: " + formatter.format(curLat));
+                    String tvSpeedStr = formatter.format(getCurrentSpeedNm(curLat, curLon)) + " kts";
+                    String tvDistanceStr = formatter.format(NavigationUtils.distanceInNauticalMiles(curLat, curLon, targetLat, targetLon)) + " NM";
+                    String tvCurrlonStr = formatter.format(curLon) + " °";
+                    String tvCurrlatStr = formatter.format(curLat) + " °";
+                    String tvCourseAngleStr = formatter.format(angle) + " °";
+                    tvSpeed.setText(tvSpeedStr);
+                    tvDistance.setText(tvDistanceStr);
+                    tvCurrlon.setText(tvCurrlonStr);
+                    tvCurrlat.setText(tvCurrlatStr);
+                    tvCourseAngle.setText(tvCourseAngleStr);
                 }
-
-
 
                 MapView mapView = (MapView) findViewById(R.id.mapView);
                 if (mapView != null) {
@@ -359,12 +360,38 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             bearing += 360;
         }
 
-        TextView tvBearing = ((TextView) findViewById(R.id.editTextBearing));
+        TextView tvHeading = ((TextView) findViewById(R.id.editTextHeading));
+        NumberFormat formatter = new DecimalFormat("#0");
 
-        if(tvBearing != null){
-            tvBearing.setText("bearing: " + bearing + "°");
+        if(tvHeading != null){
+            long bearingView = Math.round(bearing) % 360;
+            String tvHeadingText = formatter.format(bearingView) + " °";
+            tvHeading.setText(tvHeadingText);
         }
 
+        //set text field left-right properly
+        TextView tvTurnLeftRight = ((TextView) findViewById(R.id.editTextTurnDegree));
+
+        double turnLeftRight = angle - bearing;
+        turnLeftRight += (2 * 360);
+        turnLeftRight %= 360;
+
+        String turnDegreeLeftRight = "";
+
+        if(turnLeftRight > -1.0 && turnLeftRight < 1.0){
+            turnDegreeLeftRight = formatter.format(turnLeftRight) + " °\n";
+        }else if(turnLeftRight < 180){
+            turnDegreeLeftRight = formatter.format(turnLeftRight) + " °\nright";
+        }else{
+            double tmpTurnRight = 360 - turnLeftRight;
+            turnDegreeLeftRight = formatter.format(tmpTurnRight) + " °\nleft";
+        }
+
+        if(tvTurnLeftRight != null){
+            tvTurnLeftRight.setText(turnDegreeLeftRight);
+        }
+
+        //set arrows properly
         resetAllArrows();
 
         double deviation = angle - bearing ;
@@ -372,6 +399,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         deviation += 22.5;
         deviation += (2*360);
         deviation = deviation % 360;
+
+        // Log.e("Deviation", deviation);
 
         if(deviation > 0 && deviation < 45) {
             //Log.e("DIRECTION", "UP");
@@ -466,7 +495,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         resetArrow(R.id.downRightArrow);
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -707,18 +735,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         double currentSpeed = 0;
         long currentTimestamp = System.currentTimeMillis();
 
-        updateLog.add(new SimpleDateFormat("HH:mm:ss").format(currentTimestamp));
-
-        if(updateLog.size() > 9){
-            updateLog.remove(0);
-        }
-
-        ((TextView) findViewById(R.id.editTextLogUpdate)).setText("Log\n");
-
-        for(int i = 0; i < updateLog.size(); i++){
-            ((TextView) findViewById(R.id.editTextLogUpdate)).append(updateLog.get(i) + "\n");
-        }
-
         if(oldLat > -90.0 && oldLat < 90.0 && oldLon > -180.0 && oldLon < 180.0 && timestampLastUpdateTimestamp > 0){
             long timeBetweenUpdateMilliSec = (currentTimestamp - timestampLastUpdateTimestamp);
             double distanceBetweenUpdateMeters = NavigationUtils.distanceInM(curLat, curLon, oldLat, oldLon);
@@ -754,5 +770,11 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         }
 
         return 0;
+    }
+
+    private double getCurrentSpeedNm(double curLat, double curLon){
+        double speedKmh = getCurrentSpeed(curLat, curLon);
+
+        return speedKmh * 0.53995680346039;
     }
 }

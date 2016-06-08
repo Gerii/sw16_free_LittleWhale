@@ -1,26 +1,145 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.andrea.littewhale.NavigationActivity$NavigationFragment">
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+android:paddingBottom="@dimen/activity_vertical_margin"
+android:paddingLeft="@dimen/activity_horizontal_margin"
+android:paddingRight="@dimen/activity_horizontal_margin"
+android:paddingTop="@dimen/activity_vertical_margin"
+android:orientation="vertical"
+android:layout_gravity="center"
+tools:context="com.example.andrea.littewhale.NavigationActivity$NavigationFragment">
 
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:rowCount="6"
+        android:stretchColumns="0,1"
+        android:id="@+id/tableLayoutNavigationValues"
+        android:layout_gravity="top">
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Speed"
+                android:id="@+id/editTextLabelSpeed"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Bearing"
+                android:id="@+id/editTextLabelBearing"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="--- kts"
+                android:id="@+id/editTextSpeedKts"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="--- °"
+                android:id="@+id/editTextBearing"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Distance"
+                android:id="@+id/editTextLabelDistToTarget"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Heading"
+                android:id="@+id/editTextLabelHeading"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="--- NM"
+                android:id="@+id/editTextDistance"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="--- °"
+                android:id="@+id/editTextHeading"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Latitude"
+                android:id="@+id/editTextLabelLat"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Longitude"
+                android:id="@+id/editTextLabelLon"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="--- °"
+                android:id="@+id/editTextLat"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="--- °"
+                android:id="@+id/editTextLon"
+                android:textStyle="bold" />
+        </TableRow>
+    </TableLayout>
 
     <GridLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_above="@+id/editTextDistance"
-        android:layout_below="@+id/editTextLogUpdate"
+        android:layout_gravity="bottom|center_horizontal"
         android:columnCount="3"
-        android:rowCount="3">
+        android:rowCount="3"
+        android:id="@+id/gridLayoutDirections">
 
 
         <ImageView
@@ -31,6 +150,17 @@
             android:id="@+id/leftArrow"
             android:alpha="0.3"
             android:src="@drawable/ic_arrow_left"/>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="---°\n"
+            android:id="@+id/editTextTurnDegree"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:gravity="center"
+            android:layout_gravity="center" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -104,67 +234,5 @@
             android:rotation="45"
             android:alpha="0.3"
             android:src="@drawable/ic_arrow_left" />
-
     </GridLayout>
-    </FrameLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Distance: N/A"
-        android:id="@+id/editTextDistance"
-        android:layout_above="@+id/editTextSpeed"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Speed: N/A"
-        android:id="@+id/editTextSpeed"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Course Angle: N/A"
-        android:id="@+id/editTextCourseAngle"
-        android:layout_below="@+id/editTextSpeed"
-        android:layout_alignLeft="@+id/editTextCurrLongitude"
-        android:layout_alignStart="@+id/editTextCurrLongitude" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Longitude: N/A"
-        android:id="@+id/editTextCurrLongitude"
-        android:layout_below="@+id/editTextCourseAngle"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Latitude: N/A"
-        android:id="@+id/editTextCurrLatitude"
-        android:layout_below="@+id/editTextCurrLongitude"
-        android:layout_alignLeft="@+id/editTextCurrLongitude"
-        android:layout_alignStart="@+id/editTextCurrLongitude" />
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextLogUpdate"
-        android:layout_centerHorizontal="true"
-        android:maxLines="10"
-        android:text="Log:\n" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bearing"
-        android:id="@+id/editTextBearing"
-        android:layout_below="@+id/editTextCurrLatitude"
-        android:layout_centerHorizontal="true" />
-
-
-</RelativeLayout>
+</LinearLayout>
