@@ -583,28 +583,33 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             weatherStorage = weatherStore;
 
             if(weatherStorage.isLoaded()) {
-
-                /*Calendar cal = weather.getDate();
-                String date = cal.get(Calendar.DAY_OF_MONTH) + "." + cal.get(Calendar.MONTH) + "." + cal.get(Calendar.YEAR);
-                ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText(weather.getWeatherIcon());
-                ((TextView) rootView.findViewById(R.id.editTextDate)).setText(date);
-                ((TextView) rootView.findViewById(R.id.editTextPressureValue)).setText(decimalFormat.format(weather.getPressure()) + "hPa");
-                ((TextView) rootView.findViewById(R.id.editTextHumidityValue)).setText(decimalFormat.format(weather.getHumidity()) + "%");
-                ((TextView) rootView.findViewById(R.id.editTextTemperatureValue)).setText(decimalFormat.format(weather.getTemperature()) + "°C");
-                ((TextView) rootView.findViewById(R.id.editTextCloudsValue)).setText(decimalFormat.format(weather.getClouds()) + "%");
-                ((TextView) rootView.findViewById(R.id.editTextWindDirValue)).setText(decimalFormat.format(weather.getWindDirection()) + "°");
-                ((TextView) rootView.findViewById(R.id.editTextWindSpeedValue)).setText(decimalFormat.format(weather.getWindSpeed()) + "m/s");*/
+                boolean currentWeatherDone = false;
+                for(Weather weather : weatherStore) {
+                    if(!currentWeatherDone) {
+                        Calendar cal = weather.getDate();
+                        String date = cal.get(Calendar.DAY_OF_MONTH) + "." + cal.get(Calendar.MONTH) + "." + cal.get(Calendar.YEAR);
+                        ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText(weather.getWeatherIcon());
+                        ((TextView) rootView.findViewById(R.id.editTextDate)).setText(date);
+                        ((TextView) rootView.findViewById(R.id.editTextPressureValue)).setText(decimalFormat.format(weather.getPressure()) + "hPa");
+                        ((TextView) rootView.findViewById(R.id.editTextHumidityValue)).setText(decimalFormat.format(weather.getHumidity()) + "%");
+                        ((TextView) rootView.findViewById(R.id.editTextTemperatureValue)).setText(decimalFormat.format(weather.getTemperature()) + "°C");
+                        ((TextView) rootView.findViewById(R.id.editTextCloudsValue)).setText(decimalFormat.format(weather.getClouds()) + "%");
+                        ((TextView) rootView.findViewById(R.id.editTextWindDirValue)).setText(decimalFormat.format(weather.getWindDirection()) + "°");
+                        ((TextView) rootView.findViewById(R.id.editTextWindSpeedValue)).setText(decimalFormat.format(weather.getWindSpeed()) + "m/s");
+                        currentWeatherDone = true;
+                    }
+                }
             }
             else {
                 //TODO reset other fields
                 ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText("\uF07B");
                 Context context = rootView.getContext().getApplicationContext();
-                //String errorMessage = weather.getErrorMessage();
-                //CharSequence text = "Could not load weather." + ((errorMessage != null) ? "\nMessage: " + errorMessage : "");
+                String errorMessage = weatherStorage.getErrorMessage();
+                CharSequence text = "Could not load weather." + ((errorMessage != null) ? "\nMessage: " + errorMessage : "");
                 int duration = Toast.LENGTH_LONG;
 
-                //Toast toast = Toast.makeText(context, text, duration);
-                //toast.show();
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
             }
         }
 
