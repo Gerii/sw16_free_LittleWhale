@@ -20,9 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.json.*;
 
 public class Weather {
-    private static final String API_KEY = "d1db7d9ac0033228ce578944c83ac06a";
     private static HashMap<Integer, String> WEATHER_CODES;
-
 
     private int id = -1;
     private String weatherIcon;
@@ -38,7 +36,6 @@ public class Weather {
     public String getDetailedDescription() {
         return detailedDescription;
     }
-
 
     public Calendar getDate() {
         return date;
@@ -107,21 +104,20 @@ public class Weather {
         loadWeatherIds(context);
     }
 
-    public void parseWeather(String response) throws WeatherParsingException {
-        Log.e("res", response);
+    public void parseWeather(JSONObject responseJSON, boolean checkHTTPCode) throws WeatherParsingException {
         try {
-            JSONObject responseJSON = new JSONObject(response);
-            int httpcode = (int) Integer.parseInt(responseJSON.get("cod").toString());
 
-            if (httpcode != 200) {
-                success = false;
-                try {
-                    errorMessage = (String) responseJSON.get("message");
-                } catch (JSONException e) {
+            if (checkHTTPCode) {
+                int httpcode = (int) Integer.parseInt(responseJSON.get("cod").toString());
+                if (httpcode != 200) {
+                    success = false;
+                    try {
+                        errorMessage = (String) responseJSON.get("message");
+                    } catch (JSONException e) {
 
+                    }
+                    return;
                 }
-
-                return;
             }
 
             JSONArray weatherJSONArray = (JSONArray) responseJSON.get("weather");
@@ -156,12 +152,6 @@ public class Weather {
             Log.e("Weather Parsing", e.toString());
             throw new WeatherParsingException();
         }
-    }
-
-    public void updateWeather(double lat, double lon, NavigationActivity.SectionsPagerAdapter mSectionsPagerAdapter) {
-        final String url = "http://api.openweathermap.org/data/2.5/weather?lat=" + Double.toString(lat) + "&lon=" + Double.toString(lon) + "&appid=" + API_KEY;
-        WeatherGetterWhatever wgw = new WeatherGetterWhatever(this, url, mSectionsPagerAdapter);
-        wgw.execute(lat, lon);
     }
 
     public String getWeatherIcon() {

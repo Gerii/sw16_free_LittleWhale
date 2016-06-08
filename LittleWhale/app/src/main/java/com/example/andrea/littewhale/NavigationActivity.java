@@ -55,7 +55,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import com.example.andrea.utils.NavigationUtils;
 import com.example.andrea.utils.Weather;
+import com.example.andrea.utils.WeatherGetterWhatever;
 import com.example.andrea.utils.WeatherParsingException;
+import com.example.andrea.utils.WeatherStorage;
 
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
@@ -96,7 +98,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
     private static double oldLat = COORD_DEFAULT_VALUE;
     private static double oldLon = COORD_DEFAULT_VALUE;
-    private static Weather weather = null;
+    private static WeatherStorage weatherStorage = null;
     private static Calendar weatherAge = null; //TODO implement age
 
     public static double getOldLon() {
@@ -154,6 +156,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            } else {
+                startLocationParameters();
             }
         } else {
             startLocationParameters();
@@ -259,16 +263,13 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                     mapView.invalidate();
                 }
 
-                NavigationActivity.weather = new Weather(getApplicationContext());
-
-                Log.e("TAG", "Updating WEATHER 0");
-
                 double lat = NavigationActivity.getOldLat(); //TODO we have this here
                 double lon = NavigationActivity.getOldLon();
 
                 if (lat != NavigationActivity.COORD_DEFAULT_VALUE && lon != NavigationActivity.COORD_DEFAULT_VALUE) {
                     Log.e("TAG", "Updating WEATHER");
-                    weather.updateWeather(lat, lon, mSectionsPagerAdapter);
+                    WeatherGetterWhatever wgw = new WeatherGetterWhatever(lat, lon, getApplicationContext(), mSectionsPagerAdapter);
+                    wgw.execute();
                 }
             }
 
@@ -576,12 +577,13 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             return fragment;
         }
 
-        public void updateWeather(Weather weath) {
+        public void updateWeather(WeatherStorage weatherStore) {
             Log.e("TAG", "SETTING WEATHER");
-            weather = weath;
+            weatherStorage = weatherStore;
 
-            if(weath.isSuccess()) {
-                Calendar cal = weather.getDate();
+            if(weatherStorage.isLoaded()) {
+
+                /*Calendar cal = weather.getDate();
                 String date = cal.get(Calendar.DAY_OF_MONTH) + "." + cal.get(Calendar.MONTH) + "." + cal.get(Calendar.YEAR);
                 ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText(weather.getWeatherIcon());
                 ((TextView) rootView.findViewById(R.id.editTextDate)).setText(date);
@@ -590,18 +592,18 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 ((TextView) rootView.findViewById(R.id.editTextTemperatureValue)).setText(decimalFormat.format(weather.getTemperature()) + "°C");
                 ((TextView) rootView.findViewById(R.id.editTextCloudsValue)).setText(decimalFormat.format(weather.getClouds()) + "%");
                 ((TextView) rootView.findViewById(R.id.editTextWindDirValue)).setText(decimalFormat.format(weather.getWindDirection()) + "°");
-                ((TextView) rootView.findViewById(R.id.editTextWindSpeedValue)).setText(decimalFormat.format(weather.getWindSpeed()) + "m/s");
+                ((TextView) rootView.findViewById(R.id.editTextWindSpeedValue)).setText(decimalFormat.format(weather.getWindSpeed()) + "m/s");*/
             }
             else {
                 //TODO reset other fields
                 ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText("\uF07B");
                 Context context = rootView.getContext().getApplicationContext();
-                String errorMessage = weather.getErrorMessage();
-                CharSequence text = "Could not load weather." + ((errorMessage != null) ? "\nMessage: " + errorMessage : "");
+                //String errorMessage = weather.getErrorMessage();
+                //CharSequence text = "Could not load weather." + ((errorMessage != null) ? "\nMessage: " + errorMessage : "");
                 int duration = Toast.LENGTH_LONG;
 
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
+                //Toast toast = Toast.makeText(context, text, duration);
+                //toast.show();
             }
         }
 
@@ -789,7 +791,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
     private double getCurrentSpeedNm(double curLat, double curLon){
         double speedKmh = getCurrentSpeed(curLat, curLon);
-
         return speedKmh * 0.53995680346039;
     }
 }

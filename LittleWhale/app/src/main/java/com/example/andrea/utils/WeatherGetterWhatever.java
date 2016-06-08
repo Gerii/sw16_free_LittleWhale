@@ -1,5 +1,6 @@
 package com.example.andrea.utils;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.example.andrea.littewhale.NavigationActivity;
@@ -13,36 +14,71 @@ import java.net.URL;
 /**
  * Created by gery on 06.06.16.
  */
-public class WeatherGetterWhatever extends AsyncTask<Double, Void, String> {
-    private Weather weather;
-    private String url;
-    private NavigationActivity.SectionsPagerAdapter mSectionsPagerAdapter;
 
-    public WeatherGetterWhatever(Weather weather, String url, NavigationActivity.SectionsPagerAdapter mSectionsPagerAdapter) {
-        this.weather = weather;
-        this.url = url;
+class WeatherJSONs {
+    private String currentWeatherJSON;
+    private String fiveDayWeatherJSON;
+
+    public WeatherJSONs(String currentWeatherJSON, String fiveDayWeatherJSON) {
+        this.currentWeatherJSON = currentWeatherJSON;
+        this.fiveDayWeatherJSON = fiveDayWeatherJSON;
+    }
+
+    public boolean isReady() {
+        return currentWeatherJSON != null && fiveDayWeatherJSON != null;
+    }
+
+    public String getCurrentWeatherJSON() {
+        return currentWeatherJSON;
+    }
+
+    public String getFiveDayWeatherJSON() {
+        return fiveDayWeatherJSON;
+    }
+}
+
+public class WeatherGetterWhatever extends AsyncTask<Double, Void, WeatherJSONs> {
+    private static final String API_KEY = "d1db7d9ac0033228ce578944c83ac06a";
+    private String dailyURL, fiveDayURL;
+    private NavigationActivity.SectionsPagerAdapter mSectionsPagerAdapter;
+    private Context context;
+
+
+    public WeatherGetterWhatever(double lat, double lon, Context context, NavigationActivity.SectionsPagerAdapter mSectionsPagerAdapter) {
+        this.context = context;
         this.mSectionsPagerAdapter = mSectionsPagerAdapter;
+        dailyURL = "http://api.openweathermap.org/data/2.5/weather?lat=" + Double.toString(lat) + "&lon=" + Double.toString(lon) + "&appid=" + API_KEY;
+        fiveDayURL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + Double.toString(lat) + "&lon=" + Double.toString(lon) + "&appid=" + API_KEY;
+
     }
 
     @Override
-    protected String doInBackground(Double... doubles) {
+    protected WeatherJSONs doInBackground(Double... doubles) {
         try {
-            return IOUtils.toString(new URL(url));
+            String currentWeatherJSON = IOUtils.toString(new URL(dailyURL));
+            String fiveDayWeatherJSON = IOUtils.toString(new URL(fiveDayURL));
+            return new WeatherJSONs(currentWeatherJSON, fiveDayWeatherJSON);
         } catch (IOException e) {
             //TODO handle
             e.printStackTrace();
         }
-
         return null;
     }
 
-    protected void onPostExecute(String jsonString) {
+    protected void onPostExecute(WeatherJSONs weatherJSONs) {
         try {
-            if(jsonString != null) {
-                weather.parseWeather(jsonString);
-                ((NavigationActivity.WeatherFragment) mSectionsPagerAdapter.weatherFragment).updateWeather(weather);
+            if(weatherJSONs != null && weatherJSONs.isReady()) {
+                WeatherStorage weatherStorage = new WeatherStorage();
+
+                weatherStorage.parseWeather(weatherJSONs.getCurrentWeatherJSON(), weatherJSONs.getFiveDayWeatherJSON(), context);
+
+
+                ((NavigationActivity.WeatherFragment) mSectionsPagerAdapter.weatherFragment).updateWeather(weatherStorage);
             }
-        } catch (WeatherParsingException e) {
+            else {
+                //TODO show error
+            }
+        } catch (Exception e) {
             //TODO show error
             e.printStackTrace();
         }
