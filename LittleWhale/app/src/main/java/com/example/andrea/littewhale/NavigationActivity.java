@@ -12,6 +12,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -38,6 +39,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.security.Permission;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -131,117 +133,136 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         }
-
         //compass
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetic = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-        //location
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(final Location location) {
-
-
-                double[] target = getIntent().getExtras().getDoubleArray("TargetCoords");
-                double curLat = location.getLatitude();
-                double curLon = location.getLongitude();
-                double targetLat = 0;
-                double targetLon = 0;
-
-                if(target.length == 2){
-                    targetLat = target[0];
-                    targetLon = target[1];
-                }else{
-                    return;
-                }
-
-                angle = NavigationUtils.angleToTarget(curLat, curLon, targetLat, targetLon);
-
-                Log.e("TargetLatitude", Double.toString(targetLat));
-                Log.e("TargetLongitude", Double.toString(targetLon));
-                Log.e("CurrentLatitude", String.valueOf(curLat));
-                Log.e("CurrentLongitude", String.valueOf(curLon));
-                Log.e("Speed", Float.toString(location.getSpeed()));
-                Log.e("Distance", Double.toString(
-                        NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)));
-                Log.e("Angle", Double.toString(angle));
-
-                NumberFormat formatter = new DecimalFormat("#0.000");
-
-                geomagneticField = new GeomagneticField(
-                        (float) curLat,
-                        (float) curLon,
-                        (float) location.getAltitude(),
-                        System.currentTimeMillis());
-
-                TextView tvDistance = ((TextView) findViewById(R.id.editTextDistance));
-                TextView tvSpeed = ((TextView) findViewById(R.id.editTextSpeed));
-                TextView tvCourseAngle = ((TextView) findViewById(R.id.editTextCourseAngle));
-                TextView tvCurrlon = ((TextView) findViewById(R.id.editTextCurrLongitude));
-                TextView tvCurrlat = ((TextView) findViewById(R.id.editTextCurrLatitude));
-                //TextView tvBearing = ((TextView) findViewById(R.id.editTextBearing));
-
-                if(tvDistance != null && tvSpeed != null && tvCourseAngle != null && tvCurrlon != null && tvCurrlat != null){
-                    tvDistance.setText("Distance: " + formatter.format(NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)) + " km");
-                    tvSpeed.setText("Speed: " + formatter.format(getCurrentSpeed(curLat, curLon)) + " km/h");
-                    tvCourseAngle.setText("Course Angle: " + formatter.format(angle) + " °");
-                    tvCurrlon.setText("Longitude: " + formatter.format(curLon));
-                    tvCurrlat.setText("Latitude: " + formatter.format(curLat));
-                }
-
-
-
-                MapView mapView = (MapView) findViewById(R.id.mapView);
-                MapController mMapController = (MapController) mapView.getController();
-
-                Log.e("Map Long", String.valueOf(curLon * 1E6) );
-                Log.e("Map Lat", String.valueOf(curLat * 1E6));
-
-                GeoPoint gPt = new GeoPoint(curLat ,curLon );
-                mMapController.animateTo(gPt);
-
-                GeoPoint curLocation = new GeoPoint(location);
-
-                Marker marker = new Marker(mapView);
-                marker.setPosition(curLocation);
-                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                mapView.getOverlays().clear();
-                mapView.getOverlays().add(marker);
-                mapView.invalidate();
-
-            }
-
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            if ( Build.VERSION.SDK_INT >= 23 &&
+                    checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return  ;
+            }
+
+
+            //location
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+            locationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(final Location location) {
+
+
+                    double[] target = getIntent().getExtras().getDoubleArray("TargetCoords");
+                    double curLat = location.getLatitude();
+                    double curLon = location.getLongitude();
+                    double targetLat = 0;
+                    double targetLon = 0;
+
+                    if(target.length == 2){
+                        targetLat = target[0];
+                        targetLon = target[1];
+                    }else{
+                        return;
+                    }
+
+                    angle = NavigationUtils.angleToTarget(curLat, curLon, targetLat, targetLon);
+
+                    Log.e("TargetLatitude", Double.toString(targetLat));
+                    Log.e("TargetLongitude", Double.toString(targetLon));
+                    Log.e("CurrentLatitude", String.valueOf(curLat));
+                    Log.e("CurrentLongitude", String.valueOf(curLon));
+                    Log.e("Speed", Float.toString(location.getSpeed()));
+                    Log.e("Distance", Double.toString(
+                            NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)));
+                    Log.e("Angle", Double.toString(angle));
+
+                    NumberFormat formatter = new DecimalFormat("#0.000");
+
+                    geomagneticField = new GeomagneticField(
+                            (float) curLat,
+                            (float) curLon,
+                            (float) location.getAltitude(),
+                            System.currentTimeMillis());
+
+                    TextView tvDistance = ((TextView) findViewById(R.id.editTextDistance));
+                    TextView tvSpeed = ((TextView) findViewById(R.id.editTextSpeed));
+                    TextView tvCourseAngle = ((TextView) findViewById(R.id.editTextCourseAngle));
+                    TextView tvCurrlon = ((TextView) findViewById(R.id.editTextCurrLongitude));
+                    TextView tvCurrlat = ((TextView) findViewById(R.id.editTextCurrLatitude));
+                    //TextView tvBearing = ((TextView) findViewById(R.id.editTextBearing));
+
+                    if(tvDistance != null && tvSpeed != null && tvCourseAngle != null && tvCurrlon != null && tvCurrlat != null){
+                        tvDistance.setText("Distance: " + formatter.format(NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)) + " km");
+                        tvSpeed.setText("Speed: " + formatter.format(getCurrentSpeed(curLat, curLon)) + " km/h");
+                        tvCourseAngle.setText("Course Angle: " + formatter.format(angle) + " °");
+                        tvCurrlon.setText("Longitude: " + formatter.format(curLon));
+                        tvCurrlat.setText("Latitude: " + formatter.format(curLat));
+                    }
+
+
+
+                    MapView mapView = (MapView) findViewById(R.id.mapView);
+                    MapController mMapController = (MapController) mapView.getController();
+
+                    Log.e("Map Long", String.valueOf(curLon * 1E6) );
+                    Log.e("Map Lat", String.valueOf(curLat * 1E6));
+
+                    GeoPoint gPt = new GeoPoint(curLat ,curLon );
+                    mMapController.animateTo(gPt);
+
+                    GeoPoint curLocation = new GeoPoint(location);
+
+                    Marker marker = new Marker(mapView);
+                    marker.setPosition(curLocation);
+                    marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                    mapView.getOverlays().clear();
+                    mapView.getOverlays().add(marker);
+                    mapView.invalidate();
+
+                }
+
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            };
+            if(locationManager != null)
+              locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
+
+
+        }
+
+    }
+
+
+
 
     @Override
     public void onResume(){
         super.onResume();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                if(locationManager != null)
+                  locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
             }
         }
 
@@ -254,7 +275,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         super.onPause();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 locationManager.removeUpdates(locationListener);
             }
         }
