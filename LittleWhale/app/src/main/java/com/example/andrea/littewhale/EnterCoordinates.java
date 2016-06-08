@@ -25,12 +25,19 @@ public class EnterCoordinates extends AppCompatActivity {
         button.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 LinearLayout decimalLayout = (LinearLayout) findViewById(R.id.linearLayoutDecimalCoords);
-                decimalLayout.setVisibility(LinearLayout.GONE);
+                if (decimalLayout != null) {
+                    decimalLayout.setVisibility(LinearLayout.INVISIBLE);
+                  //  decimalLayout.invalidate();
 
+                }
                 setViewDecimalToTime(false, 0 ,0);
-
                 LinearLayout timeLayout = (LinearLayout) findViewById(R.id.linearLayoutTimeCoords);
-                timeLayout.setVisibility(LinearLayout.VISIBLE);
+                if (timeLayout != null) {
+                    timeLayout.setVisibility(LinearLayout.VISIBLE);
+                }
+
+
+
             }
         });
 
@@ -41,10 +48,14 @@ public class EnterCoordinates extends AppCompatActivity {
             public void onClick(View v) {
                 LinearLayout decimalLayout = (LinearLayout) findViewById(R.id.linearLayoutDecimalCoords);
                 LinearLayout timeLayout = (LinearLayout) findViewById(R.id.linearLayoutTimeCoords);
-                setViewTimeToDecimal();
+                setViewTimeToDecimal(false, null);
 
-                decimalLayout.setVisibility(LinearLayout.VISIBLE);
-                timeLayout.setVisibility(LinearLayout.GONE);
+                if (decimalLayout != null) {
+                    decimalLayout.setVisibility(LinearLayout.VISIBLE);
+                }
+                if (timeLayout != null) {
+                    timeLayout.setVisibility(LinearLayout.INVISIBLE);
+                }
             }
         });
 
@@ -61,12 +72,12 @@ public class EnterCoordinates extends AppCompatActivity {
                 RadioButton button = (RadioButton) findViewById(R.id.rbtnTimeNotation);
                 RadioButton button2 = (RadioButton) findViewById(R.id.rbtnDecimalNotation);
 
-                if (button.isChecked()) {
+                if (button != null && button.isChecked()) {
                     double[] decimal = readTimeFormat();
                     targetLatitude = decimal[0];
                     targetLongitude = decimal[1];
 
-                } else if (button2.isChecked()) {
+                } else if (button2 != null && button2.isChecked()) {
                     String latitude = ((TextView) findViewById(R.id.editTextDegreeDecimalLatitude)).getText().toString();
                     String longitude = ((TextView) findViewById(R.id.editTextDegreeDecimalLongitude)).getText().toString();
 
@@ -88,8 +99,6 @@ public class EnterCoordinates extends AppCompatActivity {
                 cardinalDirection[1] = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLongitude)).getSelectedItem().toString();
                 myIntent.putExtra("TargetCoords", target);
                 myIntent.putExtra("CardinalDirection", cardinalDirection);
-
-
                 myIntent.putExtra("TargetCoords", target);
                 EnterCoordinates.this.startActivity(myIntent);
             }
@@ -101,32 +110,56 @@ public class EnterCoordinates extends AppCompatActivity {
             useExistingLocationBtn.setOnClickListener(new Button.OnClickListener() {
                 public void onClick(View v) {
                     Intent myIntent = new Intent(EnterCoordinates.this, EditLocations.class);
-                    myIntent.putExtra("Caller", "enterCoordinates");
                     EnterCoordinates.this.startActivityForResult(myIntent, 1);
                 }
             });
         }
-
-
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.w("ON ACTIVITY", "method called");
+        Log.w("ON ACTIVITY RESULT", "Enter coordinates");
 
         if(requestCode == 1)
         {
-            if(resultCode == RESULT_OK) {
+
+            if(resultCode == RESULT_OK ) {
+                if(data == null) {
+                    Log.e("ERROR", "data null");
+
+                    return;
+                }
                 Bundle extras = data.getExtras();
                 if (extras != null)
                 {
-                    Log.w("ON ACTIVITY","set lon and lat");
+                    Log.w("ON ACTIVITY RESULT","set lon and lat");
                     Double lon = extras.getDouble("LocationLongitude");
                     Double lat = extras.getDouble("LocationLatitude");
-                    setViewDecimalToTime(true, lon, lat);
+
+                    RadioButton button = (RadioButton) findViewById(R.id.rbtnTimeNotation);
+                    RadioButton button2 = (RadioButton) findViewById(R.id.rbtnDecimalNotation);
+
+                    if (button != null && button.isChecked()) {
+                        setViewDecimalToTime(true, lon, lat);
+
+                    } else if (button2 != null && button2.isChecked()) {
+                        double[] coords = {lat, lon};
+                        setViewTimeToDecimal(true, coords);
+                    } else {
+                        Log.e("ERROR", "WTF?!?!?!");
+                    }
+
+                } else {
+                    Log.e("ERROR", "EXTRAS NULL");
+
+
                 }
+            } else {
+                Log.e("ERROR", "Result code not okay");
+                Log.e("ERROR", Integer.toString(resultCode));
+
             }
         }
 
@@ -141,9 +174,13 @@ public class EnterCoordinates extends AppCompatActivity {
         }
     }
 
-    private void setViewTimeToDecimal() {
-
-        double[] decimal = readTimeFormat();
+    private void setViewTimeToDecimal(boolean parameters, double[] coords) {
+        double[] decimal = null;
+        if(!parameters) {
+            decimal = readTimeFormat();
+        } else {
+            decimal = coords;
+        }
 
         ((TextView) findViewById(R.id.editTextDegreeDecimalLatitude)).setText(Double.toString(decimal[0]));
         ((TextView) findViewById(R.id.editTextDegreeDecimalLongitude)).setText(Double.toString(decimal[1]));

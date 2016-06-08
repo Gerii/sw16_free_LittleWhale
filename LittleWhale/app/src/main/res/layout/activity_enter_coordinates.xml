@@ -34,7 +34,9 @@
 
     </RadioGroup>
 
+
     <!-- Time format input -->
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -206,16 +208,12 @@
 
         </LinearLayout>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Use Location"
-            android:id="@+id/useExistingLocation" />
-
 
     </LinearLayout>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+
     <!-- Decimal input -->
 
     <LinearLayout
@@ -307,6 +305,7 @@
 
     </LinearLayout>
 
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -315,5 +314,16 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Use existing location"
+        android:id="@+id/useExistingLocation"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

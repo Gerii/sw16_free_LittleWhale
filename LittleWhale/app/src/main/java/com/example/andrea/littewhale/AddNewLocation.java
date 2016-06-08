@@ -23,7 +23,7 @@ public class AddNewLocation extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_location);
-
+        Log.w("ON CREATE", "Add new location");
         Bundle extras = getIntent().getExtras();
 
         if(extras != null)
@@ -56,8 +56,6 @@ public class AddNewLocation extends AppCompatActivity {
                         decimalLayout.setVisibility(LinearLayout.GONE);
                         timeLayout.setVisibility(LinearLayout.VISIBLE);
                     }
-
-
                 }
 
             });
@@ -75,12 +73,9 @@ public class AddNewLocation extends AppCompatActivity {
                         decimalLayout.setVisibility(LinearLayout.VISIBLE);
                         timeLayout.setVisibility(LinearLayout.GONE);
                     }
-
                 }
             });
         }
-
-
 
 
         Button saveLocation = (Button) findViewById(R.id.newLocation_buttonAddLocation);
@@ -146,12 +141,8 @@ public class AddNewLocation extends AppCompatActivity {
                     locationDbInstance.editLocation(getApplicationContext(), locId, newLocationName ,targetLatitude, targetLongitude);
                 } else {
                     locationDbInstance.addLocation(getApplicationContext(), newLocationName, targetLatitude ,targetLongitude);
-
                 }
-
                 AddNewLocation.this.finish();
-
-
             }
         });
 
