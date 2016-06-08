@@ -27,9 +27,10 @@
         <activity
             android:name=".NavigationActivity"
             android:label="@string/title_activity_navigation"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity android:name=".AddNewLocation" />
-        <activity android:name=".WeatherInformation"></activity>
     </application>
+
 
 </manifest>

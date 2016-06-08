@@ -151,8 +151,12 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         tabLayout.setupWithViewPager(mViewPager);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            } else {
+                startLocationParameters();
+
             }
         } else {
             startLocationParameters();
@@ -173,18 +177,19 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     }
 
     private void startLocationParameters() {
-        if ( Build.VERSION.SDK_INT >= 23 &&
-                checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if ( Build.VERSION.SDK_INT >= 23 && !(
+                checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
             return  ;
         }
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(final Location location) {
+                Log.e("LOCATION", "CHANGED");
                 waitDialog.dismiss();
 
                 double[] target = getIntent().getExtras().getDoubleArray("TargetCoords");
@@ -289,12 +294,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         };
         if(locationManager != null)
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
-
-
     }
-
-
-
 
     @Override
     public void onResume(){
@@ -317,7 +317,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                locationManager.removeUpdates(locationListener);
+                if(locationManager != null)
+                  locationManager.removeUpdates(locationListener);
             }
         }
 
@@ -618,7 +619,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         }
     }
 
-    public static class MapFragment extends Fragment {
+    public static class MapFragment extends Fragment{
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -626,12 +627,13 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         public MapFragment() {
+
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
+            /**
+             * Returns a new instance of this fragment for the given section
+             * number.
+             */
         public static MapFragment newInstance(int sectionNumber) {
             MapFragment fragment = new MapFragment();
             Bundle args = new Bundle();
