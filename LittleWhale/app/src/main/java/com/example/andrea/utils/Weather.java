@@ -78,6 +78,18 @@ public class Weather {
     private double windSpeed;
     private double windDirection;
 
+    private boolean success = false;
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    private String errorMessage;
+
     private static void loadWeatherIds(Context context) {
         if (WEATHER_CODES == null) {
             String[] weatherIconCodes = context.getResources().getStringArray(R.array.weathericoncode);
@@ -96,9 +108,22 @@ public class Weather {
     }
 
     public void parseWeather(String response) throws WeatherParsingException {
-        Log.e("res", response   );
+        Log.e("res", response);
         try {
             JSONObject responseJSON = new JSONObject(response);
+            int httpcode = (int) Integer.parseInt(responseJSON.get("cod").toString());
+
+            if (httpcode != 200) {
+                success = false;
+                try {
+                    errorMessage = (String) responseJSON.get("message");
+                } catch (JSONException e) {
+
+                }
+
+                return;
+            }
+
             JSONArray weatherJSONArray = (JSONArray) responseJSON.get("weather");
             JSONObject firstWeatherJSON = (JSONObject) weatherJSONArray.get(0);
 
@@ -106,11 +131,13 @@ public class Weather {
             this.shortDescription = firstWeatherJSON.get("main").toString();
             this.detailedDescription = firstWeatherJSON.get("description").toString();
 
-            this.weatherIcon = WEATHER_CODES.get((id == 800) ? id : id / 100);
-
             Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(Long.parseLong(responseJSON.get("dt").toString() + "000"));
+            int hourOfDay = cal.get(Calendar.HOUR_OF_DAY);
+            //TODO we could use sunrise and sunset data of the weather api
+            this.weatherIcon = WEATHER_CODES.get((id == 800) ? ((hourOfDay >= 7 && hourOfDay < 20) ? id : 0) : id / 100);
 
+            cal = Calendar.getInstance();
+            cal.setTimeInMillis(Long.parseLong(responseJSON.get("dt").toString() + "000"));
             this.date = cal;
 
             JSONObject clouds = (JSONObject) responseJSON.get("clouds");
@@ -124,6 +151,7 @@ public class Weather {
             JSONObject wind = (JSONObject) responseJSON.get("wind");
             this.windSpeed = Double.parseDouble(wind.get("speed").toString());
             this.windDirection = Double.parseDouble(wind.get("deg").toString());
+            success = true;
         } catch (JSONException e) {
             Log.e("Weather Parsing", e.toString());
             throw new WeatherParsingException();

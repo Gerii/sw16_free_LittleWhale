@@ -19,22 +19,22 @@
     <integer-array name="weatherid">
         <item>800</item>
         <item>8</item>
-        <item>8</item>
-        <item>8</item>
-        <item>8</item>
-        <item>8</item>
-        <item>8</item>
-        <item>8</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>0</item>
     </integer-array>
 
     <string-array translatable="false" name="weathericoncode">
         <item name="sunny">&#xf00d;</item>
         <item name="cloudy">&#xf013;</item>
-        <item name="foggy">&#xf014;</item>
-        <item name="rainy">&#xf019;</item>
-        <item name="snowy">&#xf01b;</item>
         <item name="thunder">&#xf01e;</item>
         <item name="drizzle">&#xf01c;</item>
+        <item name="rainy">&#xf019;</item>
+        <item name="snowy">&#xf01b;</item>
+        <item name="foggy">&#xf014;</item>
         <item name="clearnight">&#xf02e;</item>
     </string-array>
 
