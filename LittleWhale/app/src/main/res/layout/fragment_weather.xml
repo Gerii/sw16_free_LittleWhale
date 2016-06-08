@@ -9,4 +9,178 @@
     tools:context="com.example.andrea.littewhale.NavigationActivity$WeatherFragment">
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Current date"
+            android:id="@+id/editTextDate"
+            android:textSize="10pt"
+            android:layout_marginBottom="10dp"
+            />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/linearLayoutWeather"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="40pt"
+                android:id="@+id/editTextCurWeatherIcon"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="40dp"/>
+
+
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/gridLayout"
+                android:stretchColumns="0,1,2,3">
+
+                <TableRow>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="14pt"
+                        android:id="@+id/editTextTemperature"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textSize="14pt"
+                        android:id="@+id/editTextTemperatureValue"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="14pt"
+                        android:id="@+id/editTextClouds"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textSize="14pt"
+                        android:id="@+id/editTextCloudsValue"
+                        android:layout_centerHorizontal="true" />
+                </TableRow>
+
+
+
+                <TableRow>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="14pt"
+                        android:id="@+id/editTextWindSpeed"
+                        android:layout_centerHorizontal="true" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textSize="14pt"
+                        android:id="@+id/editTextWindSpeedValue"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="14pt"
+                        android:id="@+id/editTextWindDir"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textSize="14pt"
+                        android:id="@+id/editTextWindDirValue"
+                        android:layout_centerHorizontal="true" />
+
+
+                </TableRow>
+
+
+                <TableRow>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="14pt"
+                        android:id="@+id/editTextHumidity"
+                        android:layout_centerHorizontal="true" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textSize="14pt"
+                        android:id="@+id/editTextHumidityValue"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="14pt"
+                        android:id="@+id/editTextPressure"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textSize="14pt"
+                        android:id="@+id/editTextPressureValue"
+                        android:layout_centerHorizontal="true" />
+
+
+                </TableRow>
+
+
+
+            </TableLayout>
+
+        </LinearLayout>
+
+
+
+
+
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/followingDaysListView"
+        android:layout_marginTop="213dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+    
 </RelativeLayout>
