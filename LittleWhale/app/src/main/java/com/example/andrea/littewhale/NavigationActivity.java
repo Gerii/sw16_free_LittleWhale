@@ -155,6 +155,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
+        } else {
+            startLocationParameters();
         }
         //compass
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
@@ -166,16 +168,19 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startLocationParameters();
+        }
 
-            if ( Build.VERSION.SDK_INT >= 23 &&
-                    checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return  ;
-            }
+    }
 
+    private void startLocationParameters() {
+        if ( Build.VERSION.SDK_INT >= 23 &&
+                checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return  ;
+        }
 
-            //location
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 
         locationListener = new LocationListener() {
@@ -183,52 +188,52 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             public void onLocationChanged(final Location location) {
                 waitDialog.dismiss();
 
-                    double[] target = getIntent().getExtras().getDoubleArray("TargetCoords");
-                    double curLat = location.getLatitude();
-                    double curLon = location.getLongitude();
-                    double targetLat = 0;
-                    double targetLon = 0;
+                double[] target = getIntent().getExtras().getDoubleArray("TargetCoords");
+                double curLat = location.getLatitude();
+                double curLon = location.getLongitude();
+                double targetLat = 0;
+                double targetLon = 0;
 
-                    if(target.length == 2){
-                        targetLat = target[0];
-                        targetLon = target[1];
-                    }else{
-                        return;
-                    }
+                if(target.length == 2){
+                    targetLat = target[0];
+                    targetLon = target[1];
+                }else{
+                    return;
+                }
 
-                    angle = NavigationUtils.angleToTarget(curLat, curLon, targetLat, targetLon);
+                angle = NavigationUtils.angleToTarget(curLat, curLon, targetLat, targetLon);
 
-                    Log.e("TargetLatitude", Double.toString(targetLat));
-                    Log.e("TargetLongitude", Double.toString(targetLon));
-                    Log.e("CurrentLatitude", String.valueOf(curLat));
-                    Log.e("CurrentLongitude", String.valueOf(curLon));
-                    Log.e("Speed", Float.toString(location.getSpeed()));
-                    Log.e("Distance", Double.toString(
-                            NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)));
-                    Log.e("Angle", Double.toString(angle));
+                Log.e("TargetLatitude", Double.toString(targetLat));
+                Log.e("TargetLongitude", Double.toString(targetLon));
+                Log.e("CurrentLatitude", String.valueOf(curLat));
+                Log.e("CurrentLongitude", String.valueOf(curLon));
+                Log.e("Speed", Float.toString(location.getSpeed()));
+                Log.e("Distance", Double.toString(
+                        NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)));
+                Log.e("Angle", Double.toString(angle));
 
-                    NumberFormat formatter = new DecimalFormat("#0.000");
+                NumberFormat formatter = new DecimalFormat("#0.000");
 
-                    geomagneticField = new GeomagneticField(
-                            (float) curLat,
-                            (float) curLon,
-                            (float) location.getAltitude(),
-                            System.currentTimeMillis());
+                geomagneticField = new GeomagneticField(
+                        (float) curLat,
+                        (float) curLon,
+                        (float) location.getAltitude(),
+                        System.currentTimeMillis());
 
-                    TextView tvDistance = ((TextView) findViewById(R.id.editTextDistance));
-                    TextView tvSpeed = ((TextView) findViewById(R.id.editTextSpeed));
-                    TextView tvCourseAngle = ((TextView) findViewById(R.id.editTextCourseAngle));
-                    TextView tvCurrlon = ((TextView) findViewById(R.id.editTextCurrLongitude));
-                    TextView tvCurrlat = ((TextView) findViewById(R.id.editTextCurrLatitude));
-                    //TextView tvBearing = ((TextView) findViewById(R.id.editTextBearing));
+                TextView tvDistance = ((TextView) findViewById(R.id.editTextDistance));
+                TextView tvSpeed = ((TextView) findViewById(R.id.editTextSpeed));
+                TextView tvCourseAngle = ((TextView) findViewById(R.id.editTextCourseAngle));
+                TextView tvCurrlon = ((TextView) findViewById(R.id.editTextCurrLongitude));
+                TextView tvCurrlat = ((TextView) findViewById(R.id.editTextCurrLatitude));
+                //TextView tvBearing = ((TextView) findViewById(R.id.editTextBearing));
 
-                    if(tvDistance != null && tvSpeed != null && tvCourseAngle != null && tvCurrlon != null && tvCurrlat != null){
-                        tvDistance.setText("Distance: " + formatter.format(NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)) + " km");
-                        tvSpeed.setText("Speed: " + formatter.format(getCurrentSpeed(curLat, curLon)) + " km/h");
-                        tvCourseAngle.setText("Course Angle: " + formatter.format(angle) + " °");
-                        tvCurrlon.setText("Longitude: " + formatter.format(curLon));
-                        tvCurrlat.setText("Latitude: " + formatter.format(curLat));
-                    }
+                if(tvDistance != null && tvSpeed != null && tvCourseAngle != null && tvCurrlon != null && tvCurrlat != null){
+                    tvDistance.setText("Distance: " + formatter.format(NavigationUtils.distanceInKm(curLat, curLon, targetLat, targetLon)) + " km");
+                    tvSpeed.setText("Speed: " + formatter.format(getCurrentSpeed(curLat, curLon)) + " km/h");
+                    tvCourseAngle.setText("Course Angle: " + formatter.format(angle) + " °");
+                    tvCurrlon.setText("Longitude: " + formatter.format(curLon));
+                    tvCurrlat.setText("Latitude: " + formatter.format(curLat));
+                }
 
 
 
@@ -266,26 +271,24 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             }
 
 
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
 
-                }
+            }
 
-                @Override
-                public void onProviderEnabled(String provider) {
+            @Override
+            public void onProviderEnabled(String provider) {
 
-                }
+            }
 
-                @Override
-                public void onProviderDisabled(String provider) {
+            @Override
+            public void onProviderDisabled(String provider) {
 
-                }
-            };
-            if(locationManager != null)
-              locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
+            }
+        };
+        if(locationManager != null)
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
 
-
-        }
 
     }
 
