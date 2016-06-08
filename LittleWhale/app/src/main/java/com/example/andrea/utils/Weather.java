@@ -22,6 +22,7 @@ import org.json.*;
 public class Weather {
     private static HashMap<Integer, String> WEATHER_CODES;
 
+
     private int id = -1;
     private String weatherIcon;
 
@@ -36,6 +37,7 @@ public class Weather {
     public String getDetailedDescription() {
         return detailedDescription;
     }
+
 
     public Calendar getDate() {
         return date;
@@ -134,6 +136,7 @@ public class Weather {
 
             cal = Calendar.getInstance();
             cal.setTimeInMillis(Long.parseLong(responseJSON.get("dt").toString() + "000"));
+
             this.date = cal;
 
             JSONObject clouds = (JSONObject) responseJSON.get("clouds");

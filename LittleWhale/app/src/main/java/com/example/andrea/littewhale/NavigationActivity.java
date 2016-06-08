@@ -162,6 +162,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         } else {
             startLocationParameters();
         }
+
         //compass
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -243,17 +244,19 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                     tvCourseAngle.setText(tvCourseAngleStr);
                 }
 
+
+
                 MapView mapView = (MapView) findViewById(R.id.mapView);
                 if (mapView != null) {
                     MapController mMapController = (MapController) mapView.getController();
 
-                    Log.e("Map Long", String.valueOf(curLon * 1E6) );
-                    Log.e("Map Lat", String.valueOf(curLat * 1E6));
+                Log.e("Map Long", String.valueOf(curLon * 1E6) );
+                Log.e("Map Lat", String.valueOf(curLat * 1E6));
 
                     GeoPoint gPt = new GeoPoint(curLat, curLon);
                     mMapController.animateTo(gPt);
 
-                    GeoPoint curLocation = new GeoPoint(location);
+                GeoPoint curLocation = new GeoPoint(location);
 
                     Marker marker = new Marker(mapView);
                     marker.setPosition(curLocation);
@@ -294,9 +297,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
 
     }
-
-
-
 
     @Override
     public void onResume(){
@@ -497,6 +497,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         resetArrow(R.id.downRightArrow);
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
