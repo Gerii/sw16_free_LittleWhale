@@ -134,6 +134,16 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
@@ -195,6 +205,14 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             public void onLocationChanged(final Location location) {
                 Log.e("LOCATION", "CHANGED");
                 waitDialog.dismiss();
+                //waitDialog.dismiss();
+                //waitDialog.dismiss();
+                //waitDialog.dismiss();
+                //waitDialog.dismiss();
+                //waitDialog.dismiss();
+                //waitDialog.dismiss();
+                //waitDialog.dismiss();
+                //waitDialog.dismiss();
 
                 double[] target = getIntent().getExtras().getDoubleArray("TargetCoords");
                 double curLat = location.getLatitude();
@@ -299,9 +317,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
     }
 
-
-
-
     @Override
     public void onResume(){
         super.onResume();
@@ -332,24 +347,24 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        Log.i("accuracy", sensor.getName() + " " + accuracy);
+
     }
 
-    public void onSensorChanged(SensorEvent event) {
+    public void updateCourse(int sensorType, float[] values) {
         //http://www.ssaurel.com/blog/learn-how-to-make-a-compass-application-for-android/
         boolean accelOrMagnetic = false;
 
         // get accelerometer data
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
-            gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
-            gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+        if (sensorType == Sensor.TYPE_ACCELEROMETER) {
+            gravity[0] = alpha * gravity[0] + (1 - alpha) * values[0];
+            gravity[1] = alpha * gravity[1] + (1 - alpha) * values[1];
+            gravity[2] = alpha * gravity[2] + (1 - alpha) * values[2];
 
             accelOrMagnetic = true;
-        } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-            geomagnetic[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
-            geomagnetic[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
-            geomagnetic[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+        } else if (sensorType == Sensor.TYPE_MAGNETIC_FIELD) {
+            geomagnetic[0] = alpha * gravity[0] + (1 - alpha) * values[0];
+            geomagnetic[1] = alpha * gravity[1] + (1 - alpha) * values[1];
+            geomagnetic[2] = alpha * gravity[2] + (1 - alpha) * values[2];
 
             accelOrMagnetic = true;
         }
@@ -483,6 +498,14 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 arrow.setAlpha(1f);
             }
         }
+    }
+
+    public void onSensorChanged(SensorEvent event) {
+            //System.out.println("values changed");
+            //System.out.println(event.values[0]);
+            //System.out.println(event.values[1]);
+            //System.out.println(event.values[2]);
+            updateCourse(event.sensor.getType(), event.values);
     }
 
     private void resetArrow(int id) {
@@ -716,16 +739,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             mMapController.setZoom(13);
             GeoPoint gPt = new GeoPoint(51500000, -150000);
             mMapController.setCenter(gPt);
-/*
 
-            MapView mMapView = (MapView) rootView.findViewById(R.id.mapView);
-            mMapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
-            mMapView.setBuiltInZoomControls(true);
-            MapController mMapController = (MapController) mMapView.getController();
-            mMapController.setZoom(13);
-            GeoPoint gPt = new GeoPoint(51500000, -150000);
-            mMapController.setCenter(gPt);
-*/
             return rootView;
         }
     }

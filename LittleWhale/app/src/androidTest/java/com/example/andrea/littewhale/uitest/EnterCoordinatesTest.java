@@ -13,10 +13,14 @@ import android.widget.TextView;
 import com.example.andrea.littewhale.EditLocations;
 import com.example.andrea.littewhale.EnterCoordinates;
 import com.example.andrea.littewhale.MainActivity;
+import com.example.andrea.littewhale.NavigationActivity;
 import com.example.andrea.littewhale.R;
 import com.robotium.solo.Solo;
 
 import org.w3c.dom.Text;
+
+import java.io.PrintStream;
+import java.net.Socket;
 
 /**
  * Created by clemens on 05.04.16.
@@ -40,11 +44,21 @@ public class EnterCoordinatesTest extends ActivityInstrumentationTestCase2 {
     }
 
 
-/*    public void testStartNavigation() {
-       // mySolo.clickOnButton("Start Navigating");
-       // mySolo.waitForActivity("");
+    public void testStartNavigation() throws Exception{
+        mySolo.clickOnButton("Start Navigating");
+        mySolo.waitForActivity("");
 
-    }*/
+        Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
+        PrintStream out = new PrintStream(socket.getOutputStream());
+        double latitude = 41.0;
+        double longitude = 17.0;
+        String str = "geo fix " + Double.toString(latitude) + " " +  Double.toString(longitude) + "\n";
+        out.print(str);
+        socket.close();
+
+        mySolo.goBack();
+        mySolo.waitForActivity("EnterCoordinates");
+    }
 
     public void testDecimalToTime() {
         mySolo.clickOnRadioButton(1);
