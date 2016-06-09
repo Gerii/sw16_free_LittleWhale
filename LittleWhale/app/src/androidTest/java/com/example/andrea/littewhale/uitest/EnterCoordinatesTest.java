@@ -40,11 +40,11 @@ public class EnterCoordinatesTest extends ActivityInstrumentationTestCase2 {
     }
 
 
-    public void testStartNavigation() {
-        mySolo.clickOnButton("Start Navigating");
-        mySolo.waitForActivity("");
+/*    public void testStartNavigation() {
+       // mySolo.clickOnButton("Start Navigating");
+       // mySolo.waitForActivity("");
 
-    }
+    }*/
 
     public void testDecimalToTime() {
         mySolo.clickOnRadioButton(1);

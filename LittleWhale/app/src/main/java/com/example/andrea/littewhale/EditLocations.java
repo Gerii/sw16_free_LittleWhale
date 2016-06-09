@@ -3,6 +3,7 @@ package com.example.andrea.littewhale;
 import com.example.andrea.model.Location;
 import com.example.andrea.model.LocationDb;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -33,25 +34,14 @@ public class EditLocations extends AppCompatActivity {
     private static String line1 = "line1";
     private static String line2 = "line2";
 
-    private Boolean readOnly = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_locations);
-
+        Log.w("ON CREATE", "EditLocations");
         Bundle extras = getIntent().getExtras();
 
-        if(extras != null)
-        {
-            String caller = extras.getString("Caller");
-
-            if(caller.equals("enterCoordinates"))
-            {
-
-               readOnly = true;
-            }
-        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -89,17 +79,56 @@ public class EditLocations extends AppCompatActivity {
 
         final ListView lv = (ListView)findViewById(R.id.listView);
 
-        lv.setAdapter(adapter);
+        if (lv != null) {
+            lv.setAdapter(adapter);
+        }
 
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Long dbId = listIdToDbId.get(id);
+        if (lv != null) {
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Long dbId = listIdToDbId.get(id);
 
-                LocationDb locationDbInstance = LocationDb.getInstance();
-                Location selectedLocation = locationDbInstance.getLocation(getApplicationContext(), dbId);
+                    LocationDb locationDbInstance = LocationDb.getInstance();
+                    Location selectedLocation = locationDbInstance.getLocation(getApplicationContext(), dbId);
 
-                if (!readOnly) {
+                        Intent myIntent = new Intent();
+                        myIntent.putExtra("LocationLatitude", selectedLocation.latitude);
+                        myIntent.putExtra("LocationLongitude", selectedLocation.longitude);
+                        myIntent.putExtra("LocationName", selectedLocation.placeName);
+
+
+                    Log.e("SETTING FINISHED", "");
+
+                    if (getParent() == null) {
+                        setResult(Activity.RESULT_OK,myIntent);
+                        Log.e("SETTING FINISHED", "Parent was null");
+
+                    }
+                    else {
+                        getParent().setResult(Activity.RESULT_OK, myIntent);
+                        Log.e("SETTING FINISHED", "Parent was NOT null");
+
+                    }
+                        finish();
+
+                }
+            });
+        }
+
+
+        if (lv != null) {
+            lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    Log.w("EDIT", "Edit element");
+
+                    Long dbId = listIdToDbId.get(id);
+
+                    LocationDb locationDbInstance = LocationDb.getInstance();
+                    Location selectedLocation = locationDbInstance.getLocation(getApplicationContext(), dbId);
+
+
                     Intent myIntent = new Intent(EditLocations.this, AddNewLocation.class);
                     myIntent.putExtra("LocationName", selectedLocation.placeName);
                     myIntent.putExtra("LocationLatitude", selectedLocation.latitude);
@@ -107,63 +136,22 @@ public class EditLocations extends AppCompatActivity {
                     myIntent.putExtra("LocationId", dbId);
 
                     EditLocations.this.startActivity(myIntent);
-                } else {
-                    Intent myIntent = new Intent();
-                    myIntent.putExtra("LocationLatitude", selectedLocation.latitude);
-                    myIntent.putExtra("LocationLongitude", selectedLocation.longitude);
-                    setResult(RESULT_OK, myIntent);
-                    finish();
+                    return true;
                 }
-
-
-            }
-        });
-
-
-        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.w("DELETE", "Delete element");
-                //locationList.remove(position);
-                //adapter.notify();
-                return false;
-            }
-        });
+            });
+        }
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAdd);
-
-        if(readOnly)
-        {
-            fab.setVisibility(LinearLayout.GONE);
-        }
 
         if(fab != null){
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //Log.w("fab", "fab pressed");
-
                     try {
-                        //LocationDb.getInstance().addLocation(getApplicationContext(), "blub", 12.0, 15.3);
                         Intent myIntent = new Intent(EditLocations.this, AddNewLocation.class);
                         EditLocations.this.startActivity(myIntent);
 
-                        /*ArrayList<Location> locationList = LocationDb.getInstance().getAllLocations(getApplicationContext());
-
-                        for(Location l : locationList){
-                            Log.w("id", l.id.toString());
-                            Log.w("name", l.placeName);
-                            Log.w("lat", l.latitude.toString());
-                            Log.w("lon", l.longitude.toString());
-                        }*/
-
-                        /*Location tmpLoc = LocationDb.getInstance().getLocation(getApplicationContext(), Long.valueOf(2));
-
-                        Log.w("id", tmpLoc.id.toString());
-                        Log.w("name", tmpLoc.placeName);
-                        Log.w("lat", tmpLoc.latitude.toString());
-                        Log.w("lon", tmpLoc.longitude.toString());*/
                     }
                     catch (Exception e)
                     {
@@ -180,6 +168,7 @@ public class EditLocations extends AppCompatActivity {
         super.onRestart();
         finish();
         startActivity(getIntent());
-        Log.w("RESUME", "method is called");
+        Log.w("RESTART", "method is called");
+
     }
 }

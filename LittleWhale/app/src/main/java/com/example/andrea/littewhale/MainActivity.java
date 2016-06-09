@@ -12,23 +12,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Button buttonStartNavigation = (Button) findViewById(R.id.btnStartNavigate);
-        buttonStartNavigation.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-                Intent myIntent = new Intent(MainActivity.this, EnterCoordinates.class);
-                MainActivity.this.startActivity(myIntent);
-            }
-        });
-
-        Button buttonStartEditLocations = (Button) findViewById(R.id.btnStartEditLocations);
-        buttonStartEditLocations.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-                Intent myIntent = new Intent(MainActivity.this, EditLocations.class);
-                MainActivity.this.startActivity(myIntent);
-            }
-        });
-
+        setContentView(R.layout.activity_enter_coordinates);
     }
 }
