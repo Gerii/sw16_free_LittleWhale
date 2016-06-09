@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".EnterCoordinates">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,14 +22,19 @@
         <activity
             android:name=".EditLocations"
             android:label="@string/title_activity_edit_locations"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".EnterCoordinates" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="standard"
+
+            />
+
         <activity
             android:name=".NavigationActivity"
             android:label="@string/title_activity_navigation"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>
-        <activity android:name=".AddNewLocation" />
+
+        <activity android:name=".AddNewLocation"
+            android:launchMode="standard"/>
     </application>
 
 

@@ -9,14 +9,30 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.andrea.littewhale.EnterCoordinates">
 
-    <RadioGroup
+
+    <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Target location"
+            android:id="@+id/cityName" />
+
+
+    </LinearLayout>
+
+
+    <RadioGroup
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/radioGroup"
         android:layout_gravity="center"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_marginTop="50dp"
+        android:layout_alignParentLeft="true">
 
         <RadioButton
             android:layout_width="wrap_content"
@@ -40,7 +56,8 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/radioGroup"
         android:id="@+id/linearLayoutTimeCoords">
 
         <!-- Time latitude-->
@@ -56,7 +73,6 @@
                 android:inputType="number"
                 android:ems="10"
                 android:id="@+id/editTextDegreeTimeLatitude"
-                android:layout_centerHorizontal="true"
                 android:editable="true"
                 android:layout_weight="1"
                 android:nextFocusForward="@+id/editTextMinuteLatitude"
@@ -75,7 +91,6 @@
                 android:inputType="number"
                 android:ems="10"
                 android:id="@+id/editTextMinuteLatitude"
-                android:layout_centerHorizontal="true"
                 android:editable="true"
                 android:layout_weight="1"
                 android:nextFocusForward="@+id/editTextSecondLatitude"
@@ -221,6 +236,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignTop="@id/radioGroup"
         android:id="@+id/linearLayoutDecimalCoords">
 
         <!-- decimal latitude-->
@@ -306,24 +322,51 @@
     </LinearLayout>
 
 
-    <Button
+    <!-- Buttons -->
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start Navigating"
-        android:id="@+id/buttonStartNavigating"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:orientation="horizontal"
+        android:layout_marginTop="280dp"
+        android:id="@+id/buttonLayout">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Use existing location"
-        android:id="@+id/useExistingLocation"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        <Button
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Use existing location"
+            android:drawableLeft="@android:drawable/ic_dialog_map"
+            android:paddingLeft="10dip"
+            android:id="@+id/useExistingLocation"
+            android:background="#40C4FF"
+            android:textColor="@color/colorWhite"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Start Navigating"
+            android:drawableLeft="@android:drawable/ic_menu_directions"
+            android:paddingLeft="10dip"
+            android:id="@+id/buttonStartNavigating"
+            android:background="#40C4FF"
+            android:layout_marginLeft="5pt"
+            android:textColor="@color/colorWhite"/>
+
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="70dp"
+
+        android:id="@+id/imageView"
+        android:src="@drawable/icon"
+        android:layout_alignTop="@id/buttonLayout"
+        />
+
 
 </RelativeLayout>

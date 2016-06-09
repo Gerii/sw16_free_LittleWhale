@@ -5,6 +5,8 @@ import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -18,6 +20,8 @@ public class EnterCoordinates extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_enter_coordinates);
 
         RadioButton button = (RadioButton) findViewById(R.id.rbtnTimeNotation);
@@ -35,9 +39,6 @@ public class EnterCoordinates extends AppCompatActivity {
                 if (timeLayout != null) {
                     timeLayout.setVisibility(LinearLayout.VISIBLE);
                 }
-
-
-
             }
         });
 
@@ -125,7 +126,7 @@ public class EnterCoordinates extends AppCompatActivity {
         if(requestCode == 1)
         {
 
-            if(resultCode == RESULT_OK ) {
+            if(resultCode == RESULT_OK || resultCode == RESULT_CANCELED) {
                 if(data == null) {
                     Log.e("ERROR", "data null");
 
@@ -137,6 +138,7 @@ public class EnterCoordinates extends AppCompatActivity {
                     Log.w("ON ACTIVITY RESULT","set lon and lat");
                     Double lon = extras.getDouble("LocationLongitude");
                     Double lat = extras.getDouble("LocationLatitude");
+                    String name = extras.getString("LocationName");
 
                     RadioButton button = (RadioButton) findViewById(R.id.rbtnTimeNotation);
                     RadioButton button2 = (RadioButton) findViewById(R.id.rbtnDecimalNotation);
@@ -151,6 +153,12 @@ public class EnterCoordinates extends AppCompatActivity {
                         Log.e("ERROR", "WTF?!?!?!");
                     }
 
+                    TextView locationName = (TextView) findViewById(R.id.cityName);
+                    if(locationName != null) {
+                        locationName.setText(name);
+                    }
+
+
                 } else {
                     Log.e("ERROR", "EXTRAS NULL");
 
@@ -164,6 +172,7 @@ public class EnterCoordinates extends AppCompatActivity {
         }
 
     }
+
 
     private int convertToInt(String numberString) {
 
