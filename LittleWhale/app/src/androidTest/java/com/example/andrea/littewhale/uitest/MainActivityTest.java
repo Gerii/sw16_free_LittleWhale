@@ -28,7 +28,11 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
     public void testButtons() {
         mySolo.clickOnButton("Start Navigating");
+        mySolo.waitForActivity("EnterCoordinates");
         mySolo.goBack();
         mySolo.clickOnButton("Edit Locations");
+        mySolo.waitForActivity("EditLocations");
+        mySolo.goBack();
+        mySolo.waitForActivity("MainActivity");
     }
 }

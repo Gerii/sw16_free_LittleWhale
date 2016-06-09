@@ -51,7 +51,6 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
         String str = "geo fix " + Double.toString(latitude) + " " +  Double.toString(longitude) + "\n";
         out.print(str);
 
-
         mySolo = new Solo(getInstrumentation(), getActivity());
 
     }
@@ -61,7 +60,14 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
 
     }
 
-    public void testCalculatedCourse() {
+    public void testCalculatedCourse() throws Exception{
+        Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
+        PrintStream out = new PrintStream(socket.getOutputStream());
+        double latitude = 41.0;
+        double longitude = 17.0;
+        String str = "geo fix " + Double.toString(latitude) + " " +  Double.toString(longitude) + "\n";
+        out.print(str);
+
         Assert.assertTrue(mySolo.searchText("0.000 kts"));
         Assert.assertTrue(mySolo.searchText("347.773 °"));
         Assert.assertTrue(mySolo.searchText("3383.015 NM"));

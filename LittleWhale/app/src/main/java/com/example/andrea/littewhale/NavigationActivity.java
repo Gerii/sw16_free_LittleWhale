@@ -496,10 +496,10 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     }
 
     public void onSensorChanged(SensorEvent event) {
-            System.out.println("values changed");
-            System.out.println(event.values[0]);
-            System.out.println(event.values[1]);
-            System.out.println(event.values[2]);
+            //System.out.println("values changed");
+            //System.out.println(event.values[0]);
+            //System.out.println(event.values[1]);
+            //System.out.println(event.values[2]);
             updateCourse(event.sensor.getType(), event.values);
     }
 
@@ -696,16 +696,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             mMapController.setZoom(13);
             GeoPoint gPt = new GeoPoint(51500000, -150000);
             mMapController.setCenter(gPt);
-/*
 
-            MapView mMapView = (MapView) rootView.findViewById(R.id.mapView);
-            mMapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
-            mMapView.setBuiltInZoomControls(true);
-            MapController mMapController = (MapController) mMapView.getController();
-            mMapController.setZoom(13);
-            GeoPoint gPt = new GeoPoint(51500000, -150000);
-            mMapController.setCenter(gPt);
-*/
             return rootView;
         }
     }
