@@ -345,21 +345,21 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
     }
 
-    public void onSensorChanged(SensorEvent event) {
+    public void updateCourse(int sensorType, float[] values) {
         //http://www.ssaurel.com/blog/learn-how-to-make-a-compass-application-for-android/
         boolean accelOrMagnetic = false;
 
         // get accelerometer data
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
-            gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
-            gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+        if (sensorType == Sensor.TYPE_ACCELEROMETER) {
+            gravity[0] = alpha * gravity[0] + (1 - alpha) * values[0];
+            gravity[1] = alpha * gravity[1] + (1 - alpha) * values[1];
+            gravity[2] = alpha * gravity[2] + (1 - alpha) * values[2];
 
             accelOrMagnetic = true;
-        } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-            geomagnetic[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
-            geomagnetic[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
-            geomagnetic[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+        } else if (sensorType == Sensor.TYPE_MAGNETIC_FIELD) {
+            geomagnetic[0] = alpha * gravity[0] + (1 - alpha) * values[0];
+            geomagnetic[1] = alpha * gravity[1] + (1 - alpha) * values[1];
+            geomagnetic[2] = alpha * gravity[2] + (1 - alpha) * values[2];
 
             accelOrMagnetic = true;
         }
@@ -493,6 +493,14 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 arrow.setAlpha(1f);
             }
         }
+    }
+
+    public void onSensorChanged(SensorEvent event) {
+            System.out.println("values changed");
+            System.out.println(event.values[0]);
+            System.out.println(event.values[1]);
+            System.out.println(event.values[2]);
+            updateCourse(event.sensor.getType(), event.values);
     }
 
     private void resetArrow(int id) {
