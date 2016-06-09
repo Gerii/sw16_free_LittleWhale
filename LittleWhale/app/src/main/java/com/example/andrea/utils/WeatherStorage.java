@@ -1,6 +1,7 @@
 package com.example.andrea.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,8 +13,7 @@ import java.util.Iterator;
 /**
  * Created by gery on 08.06.16.
  */
-public class WeatherStorage implements Iterable<Weather> {
-    private ArrayList<Weather> weatherList = new ArrayList<>();
+public class WeatherStorage extends ArrayList<Weather> {
     boolean isLoaded = false;
 
     public boolean isLoaded() {
@@ -38,27 +38,25 @@ public class WeatherStorage implements Iterable<Weather> {
                 errorMessage = curWeather.getErrorMessage();
                 return;
             }
-            weatherList.add(curWeather);
-
+            this.add(curWeather);
 
             JSONObject fiveDayWeatherJSON = new JSONObject(fiveDayWeather);
 
+            //TODO this can also be {"cod":"404","message":"Error: Not found city"}
             JSONArray weatherJSONArray = (JSONArray) fiveDayWeatherJSON.get("list");
             for(int i = 0; i < weatherJSONArray.length(); ++i) {
-                JSONObject weatherJSON = (JSONObject) weatherJSONArray.get(0);
+                JSONObject weatherJSON = (JSONObject) weatherJSONArray.get(i);
                 Weather weather = new Weather(context);
-                curWeather.parseWeather(weatherJSON, false);
-                weatherList.add(weather);
+                Log.e("parsn", weatherJSON.toString());
+
+                weather.parseWeather(weatherJSON, false);
+
+                this.add(weather);
             }
         } catch (Exception e) {
-            weatherList.clear();
+            this.clear();
             throw e;
         }
         isLoaded = true;
-    }
-
-    @Override
-    public Iterator<Weather> iterator() {
-        return weatherList.iterator();
     }
 }

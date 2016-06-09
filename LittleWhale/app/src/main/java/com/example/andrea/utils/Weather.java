@@ -4,16 +4,21 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.JsonReader;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.example.andrea.littewhale.NavigationActivity;
 import com.example.andrea.littewhale.R;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InterfaceAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.commons.io.IOUtils;
@@ -25,6 +30,7 @@ public class Weather {
 
     private int id = -1;
     private String weatherIcon;
+    private Date time;
 
     public int getId() {
         return id;
@@ -108,7 +114,6 @@ public class Weather {
 
     public void parseWeather(JSONObject responseJSON, boolean checkHTTPCode) throws WeatherParsingException {
         try {
-
             if (checkHTTPCode) {
                 int httpcode = (int) Integer.parseInt(responseJSON.get("cod").toString());
                 if (httpcode != 200) {
@@ -122,6 +127,19 @@ public class Weather {
                 }
             }
 
+            /*if (responseJSON.has("dt_txt")) {
+                try {
+                    timeText = (String) responseJSON.get("dt_txt");
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date = formatter.parse(timeText);
+                    timeText = formatter.format(date);
+                }
+                catch (ParseException pE) {
+                    Log.e("Weather Parsing", pE.toString());
+                    throw new WeatherParsingException();
+                }
+            }*/
+
             JSONArray weatherJSONArray = (JSONArray) responseJSON.get("weather");
             JSONObject firstWeatherJSON = (JSONObject) weatherJSONArray.get(0);
 
@@ -134,9 +152,10 @@ public class Weather {
             //TODO we could use sunrise and sunset data of the weather api
             this.weatherIcon = WEATHER_CODES.get((id == 800) ? ((hourOfDay >= 7 && hourOfDay < 20) ? id : 0) : id / 100);
 
+            long time = Long.parseLong(responseJSON.get("dt").toString() + "000");
             cal = Calendar.getInstance();
-            cal.setTimeInMillis(Long.parseLong(responseJSON.get("dt").toString() + "000"));
-
+            cal.setTimeInMillis(time);
+            this.time = new Date(time);
             this.date = cal;
 
             JSONObject clouds = (JSONObject) responseJSON.get("clouds");
@@ -151,10 +170,20 @@ public class Weather {
             this.windSpeed = Double.parseDouble(wind.get("speed").toString());
             this.windDirection = Double.parseDouble(wind.get("deg").toString());
             success = true;
+            Log.e("PARSING", Double.toString(this.temperature));
         } catch (JSONException e) {
             Log.e("Weather Parsing", e.toString());
             throw new WeatherParsingException();
         }
+    }
+
+    public String getFormattedDate() {
+        Calendar cal = getDate();
+        return cal.get(Calendar.DAY_OF_MONTH) + "." + (cal.get(Calendar.MONTH) + 1) + "." + cal.get(Calendar.YEAR);
+    }
+
+    public String getFormattedTime() {
+        return new SimpleDateFormat("HH:mm").format(time);
     }
 
     public String getWeatherIcon() {

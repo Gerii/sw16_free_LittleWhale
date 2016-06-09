@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fiveDayWeather"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+    <TextView
+        android:id="@+id/editTextDateFiveDay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:textColor="@android:color/white"
+        android:textSize="10pt" />
+
+    <LinearLayout
+        android:id="@+id/linearLayoutWeather"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/editTextCurWeatherIconFiveDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30dp"
+            android:text=""
+            android:textColor="@android:color/white"
+            android:textSize="30pt" />
+
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="0,1,2,3">
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/editTextTemperatureFiveDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text=""
+                    android:textColor="@android:color/white"
+                    android:textSize="10pt" />
+
+                <TextView
+                    android:id="@+id/editTextTemperatureValueFiveDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="N/A"
+                    android:textColor="@android:color/white"
+                    android:textSize="10pt" />
+
+                <TextView
+                    android:id="@+id/editTextCloudsFiveDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text=""
+                    android:textColor="@android:color/white"
+                    android:textSize="10pt" />
+
+                <TextView
+                    android:id="@+id/editTextCloudsValueFiveDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="N/A"
+                    android:textColor="@android:color/white"
+                    android:textSize="10pt" />
+            </TableRow>
+
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/editTextWindSpeedFiveDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text=""
+                    android:textColor="@android:color/white"
+                    android:textSize="10pt" />
+
+
+                <TextView
+                    android:id="@+id/editTextWindSpeedValueFiveDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="N/A"
+                    android:textColor="@android:color/white"
+                    android:textSize="10pt" />
+
+                <TextView
+                    android:id="@+id/editTextWindDirFiveDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text=""
+                    android:textColor="@android:color/white"
+                    android:textSize="10pt" />
+
+                <TextView
+                    android:id="@+id/editTextWindDirValueFiveDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="N/A"
+                    android:textColor="@android:color/white"
+                    android:textSize="10pt" />
+
+
+            </TableRow>
+
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/editTextHumidityFiveDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text=""
+                    android:textColor="@android:color/white"
+                    android:textSize="10pt" />
+
+
+                <TextView
+                    android:id="@+id/editTextHumidityValueFiveDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="N/A"
+                    android:textColor="@android:color/white"
+                    android:textSize="10pt" />
+
+                <TextView
+                    android:id="@+id/editTextPressureFiveDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text=""
+                    android:textColor="@android:color/white"
+                    android:textSize="10pt" />
+
+                <TextView
+                    android:id="@+id/editTextPressureValueFiveDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="N/A"
+                    android:textColor="@android:color/white"
+                    android:textSize="10pt" />
+            </TableRow>
+
+        </TableLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

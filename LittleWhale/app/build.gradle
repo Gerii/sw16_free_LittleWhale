@@ -26,9 +26,11 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
+    androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.3.1'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.4.0'
-    androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.3.1'
     compile 'org.osmdroid:osmdroid-android:5.2@aar'
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
 }

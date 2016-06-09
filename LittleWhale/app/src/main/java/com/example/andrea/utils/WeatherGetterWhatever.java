@@ -72,7 +72,6 @@ public class WeatherGetterWhatever extends AsyncTask<Double, Void, WeatherJSONs>
 
                 weatherStorage.parseWeather(weatherJSONs.getCurrentWeatherJSON(), weatherJSONs.getFiveDayWeatherJSON(), context);
 
-
                 ((NavigationActivity.WeatherFragment) mSectionsPagerAdapter.weatherFragment).updateWeather(weatherStorage);
             }
             else {
