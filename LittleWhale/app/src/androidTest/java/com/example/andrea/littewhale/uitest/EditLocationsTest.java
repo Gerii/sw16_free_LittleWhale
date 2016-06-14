@@ -57,7 +57,8 @@ public class EditLocationsTest extends ActivityInstrumentationTestCase2 {
     public void tearDown() throws Exception {
 
     }
-/*
+
+    /*
     public void testPlus(){
      //   View fab = getActivity().findViewById(R.id.fabAdd);
       //  mySolo.clickOnView(fab);
@@ -68,7 +69,7 @@ public class EditLocationsTest extends ActivityInstrumentationTestCase2 {
 
         for(int i = 0; i < lv.getAdapter().getCount() ; i++){
             mySolo.clickOnView(getViewAtIndex(lv, i, getInstrumentation()));
-            Log.w("w", i + "a");
+            Log.w("w", i + "blub bla bla");
             mySolo.sleep(500);
         }
     }
