@@ -360,12 +360,11 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginTop="70dp"
+        android:layout_height="170dp"
 
         android:id="@+id/imageView"
         android:src="@drawable/icon"
-        android:layout_alignTop="@id/buttonLayout"
+        android:layout_alignParentBottom="true"
         />
 
 
