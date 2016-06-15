@@ -49,7 +49,6 @@ public class WeatherGetterWhatever extends AsyncTask<Double, Void, WeatherJSONs>
         this.mSectionsPagerAdapter = mSectionsPagerAdapter;
         dailyURL = "http://api.openweathermap.org/data/2.5/weather?lat=" + Double.toString(lat) + "&lon=" + Double.toString(lon) + "&appid=" + API_KEY;
         fiveDayURL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + Double.toString(lat) + "&lon=" + Double.toString(lon) + "&appid=" + API_KEY;
-
     }
 
     @Override
@@ -59,7 +58,7 @@ public class WeatherGetterWhatever extends AsyncTask<Double, Void, WeatherJSONs>
             String fiveDayWeatherJSON = IOUtils.toString(new URL(fiveDayURL));
             return new WeatherJSONs(currentWeatherJSON, fiveDayWeatherJSON);
         } catch (IOException e) {
-            //TODO handle
+            ((NavigationActivity.WeatherFragment) mSectionsPagerAdapter.weatherFragment).updateWeather(null);
             e.printStackTrace();
         }
         return null;
@@ -69,9 +68,7 @@ public class WeatherGetterWhatever extends AsyncTask<Double, Void, WeatherJSONs>
         try {
             if(weatherJSONs != null && weatherJSONs.isReady()) {
                 WeatherStorage weatherStorage = new WeatherStorage();
-
                 weatherStorage.parseWeather(weatherJSONs.getCurrentWeatherJSON(), weatherJSONs.getFiveDayWeatherJSON(), context);
-
                 ((NavigationActivity.WeatherFragment) mSectionsPagerAdapter.weatherFragment).updateWeather(weatherStorage);
             }
             else {

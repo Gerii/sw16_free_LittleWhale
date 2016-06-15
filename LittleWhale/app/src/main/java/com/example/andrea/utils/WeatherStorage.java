@@ -26,11 +26,11 @@ public class WeatherStorage extends ArrayList<Weather> {
 
     private String errorMessage;
 
-
     public WeatherStorage() {
     }
 
     public void parseWeather(String currentWeather, String fiveDayWeather, Context context) throws Exception {
+        this.clear();
         try {
             Weather curWeather = new Weather(context);
             curWeather.parseWeather(new JSONObject(currentWeather), true);
@@ -42,15 +42,21 @@ public class WeatherStorage extends ArrayList<Weather> {
 
             JSONObject fiveDayWeatherJSON = new JSONObject(fiveDayWeather);
 
-            //TODO this can also be {"cod":"404","message":"Error: Not found city"}
+            if(Weather.weatherAPIFailed(fiveDayWeatherJSON)) {
+                try {
+                    errorMessage = (String) fiveDayWeatherJSON.get("message");
+                } catch (JSONException e) {
+                    errorMessage = "Weather fetching failed.";
+                }
+                this.clear();
+                return;
+            }
+
             JSONArray weatherJSONArray = (JSONArray) fiveDayWeatherJSON.get("list");
             for(int i = 0; i < weatherJSONArray.length(); ++i) {
                 JSONObject weatherJSON = (JSONObject) weatherJSONArray.get(i);
                 Weather weather = new Weather(context);
-                Log.e("parsn", weatherJSON.toString());
-
                 weather.parseWeather(weatherJSON, false);
-
                 this.add(weather);
             }
         } catch (Exception e) {
