@@ -541,6 +541,9 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
