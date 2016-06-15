@@ -155,7 +155,7 @@ public class EditLocations extends AppCompatActivity {
                     }
                     catch (Exception e)
                     {
-                        Log.w("graz", e);
+                        Log.w("FAIL", e);
                     }
                 }
             });
