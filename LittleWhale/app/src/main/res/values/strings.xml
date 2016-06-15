@@ -16,6 +16,18 @@
     <string name="section_format">Hello World from section: %1$d</string>
 
 
+    <string name="windDirIcon"></string>
+    <string name="cloudsIcon"></string>
+    <string name="temperatureIcon"></string>
+    <string name="windSpeedIcon"></string>
+    <string name="humidityIcon"></string>
+    <string name="pressureIcon"></string>
+    <string name="valueNotAvailable"></string>
+    <string name="weatherLoadingFailedText">Could not load weather :(</string>
+    <string name="weatherCheckNetworkConnText">Check your network connection and try again later.</string>
+    <string name="weatherServerReturnText">The server returned:</string>
+
+
     <integer-array name="weatherid">
         <item>800</item>
         <item>8</item>

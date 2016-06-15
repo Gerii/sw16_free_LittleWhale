@@ -27,6 +27,7 @@ public class WeatherStorage extends ArrayList<Weather> {
     private String errorMessage;
 
     public WeatherStorage() {
+        super();
     }
 
     public void parseWeather(String currentWeather, String fiveDayWeather, Context context) throws Exception {

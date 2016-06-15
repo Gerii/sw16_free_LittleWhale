@@ -47,7 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text=""
+                    android:text="@string/temperatureIcon"
                     android:textColor="@android:color/white"
                     android:textSize="10pt" />
 
@@ -56,7 +56,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="N/A"
+                    android:text="@string/valueNotAvailable"
                     android:textColor="@android:color/white"
                     android:textSize="10pt" />
 
@@ -65,7 +65,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text=""
+                    android:text="@string/cloudsIcon"
                     android:textColor="@android:color/white"
                     android:textSize="10pt" />
 
@@ -74,7 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="N/A"
+                    android:text="@string/valueNotAvailable"
                     android:textColor="@android:color/white"
                     android:textSize="10pt" />
             </TableRow>
@@ -87,7 +87,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text=""
+                    android:text="@string/windSpeedIcon"
                     android:textColor="@android:color/white"
                     android:textSize="10pt" />
 
@@ -97,7 +97,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="N/A"
+                    android:text="@string/valueNotAvailable"
                     android:textColor="@android:color/white"
                     android:textSize="10pt" />
 
@@ -106,7 +106,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text=""
+                    android:text="@string/windDirIcon"
                     android:textColor="@android:color/white"
                     android:textSize="10pt" />
 
@@ -115,7 +115,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="N/A"
+                    android:text="@string/valueNotAvailable"
                     android:textColor="@android:color/white"
                     android:textSize="10pt" />
 
@@ -130,7 +130,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text=""
+                    android:text="@string/humidityIcon"
                     android:textColor="@android:color/white"
                     android:textSize="10pt" />
 
@@ -140,7 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="N/A"
+                    android:text="@string/valueNotAvailable"
                     android:textColor="@android:color/white"
                     android:textSize="10pt" />
 
@@ -149,7 +149,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text=""
+                    android:text="@string/pressureIcon"
                     android:textColor="@android:color/white"
                     android:textSize="10pt" />
 
@@ -158,7 +158,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="N/A"
+                    android:text="@string/valueNotAvailable"
                     android:textColor="@android:color/white"
                     android:textSize="10pt" />
             </TableRow>

@@ -97,7 +97,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     LocationManager locationManager;
 
     public static final double COORD_DEFAULT_VALUE = -1000.0;
-    public static final int WEATHER_MAX_AGE = 1 * 60 * 60 * 1000;
+    public static final int WEATHER_MAX_AGE = 0; //1 * 60 * 60 * 1000;
 
     private static double oldLat = COORD_DEFAULT_VALUE;
     private static double oldLon = COORD_DEFAULT_VALUE;
@@ -270,7 +270,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 }
 
                 Calendar now = Calendar.getInstance();
-                if (weatherAge == null || weatherAge.compareTo(now) >= WEATHER_MAX_AGE) {
+                if (weatherAge == null || now.compareTo(weatherAge) >= WEATHER_MAX_AGE) {
                     Log.e("TAG", "Updating WEATHER");
                     WeatherGetterWhatever wgw = new WeatherGetterWhatever(curLat, curLon, getApplicationContext(), mSectionsPagerAdapter);
                     wgw.execute();
@@ -627,18 +627,23 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 ((TextView) rootView.findViewById(R.id.editTextWindSpeedValue)).setText(DECIMAL_FORMAT.format(weather.getWindSpeed()) + "m/s");
 
                 mAdapter.replaceWeatherStorage(weatherStorage);
-
             } else {
-                //TODO reset other fields
-                ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText("\uF07B");
-
+                ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText(R.string.valueNotAvailable);
+                ((TextView) rootView.findViewById(R.id.editTextDate)).setText(R.string.weatherLoadingFailedText);
+                ((TextView) rootView.findViewById(R.id.editTextPressureValue)).setText(R.string.pressureIcon);
+                ((TextView) rootView.findViewById(R.id.editTextHumidityValue)).setText(R.string.humidityIcon);
+                ((TextView) rootView.findViewById(R.id.editTextTemperatureValue)).setText(R.string.temperatureIcon);
+                ((TextView) rootView.findViewById(R.id.editTextCloudsValue)).setText(R.string.cloudsIcon);
+                ((TextView) rootView.findViewById(R.id.editTextWindDirValue)).setText(R.string.windDirIcon);
+                ((TextView) rootView.findViewById(R.id.editTextWindSpeedValue)).setText(R.string.windSpeedIcon);
+                mAdapter.replaceWeatherStorage(new WeatherStorage());
                 Context context = rootView.getContext().getApplicationContext();
                 CharSequence text;
                 if (weatherStorage != null) {
                     String errorMessage = weatherStorage.getErrorMessage();
-                    text = "Could not load weather." + ((errorMessage != null) ? "\nMessage: " + errorMessage : "");
+                    text = R.string.weatherLoadingFailedText + ((errorMessage != null) ? ("\n" + R.string.weatherServerReturnText + " ") + errorMessage : "");
                 } else {
-                    text = "Could not load weather.\nCheck your network connection and try again later.";
+                    text = R.string.weatherLoadingFailedText + "\n" + R.string.weatherCheckNetworkConnText;
                 }
                 Toast.makeText(context, text, Toast.LENGTH_LONG).show();
             }
