@@ -97,11 +97,12 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     LocationManager locationManager;
 
     public static final double COORD_DEFAULT_VALUE = -1000.0;
+    public static final int WEATHER_MAX_AGE = 1 * 60 * 60 * 1000;
 
     private static double oldLat = COORD_DEFAULT_VALUE;
     private static double oldLon = COORD_DEFAULT_VALUE;
     private static WeatherStorage weatherStorage = null;
-    private static Calendar weatherAge = null; //TODO implement age
+    private static Calendar weatherAge = null;
 
     public static double getOldLon() {
         return oldLon;
@@ -134,16 +135,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
-        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
-        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
-        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
-        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
-        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
-        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
-        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
-        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
-        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
-        //waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
@@ -156,18 +147,18 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
 
-        if(mViewPager != null)
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        if (mViewPager != null)
+            mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setOffscreenPageLimit(2);
 
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
-        if(tabLayout != null)
-        tabLayout.setupWithViewPager(mViewPager);
+        if (tabLayout != null)
+            tabLayout.setupWithViewPager(mViewPager);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-            checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             } else {
                 startLocationParameters();
@@ -176,7 +167,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             startLocationParameters();
         }
         //compass
-        mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetic = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
@@ -184,18 +175,18 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             startLocationParameters();
         }
 
     }
 
     private void startLocationParameters() {
-        if ( Build.VERSION.SDK_INT >= 23 && !(
+        if (Build.VERSION.SDK_INT >= 23 && !(
                 checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
-            return  ;
+                        checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                        checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+            return;
         }
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -213,10 +204,10 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 double targetLat = 0;
                 double targetLon = 0;
 
-                if(target.length == 2){
+                if (target.length == 2) {
                     targetLat = target[0];
                     targetLon = target[1];
-                }else{
+                } else {
                     return;
                 }
 
@@ -245,7 +236,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 TextView tvCurrlon = ((TextView) findViewById(R.id.editTextLon));
                 TextView tvCourseAngle = ((TextView) findViewById(R.id.editTextBearing));
 
-                if(tvDistance != null && tvSpeed != null && tvCourseAngle != null && tvCurrlon != null && tvCurrlat != null){
+                if (tvDistance != null && tvSpeed != null && tvCourseAngle != null && tvCurrlon != null && tvCurrlat != null) {
                     String tvSpeedStr = formatter.format(getCurrentSpeedNm(curLat, curLon)) + " kts";
                     String tvDistanceStr = formatter.format(NavigationUtils.distanceInNauticalMiles(curLat, curLon, targetLat, targetLon)) + " NM";
                     String tvCurrlonStr = formatter.format(curLon) + " °";
@@ -262,7 +253,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 if (mapView != null) {
                     MapController mMapController = (MapController) mapView.getController();
 
-                    Log.e("Map Long", String.valueOf(curLon * 1E6) );
+                    Log.e("Map Long", String.valueOf(curLon * 1E6));
                     Log.e("Map Lat", String.valueOf(curLat * 1E6));
 
                     GeoPoint gPt = new GeoPoint(curLat, curLon);
@@ -278,12 +269,10 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                     mapView.invalidate();
                 }
 
-                double lat = NavigationActivity.getOldLat(); //TODO we have this here
-                double lon = NavigationActivity.getOldLon();
-
-                if (lat != NavigationActivity.COORD_DEFAULT_VALUE && lon != NavigationActivity.COORD_DEFAULT_VALUE) {
+                Calendar now = Calendar.getInstance();
+                if (weatherAge == null || weatherAge.compareTo(now) >= WEATHER_MAX_AGE) {
                     Log.e("TAG", "Updating WEATHER");
-                    WeatherGetterWhatever wgw = new WeatherGetterWhatever(lat, lon, getApplicationContext(), mSectionsPagerAdapter);
+                    WeatherGetterWhatever wgw = new WeatherGetterWhatever(curLat, curLon, getApplicationContext(), mSectionsPagerAdapter);
                     wgw.execute();
                 }
             }
@@ -304,20 +293,20 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
             }
         };
-        if(locationManager != null)
+        if (locationManager != null)
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
 
 
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                if(locationManager != null)
-                  locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
+                if (locationManager != null)
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
             }
         }
 
@@ -326,13 +315,13 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                if(locationManager != null)
-                  locationManager.removeUpdates(locationListener);
+                if (locationManager != null)
+                    locationManager.removeUpdates(locationListener);
             }
         }
 
@@ -378,7 +367,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         TextView tvHeading = ((TextView) findViewById(R.id.editTextHeading));
         NumberFormat formatter = new DecimalFormat("#0");
 
-        if(tvHeading != null){
+        if (tvHeading != null) {
             long bearingView = Math.round(bearing) % 360;
             String tvHeadingText = formatter.format(bearingView) + " °";
             tvHeading.setText(tvHeadingText);
@@ -393,23 +382,23 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         String turnDegreeLeftRight = "";
 
-        if(turnLeftRight > -1.0 && turnLeftRight < 1.0){
+        if (turnLeftRight > -1.0 && turnLeftRight < 1.0) {
             turnDegreeLeftRight = formatter.format(turnLeftRight) + " °\n";
-        }else if(turnLeftRight < 180){
+        } else if (turnLeftRight < 180) {
             turnDegreeLeftRight = formatter.format(turnLeftRight) + " °\nright";
-        }else{
+        } else {
             double tmpTurnRight = 360 - turnLeftRight;
             turnDegreeLeftRight = formatter.format(tmpTurnRight) + " °\nleft";
         }
 
-        if(tvTurnLeftRight != null){
+        if (tvTurnLeftRight != null) {
             tvTurnLeftRight.setText(turnDegreeLeftRight);
         }
 
         //set arrows properly
         resetAllArrows();
 
-        double deviation = angle - bearing ;
+        double deviation = angle - bearing;
 
         deviation += 22.5;
         deviation += (2 * 360);
@@ -417,53 +406,52 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         // Log.e("Deviation", deviation);
 
-        if(deviation > 0 && deviation < 45) {
+        if (deviation > 0 && deviation < 45) {
             //Log.e("DIRECTION", "UP");
             ImageView arrow = ((ImageView) findViewById(R.id.upArrow));
-            if(arrow != null) {
+            if (arrow != null) {
                 arrow.setAlpha(1f);
             }
-        } else if(deviation > 45 && deviation < 90) {
+        } else if (deviation > 45 && deviation < 90) {
             //Log.e("DIRECTION", "UP RIGHT");
             ImageView arrow = ((ImageView) findViewById(R.id.upRightArrow));
-            if(arrow != null) {
+            if (arrow != null) {
                 arrow.setAlpha(1f);
             }
-        } else if(deviation > 90 && deviation < 135) {
+        } else if (deviation > 90 && deviation < 135) {
             //Log.e("DIRECTION", "RIGHT");
             ImageView arrow = ((ImageView) findViewById(R.id.rightArrow));
-            if(arrow != null) {
+            if (arrow != null) {
                 arrow.setAlpha(1f);
             }
-        }else if(deviation > 135 && deviation < 180) {
+        } else if (deviation > 135 && deviation < 180) {
             //Log.e("DIRECTION", "DOWN RIGHT");
             ImageView arrow = ((ImageView) findViewById(R.id.downRightArrow));
-            if(arrow != null) {
+            if (arrow != null) {
                 arrow.setAlpha(1f);
             }
-        }
-        else if(deviation > 180 && deviation < 225) {
+        } else if (deviation > 180 && deviation < 225) {
             //Log.e("DIRECTION", "DOWN");
             ImageView arrow = ((ImageView) findViewById(R.id.downArrow));
-            if(arrow != null) {
+            if (arrow != null) {
                 arrow.setAlpha(1f);
             }
-        } else if(deviation > 225 && deviation < 270) {
+        } else if (deviation > 225 && deviation < 270) {
             //Log.e("DIRECTION", "DOWN LEFT");
             ImageView arrow = ((ImageView) findViewById(R.id.downLeftArrow));
-            if(arrow != null) {
+            if (arrow != null) {
                 arrow.setAlpha(1f);
             }
-        } else if(deviation > 270 && deviation < 315) {
+        } else if (deviation > 270 && deviation < 315) {
             //Log.e("DIRECTION", "LEFT");
             ImageView arrow = ((ImageView) findViewById(R.id.leftArrow));
-            if(arrow != null) {
+            if (arrow != null) {
                 arrow.setAlpha(1f);
             }
-        } else if(deviation > 315 && deviation < 360) {
+        } else if (deviation > 315 && deviation < 360) {
             //Log.e("DIRECTION", "UP LEFT");
             ImageView arrow = ((ImageView) findViewById(R.id.upLeftArrow));
-            if(arrow != null) {
+            if (arrow != null) {
                 arrow.setAlpha(1f);
             }
         } else if (deviation > 180 && deviation < 225) {
@@ -494,16 +482,16 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     }
 
     public void onSensorChanged(SensorEvent event) {
-            //System.out.println("values changed");
-            //System.out.println(event.values[0]);
-            //System.out.println(event.values[1]);
-            //System.out.println(event.values[2]);
-            updateCourse(event.sensor.getType(), event.values);
+        //System.out.println("values changed");
+        //System.out.println(event.values[0]);
+        //System.out.println(event.values[1]);
+        //System.out.println(event.values[2]);
+        updateCourse(event.sensor.getType(), event.values);
     }
 
     private void resetArrow(int id) {
         ImageView arrow = ((ImageView) findViewById(id));
-        if(arrow != null)
+        if (arrow != null)
             arrow.setAlpha(0.3f);
     }
 
@@ -622,6 +610,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         public void updateWeather(WeatherStorage weatherStore) {
             weatherStorage = weatherStore;
+            weatherAge = Calendar.getInstance();
 
             if (weatherStorage != null && weatherStorage.isLoaded()) {
                 initFiveDayForecastList();
@@ -629,7 +618,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 boolean currentWeatherDone = false;
                 Weather weather = weatherStore.get(0);
                 ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText(weather.getWeatherIcon());
-                ((TextView) rootView.findViewById(R.id.editTextDate)).setText(weather.getFormattedDate()+ " " + weather.getFormattedTime());
+                ((TextView) rootView.findViewById(R.id.editTextDate)).setText(weather.getFormattedDate() + " " + weather.getFormattedTime());
                 ((TextView) rootView.findViewById(R.id.editTextPressureValue)).setText(DECIMAL_FORMAT.format(weather.getPressure()) + "hPa");
                 ((TextView) rootView.findViewById(R.id.editTextHumidityValue)).setText(weather.getHumidity() + "%");
                 ((TextView) rootView.findViewById(R.id.editTextTemperatureValue)).setText(DECIMAL_FORMAT.format(weather.getTemperature()) + "°C");
@@ -642,9 +631,10 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             } else {
                 //TODO reset other fields
                 ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText("\uF07B");
+
                 Context context = rootView.getContext().getApplicationContext();
                 CharSequence text;
-                if(weatherStorage != null) {
+                if (weatherStorage != null) {
                     String errorMessage = weatherStorage.getErrorMessage();
                     text = "Could not load weather." + ((errorMessage != null) ? "\nMessage: " + errorMessage : "");
                 } else {
@@ -714,7 +704,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                     19,
                     256,
                     ".png",
-                    new String[] {"http://t1.openseamap.org/seamark/"});
+                    new String[]{"http://t1.openseamap.org/seamark/"});
             final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context, seamarks);
             final TilesOverlay seamarksOverlay = new TilesOverlay(tileProvider, context);
             seamarksOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
@@ -785,11 +775,11 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         }
     }
 
-    private double getCurrentSpeed(double curLat, double curLon){
+    private double getCurrentSpeed(double curLat, double curLon) {
         double currentSpeed = 0;
         long currentTimestamp = System.currentTimeMillis();
 
-        if(oldLat > -90.0 && oldLat < 90.0 && oldLon > -180.0 && oldLon < 180.0 && timestampLastUpdateTimestamp > 0){
+        if (oldLat > -90.0 && oldLat < 90.0 && oldLon > -180.0 && oldLon < 180.0 && timestampLastUpdateTimestamp > 0) {
             long timeBetweenUpdateMilliSec = (currentTimestamp - timestampLastUpdateTimestamp);
             double distanceBetweenUpdateMeters = NavigationUtils.distanceInM(curLat, curLon, oldLat, oldLon);
 
@@ -800,7 +790,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
             speedHistory.add(new Pair(timeBetweenUpdateMilliSec, currentSpeed));
 
-            if(speedHistory.size() > 3){
+            if (speedHistory.size() > 3) {
                 speedHistory.remove(0);
             }
         }
@@ -813,20 +803,20 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         long cumulatedTimeSpan = 0;
         double cumulatedSpeeds = 0;
 
-        for(int i = 0; i < speedHistory.size(); i++){
+        for (int i = 0; i < speedHistory.size(); i++) {
             cumulatedTimeSpan += speedHistory.get(i).first;
-            cumulatedSpeeds += speedHistory.get(i).second * speedHistory.get(i).first ;
+            cumulatedSpeeds += speedHistory.get(i).second * speedHistory.get(i).first;
             Log.w("speed hist", speedHistory.get(i).first + " " + speedHistory.get(i).second);
         }
 
-        if(cumulatedTimeSpan > 0){
+        if (cumulatedTimeSpan > 0) {
             return cumulatedSpeeds / cumulatedTimeSpan;
         }
 
         return 0;
     }
 
-    private double getCurrentSpeedNm(double curLat, double curLon){
+    private double getCurrentSpeedNm(double curLat, double curLon) {
         double speedKmh = getCurrentSpeed(curLat, curLon);
 
         return speedKmh * 0.53995680346039;

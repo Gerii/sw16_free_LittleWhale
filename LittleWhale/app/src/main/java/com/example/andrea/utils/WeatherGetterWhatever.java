@@ -64,18 +64,16 @@ public class WeatherGetterWhatever extends AsyncTask<Double, Void, WeatherJSONs>
     }
 
     protected void onPostExecute(WeatherJSONs weatherJSONs) {
+        WeatherStorage weatherStorage = null;
         try {
             if (weatherJSONs != null && weatherJSONs.isReady()) {
-                WeatherStorage weatherStorage = new WeatherStorage();
+                weatherStorage = new WeatherStorage();
                 weatherStorage.parseWeather(weatherJSONs.getCurrentWeatherJSON(), weatherJSONs.getFiveDayWeatherJSON(), context);
-                ((NavigationActivity.WeatherFragment) mSectionsPagerAdapter.weatherFragment).updateWeather(weatherStorage);
-            } else {
-                ((NavigationActivity.WeatherFragment) mSectionsPagerAdapter.weatherFragment).updateWeather(null);
             }
         } catch (Exception e) {
-            ((NavigationActivity.WeatherFragment) mSectionsPagerAdapter.weatherFragment).updateWeather(null);
-            e.printStackTrace();
+            //e.printStackTrace();
         }
+        ((NavigationActivity.WeatherFragment) mSectionsPagerAdapter.weatherFragment).updateWeather(weatherStorage);
     }
 
 }
