@@ -1,27 +1,15 @@
 package com.example.andrea.utils;
 
 import android.content.Context;
-import android.os.AsyncTask;
-import android.util.JsonReader;
 import android.util.Log;
-import android.widget.TextView;
 
-import com.example.andrea.littewhale.NavigationActivity;
 import com.example.andrea.littewhale.R;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InterfaceAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.apache.commons.io.IOUtils;
 import org.json.*;
 
 public class Weather {
@@ -114,17 +102,14 @@ public class Weather {
 
     public void parseWeather(JSONObject responseJSON, boolean checkHTTPCode) throws WeatherParsingException {
         try {
-            if (checkHTTPCode) {
-                int httpcode = (int) Integer.parseInt(responseJSON.get("cod").toString());
-                if (httpcode != 200) {
-                    success = false;
-                    try {
-                        errorMessage = (String) responseJSON.get("message");
-                    } catch (JSONException e) {
-
-                    }
-                    return;
+            if (checkHTTPCode && weatherAPIFailed(responseJSON)) {
+                success = false;
+                try {
+                    errorMessage = (String) responseJSON.get("message");
+                } catch (JSONException e) {
+                    errorMessage = "Weather fetching failed.";
                 }
+                return;
             }
 
             /*if (responseJSON.has("dt_txt")) {
@@ -175,6 +160,11 @@ public class Weather {
             Log.e("Weather Parsing", e.toString());
             throw new WeatherParsingException();
         }
+    }
+
+    public static boolean weatherAPIFailed(JSONObject responseJSON) throws JSONException {
+        int httpcode = Integer.parseInt(responseJSON.get("cod").toString());
+        return httpcode != 200;
     }
 
     public String getFormattedDate() {
