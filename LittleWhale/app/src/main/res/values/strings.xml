@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Little Whale</string>
-    <string name="title_activity_edit_locations">EditLocations</string>
+    <string name="title_activity_edit_locations">Locations</string>
 
     <string-array name="longitude">
         <item>E</item>
@@ -11,7 +11,7 @@
         <item>N</item>
         <item>S</item>
     </string-array>
-    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="title_activity_navigation">Navigation</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
