@@ -206,14 +206,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             public void onLocationChanged(final Location location) {
                 Log.e("LOCATION", "CHANGED");
                 waitDialog.dismiss();
-                //waitDialog.dismiss();
-                //waitDialog.dismiss();
-                //waitDialog.dismiss();
-                //waitDialog.dismiss();
-                //waitDialog.dismiss();
-                //waitDialog.dismiss();
-                //waitDialog.dismiss();
-                //waitDialog.dismiss();
 
                 double[] target = getIntent().getExtras().getDoubleArray("TargetCoords");
                 double curLat = location.getLatitude();
@@ -631,7 +623,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         public void updateWeather(WeatherStorage weatherStore) {
             weatherStorage = weatherStore;
 
-            if (weatherStorage.isLoaded()) {
+            if (weatherStorage != null && weatherStorage.isLoaded()) {
                 initFiveDayForecastList();
 
                 boolean currentWeatherDone = false;
@@ -651,12 +643,14 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 //TODO reset other fields
                 ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText("\uF07B");
                 Context context = rootView.getContext().getApplicationContext();
-                String errorMessage = weatherStorage.getErrorMessage();
-                CharSequence text = "Could not load weather." + ((errorMessage != null) ? "\nMessage: " + errorMessage : "");
-                int duration = Toast.LENGTH_LONG;
-
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
+                CharSequence text;
+                if(weatherStorage != null) {
+                    String errorMessage = weatherStorage.getErrorMessage();
+                    text = "Could not load weather." + ((errorMessage != null) ? "\nMessage: " + errorMessage : "");
+                } else {
+                    text = "Could not load weather.\nCheck your network connection and try again later.";
+                }
+                Toast.makeText(context, text, Toast.LENGTH_LONG).show();
             }
         }
 
