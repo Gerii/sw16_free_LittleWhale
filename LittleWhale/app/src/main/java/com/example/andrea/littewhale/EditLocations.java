@@ -128,7 +128,6 @@ public class EditLocations extends AppCompatActivity {
                     LocationDb locationDbInstance = LocationDb.getInstance();
                     Location selectedLocation = locationDbInstance.getLocation(getApplicationContext(), dbId);
 
-
                     Intent myIntent = new Intent(EditLocations.this, AddNewLocation.class);
                     myIntent.putExtra("LocationName", selectedLocation.placeName);
                     myIntent.putExtra("LocationLatitude", selectedLocation.latitude);

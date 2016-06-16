@@ -356,7 +356,6 @@ public class EnterCoordinates extends AppCompatActivity {
             latitude = Math.abs(lat);
         }
 
-
         int[] longitudeArray = decimalToTimeConversion(longitude);
         int[] latitudeArray = decimalToTimeConversion(latitude);
 
@@ -374,9 +373,13 @@ public class EnterCoordinates extends AppCompatActivity {
         if (parameters) {
             if (lon < 0) {
                 longitudeSelectionIndex = 1;
+            } else {
+                longitudeSelectionIndex = 0;
             }
             if (lat < 0) {
                 latitudeSelectionIndex = 1;
+            } else {
+                latitudeSelectionIndex = 0;
             }
         }
 
