@@ -80,10 +80,15 @@ public class EnterCoordinates extends AppCompatActivity {
                 RadioButton button = (RadioButton) findViewById(R.id.rbtnTimeNotation);
                 RadioButton button2 = (RadioButton) findViewById(R.id.rbtnDecimalNotation);
 
+                String[] cardinalDirection = new String[2];
+
                 if (button != null && button.isChecked()) {
                     double[] decimal = readTimeFormat();
                     targetLatitude = decimal[0];
                     targetLongitude = decimal[1];
+
+                    cardinalDirection[0] = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLatitude)).getSelectedItem().toString();
+                    cardinalDirection[1] = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLongitude)).getSelectedItem().toString();
 
                 } else if (button2 != null && button2.isChecked()) {
                     String latitude = ((TextView) findViewById(R.id.editTextDegreeDecimalLatitude)).getText().toString();
@@ -92,19 +97,27 @@ public class EnterCoordinates extends AppCompatActivity {
                     targetLatitude = Double.parseDouble(latitude);
                     targetLongitude = Double.parseDouble(longitude);
 
+                    cardinalDirection[0] = ((Spinner) findViewById(R.id.spinnerCardinalDirectionDecimalLatitude)).getSelectedItem().toString();
+                    cardinalDirection[1] = ((Spinner) findViewById(R.id.spinnerCardinalDirectionDecimalLongitude)).getSelectedItem().toString();
+
+
                 } else {
                     Log.e("ERROR", "WTF?!?!?!");
                 }
+
+                if (cardinalDirection[0].equals("S")) {
+                    targetLatitude *= -1;
+                }
+                if(cardinalDirection[1].equals("W")) {
+                    targetLongitude *= -1;
+                }
+
 
                 double[] target = new double[2];
 
                 target[0] = targetLatitude;
                 target[1] = targetLongitude;
 
-                String[] cardinalDirection = new String[2];
-
-                cardinalDirection[0] = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLatitude)).getSelectedItem().toString();
-                cardinalDirection[1] = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLongitude)).getSelectedItem().toString();
                 myIntent.putExtra("TargetCoords", target);
                 myIntent.putExtra("CardinalDirection", cardinalDirection);
                 myIntent.putExtra("TargetCoords", target);

@@ -124,12 +124,14 @@ public class AddNewLocation extends AppCompatActivity {
                     Log.e("ERROR", "WTF?!?!?!");
                 }
 
-                if(cardinalDirection[1].equals("W")) {
-                    targetLongitude *= -1;
-                }
                 if (cardinalDirection[0].equals("S")) {
                     targetLatitude *= -1;
                 }
+
+                if(cardinalDirection[1].equals("W")) {
+                    targetLongitude *= -1;
+                }
+
 
                 double[] target = new double[2];
 
