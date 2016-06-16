@@ -58,38 +58,9 @@ public class EditLocationsTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void tearDown() throws Exception {
+        mySolo.finishOpenedActivities();
+        super.tearDown();
 
-    }
-
-    /*
-    public void testPlus(){
-     //   View fab = getActivity().findViewById(R.id.fabAdd);
-      //  mySolo.clickOnView(fab);
-    }*/
-
-
-    /*public void testClickListElement() {
-        ListView lv = (ListView) getActivity().findViewById(R.id.listView);
-
-        if(lv.getAdapter().getCount() > 0) {
-            mySolo.clickOnView(getViewAtIndex(lv, 0, getInstrumentation()));
-            mySolo.waitForActivity("EnterCoordinates");
-        }
-    }*/
-
-    public  void testList(){
-       /* ListView lv = (ListView) getActivity().findViewById(R.id.listView);
-
-
-        for(int i = 0; i < lv.getAdapter().getCount() ; i++){
-            mySolo.clickOnView(getViewAtIndex(lv, 0, getInstrumentation()));
-
-            //mySolo.goBack();
-
-//            mySolo.clickOnView(getViewAtIndex(lv, i, getInstrumentation()));
-//            Log.w("w", i + "blub bla bla");
-//            mySolo.sleep(500);
-        }*/
     }
 
     public void testAddNewElement()  {
@@ -113,25 +84,26 @@ public class EditLocationsTest extends ActivityInstrumentationTestCase2 {
             mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextSecondLatitude), "12");
 
             mySolo.clickOnButton("Save Location");
-            mySolo.waitForActivity("EditLocations");
-            lv = (ListView) mySolo.getView(R.id.listView);
-            Assert.assertEquals(oldCount + 1, lv.getAdapter().getCount());
+            if(mySolo.waitForActivity("EditLocations")) {
+                lv = (ListView) mySolo.getView(R.id.listView);
+                Assert.assertEquals(oldCount + 1, lv.getAdapter().getCount());
 
 
-            boolean newElementFound = false;
+                boolean newElementFound = false;
 
-            for(int i = 0; i < lv.getAdapter().getCount() ; i++) {
-                if(lv.getItemAtPosition(i).toString().equals("{line1=Markt Hartmannsdorf, line2=12,20 N   12,20 E}")) {
-                    newElementFound = true;
-                    break;
+                for(int i = 0; i < lv.getAdapter().getCount() ; i++) {
+                    if(lv.getItemAtPosition(i).toString().equals("{line2=12.20 N   12.20 E, line1=Markt Hartmannsdorf}")) {
+                        newElementFound = true;
+                        break;
+                    }
                 }
+
+
+                Assert.assertTrue(newElementFound);
             }
 
-            Assert.assertTrue(newElementFound);
 
         }
-
-        //FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fabAdd);
     }
 
     public void testEditElement()  {
@@ -142,7 +114,6 @@ public class EditLocationsTest extends ActivityInstrumentationTestCase2 {
         if (lv.getAdapter().getCount() == 0) {
             View fab = getActivity().findViewById(R.id.fabAdd);
             mySolo.clickOnView(fab);
-            mySolo.waitForActivity("AddNewLocation");
 
             if (mySolo.waitForActivity("AddNewLocation")) {
                 mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_locationName), "Markt Hartmannsdorf");
@@ -164,16 +135,14 @@ public class EditLocationsTest extends ActivityInstrumentationTestCase2 {
                     boolean newElementFound = false;
 
                     for(int i = 0; i < lv.getAdapter().getCount() ; i++) {
-                        if(lv.getItemAtPosition(i).toString().equals("{line1=Markt Hartmannsdorf, line2=12,20 N   12,20 E}")) {
+                        System.out.println(lv.getItemAtPosition(i).toString());
+                        if(lv.getItemAtPosition(i).toString().equals("{line2=12.20 N   12.20 E, line1=Markt Hartmannsdorf}")) {
                             newElementFound = true;
                             break;
                         }
                     }
                     Assert.assertTrue(newElementFound);
                 }
-
-
-
             }
         }
 
@@ -209,7 +178,8 @@ public class EditLocationsTest extends ActivityInstrumentationTestCase2 {
                 boolean newElementFound = false;
 
                 for(int i = 0; i < lv.getAdapter().getCount() ; i++) {
-                    if(lv.getItemAtPosition(i).toString().equals("{line1=TEST, line2=13,22 N   13,22 E}")) {
+                    System.out.println(lv.getItemAtPosition(i).toString());
+                    if(lv.getItemAtPosition(i).toString().equals("{line2=13.22 N   13.22 E, line1=TEST}")) {
                         newElementFound = true;
                         break;
                     }
