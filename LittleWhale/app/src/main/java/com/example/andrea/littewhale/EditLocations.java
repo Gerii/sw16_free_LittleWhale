@@ -40,8 +40,6 @@ public class EditLocations extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_locations);
         Log.w("ON CREATE", "EditLocations");
-        Bundle extras = getIntent().getExtras();
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -52,21 +50,31 @@ public class EditLocations extends AppCompatActivity {
             Location l = locationList.get(i);
             Map<String, String> tmp = new HashMap<String, String>(2);
             tmp.put(line1, l.placeName);
-            String lon = "E";
-            String lat = "N";
+            String lonCardinalDir = "E";
+            String latCardinalDir = "N";
 
             if(l.latitude < 0 ) {
-                lat = "S";
+                latCardinalDir = "S";
             }
             if(l.longitude < 0) {
-                lon = "W";
+                lonCardinalDir = "W";
             }
 
+            int[] lat = EnterCoordinates.decimalToTimeConversion(Math.abs(l.latitude));
+            int[] lon = EnterCoordinates.decimalToTimeConversion(Math.abs(l.longitude));
 
-            String latValue = String.format("%.2f", Math.abs(l.latitude));
-            String lonValue = String.format("%.2f", Math.abs(l.longitude));
 
-            tmp.put(line2, latValue + " " + lat + "   "+ lonValue  + " " + lon);
+            String latString = Integer.toString(lat[0]) + "° " +
+                    Integer.toString(lat[1]) + "' " + Integer.toString(lat[2]) + "'' " + latCardinalDir;
+            String lonString = Integer.toString(lon[0]) + "°" +
+                    Integer.toString(lon[1]) + "' " + Integer.toString(lon[2]) + "'' " + lonCardinalDir;
+
+
+
+          //  String test = String.format("%1$-25s", latString);
+          //  String test2 = String.format("%1$-25s", lonString);
+
+            tmp.put(line2, latString + "   "+ lonString);
 
             listIdToDbId.put(Long.valueOf(i), l.id);
             valueListLocations.add(tmp);

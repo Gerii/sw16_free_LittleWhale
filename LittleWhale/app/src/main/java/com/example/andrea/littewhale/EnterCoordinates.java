@@ -386,7 +386,7 @@ public class EnterCoordinates extends AppCompatActivity {
 
     }
 
-    private int[] decimalToTimeConversion(double degree) {
+    static public int[] decimalToTimeConversion(double degree) {
         int[] result = new int[3];
         result[0] = (int) Math.floor(degree);
         degree -= result[0];

@@ -16,10 +16,15 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.andrea.model.Location;
 import com.example.andrea.model.LocationDb;
 import com.example.andrea.utils.InputFilterDouble;
 import com.example.andrea.utils.InputFilterInt;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class AddNewLocation extends AppCompatActivity {
 
@@ -188,6 +193,15 @@ public class AddNewLocation extends AppCompatActivity {
         }
 
         LocationDb locationDbInstance = LocationDb.getInstance();
+
+        ArrayList<Location> allLocations = locationDbInstance.getAllLocations(getApplicationContext());
+        for(Location l: allLocations) {
+            if(l.placeName.equals(newLocationName) &&  l.latitude == targetLatitude && l.longitude == targetLongitude) {
+                Toast.makeText(getApplicationContext(), "This location already exists", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+
 
         if (editing) {
             locationDbInstance.editLocation(getApplicationContext(), locId, newLocationName, targetLatitude, targetLongitude);
