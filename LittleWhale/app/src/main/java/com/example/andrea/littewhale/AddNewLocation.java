@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import com.example.andrea.model.LocationDb;
 import com.example.andrea.utils.InputFilterDouble;
 import com.example.andrea.utils.InputFilterInt;
@@ -33,8 +34,7 @@ public class AddNewLocation extends AppCompatActivity {
         Log.w("ON CREATE", "Add new location");
         Bundle extras = getIntent().getExtras();
 
-        if(extras != null)
-        {
+        if (extras != null) {
             editing = true;
 
             Log.w("EDIT", "Location");
@@ -50,7 +50,7 @@ public class AddNewLocation extends AppCompatActivity {
         }
 
         RadioButton button = (RadioButton) findViewById(R.id.newLocation_rbtnTimeNotation);
-        if(button != null) {
+        if (button != null) {
 
             button.setOnClickListener(new Button.OnClickListener() {
                 public void onClick(View v) {
@@ -70,7 +70,7 @@ public class AddNewLocation extends AppCompatActivity {
 
 
         RadioButton button2 = (RadioButton) findViewById(R.id.newLocation_rbtnDecimalNotation);
-        if(button2 != null) {
+        if (button2 != null) {
             button2.setOnClickListener(new Button.OnClickListener() {
                 public void onClick(View v) {
                     LinearLayout decimalLayout = (LinearLayout) findViewById(R.id.newLocation_linearLayoutDecimalCoords);
@@ -121,7 +121,7 @@ public class AddNewLocation extends AppCompatActivity {
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                     if (view != null) {
-                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
                     saveLocationClicked();
@@ -145,95 +145,63 @@ public class AddNewLocation extends AppCompatActivity {
             return;
         }
 
-                double targetLatitude = 0;
-                double targetLongitude = 0;
+        double targetLatitude = 0;
+        double targetLongitude = 0;
 
-                RadioButton button = (RadioButton) findViewById(R.id.newLocation_rbtnTimeNotation);
-                RadioButton button2 = (RadioButton) findViewById(R.id.newLocation_rbtnDecimalNotation);
+        RadioButton button = (RadioButton) findViewById(R.id.newLocation_rbtnTimeNotation);
+        RadioButton button2 = (RadioButton) findViewById(R.id.newLocation_rbtnDecimalNotation);
 
-                String[] cardinalDirection = new String[2];
+        String[] cardinalDirection = new String[2];
 
-                if (button != null && button.isChecked()) {
-                    double[] decimal = readTimeFormat();
-                    targetLatitude = decimal[0];
-                    targetLongitude = decimal[1];
+        if (button != null && button.isChecked()) {
+            double[] decimal = readTimeFormat();
+            targetLatitude = decimal[0];
+            targetLongitude = decimal[1];
 
-                    cardinalDirection[0] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLatitude)).getSelectedItem().toString();
-                    cardinalDirection[1] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLongitude)).getSelectedItem().toString();
+            cardinalDirection[0] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLatitude)).getSelectedItem().toString();
+            cardinalDirection[1] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLongitude)).getSelectedItem().toString();
 
-                } else if (button2 != null && button2.isChecked()) {
-                    String latitude = ((TextView) findViewById(R.id.newLocation_editTextDegreeDecimalLatitude)).getText().toString();
-                    String longitude = ((TextView) findViewById(R.id.newLocation_editTextDegreeDecimalLongitude)).getText().toString();
+        } else if (button2 != null && button2.isChecked()) {
+            String latitude = ((TextView) findViewById(R.id.newLocation_editTextDegreeDecimalLatitude)).getText().toString();
+            String longitude = ((TextView) findViewById(R.id.newLocation_editTextDegreeDecimalLongitude)).getText().toString();
 
-                    targetLatitude = Double.parseDouble(latitude);
-                    targetLongitude = Double.parseDouble(longitude);
+            targetLatitude = Double.parseDouble(latitude);
+            targetLongitude = Double.parseDouble(longitude);
 
-                    cardinalDirection[0] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionDecimalLatitude)).getSelectedItem().toString();
-                    cardinalDirection[1] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionDecimalLongitude)).getSelectedItem().toString();
+            cardinalDirection[0] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionDecimalLatitude)).getSelectedItem().toString();
+            cardinalDirection[1] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionDecimalLongitude)).getSelectedItem().toString();
 
-                } else {
-                    Log.e("ERROR", "WTF?!?!?!");
-                }
+        } else {
+            Log.e("ERROR", "WTF?!?!?!");
+        }
 
-                double[] target = new double[2];
+        double[] target = new double[2];
 
-                target[0] = targetLatitude;
-                target[1] = targetLongitude;
+        target[0] = targetLatitude;
+        target[1] = targetLongitude;
 
-                String[] cardinalDirection = new String[2];
+        if (cardinalDirection[1].equals("W")) {
+            targetLongitude *= -1;
+        }
+        if (cardinalDirection[0].equals("S")) {
+            targetLatitude *= -1;
+        }
 
-                cardinalDirection[0] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLatitude)).getSelectedItem().toString();
-                cardinalDirection[1] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLongitude)).getSelectedItem().toString();
+        LocationDb locationDbInstance = LocationDb.getInstance();
 
-
-                if(cardinalDirection[1].equals("W")) {
-                    targetLongitude *= -1;
-                }
-                if (cardinalDirection[0].equals("S")) {
-                    targetLatitude *= -1;
-                }
-
-
-                LocationDb locationDbInstance = LocationDb.getInstance();
-
-                if(editing) {
-                    locationDbInstance.editLocation(getApplicationContext(), locId, newLocationName ,targetLatitude, targetLongitude);
-                } else {
-                    locationDbInstance.addLocation(getApplicationContext(), newLocationName, targetLatitude ,targetLongitude);
-                }
-                AddNewLocation.this.finish();
-            }
-        });
-
-        EditText editTextSecondLatitude = (EditText) findViewById(R.id.newLocation_editTextSecondLatitude);
-        EditText editTextSecondLongitude = (EditText) findViewById(R.id.newLocation_editTextSecondLongitude);
-
-        EditText editTextMinuteLatitude = (EditText) findViewById(R.id.newLocation_editTextMinuteLatitude);
-        EditText editTextMinuteLongitude = (EditText) findViewById(R.id.newLocation_editTextMinuteLongitude);
-
-        EditText editTextDegreeTimeLatitude = (EditText) findViewById(R.id.newLocation_editTextDegreeTimeLatitude);
-        EditText editTextDegreeTimeLongitude = (EditText) findViewById(R.id.newLocation_editTextDegreeTimeLongitude);
-
-        EditText editTextDegreeDecimalLatitude = (EditText) findViewById(R.id.newLocation_editTextDegreeDecimalLatitude);
-        EditText editTextDegreeDecimalLongitude = (EditText) findViewById(R.id.newLocation_editTextDegreeDecimalLongitude);
-
-        editTextSecondLatitude.setFilters(new InputFilter[]{new InputFilterInt(0, 60, editTextSecondLatitude)});
-        editTextSecondLongitude.setFilters(new InputFilter[]{new InputFilterInt(0, 60, editTextSecondLongitude)});
-        editTextMinuteLatitude.setFilters(new InputFilter[]{new InputFilterInt(0, 60, editTextMinuteLatitude)});
-        editTextMinuteLongitude.setFilters(new InputFilter[]{new InputFilterInt(0, 60, editTextMinuteLongitude)});
-
-        editTextDegreeTimeLatitude.setFilters(new InputFilter[]{new InputFilterInt(0, 90, editTextDegreeTimeLatitude)});
-        editTextDegreeTimeLongitude.setFilters(new InputFilter[]{new InputFilterInt(0, 180, editTextDegreeTimeLongitude)});
-
-        editTextDegreeDecimalLatitude.setFilters(new InputFilter[]{new InputFilterDouble(0, 90, editTextDegreeDecimalLatitude)});
-        editTextDegreeDecimalLongitude.setFilters(new InputFilter[]{new InputFilterDouble(0, 180, editTextDegreeDecimalLongitude)});
+        if (editing) {
+            locationDbInstance.editLocation(getApplicationContext(), locId, newLocationName, targetLatitude, targetLongitude);
+        } else {
+            locationDbInstance.addLocation(getApplicationContext(), newLocationName, targetLatitude, targetLongitude);
+        }
+        AddNewLocation.this.finish();
     }
 
     private int convertToInt(String numberString) {
 
-        try{
+        try {
             return Integer.parseInt(numberString);
-        } catch(Exception e) {
+        } catch (Exception e) {
             return 0;
         }
     }
@@ -256,12 +224,12 @@ public class AddNewLocation extends AppCompatActivity {
 
     private double timeToDecimalConversion(int degree, int minute, int second) {
 
-        return degree + ((double)minute / 60) + ((double) second / 3600);
+        return degree + ((double) minute / 60) + ((double) second / 3600);
     }
 
 
     private double[] readTimeFormat() {
-        double [] decimal = new double[2];
+        double[] decimal = new double[2];
         int degreesLatitude = convertToInt(((TextView) findViewById(R.id.newLocation_editTextDegreeTimeLatitude)).getText().toString());
         int minutesLatitude = convertToInt(((TextView) findViewById(R.id.newLocation_editTextMinuteLatitude)).getText().toString());
         int secondsLatitude = convertToInt(((TextView) findViewById(R.id.newLocation_editTextSecondLatitude)).getText().toString());
@@ -277,24 +245,23 @@ public class AddNewLocation extends AppCompatActivity {
     }
 
 
-
     private void setViewDecimalToTime(boolean parameters, double lon, double lat) {
         double longitude = 0;
         double latitude = 0;
 
 
-         if(parameters == false) {
-           try {
-               longitude = Double.parseDouble(((TextView) findViewById(R.id.newLocation_editTextDegreeDecimalLongitude)).getText().toString());
-               latitude = Double.parseDouble(((TextView) findViewById(R.id.newLocation_editTextDegreeDecimalLatitude)).getText().toString());
-           } catch (Exception e) {
-               Log.w("Exception", "Dont know");
-           }
+        if (parameters == false) {
+            try {
+                longitude = Double.parseDouble(((TextView) findViewById(R.id.newLocation_editTextDegreeDecimalLongitude)).getText().toString());
+                latitude = Double.parseDouble(((TextView) findViewById(R.id.newLocation_editTextDegreeDecimalLatitude)).getText().toString());
+            } catch (Exception e) {
+                Log.w("Exception", "Dont know");
+            }
 
-         } else {
-           longitude = lon;
-           latitude = lat;
-         }
+        } else {
+            longitude = lon;
+            latitude = lat;
+        }
         int[] longitudeArray = decimalToTimeConversion(Math.abs(longitude));
         int[] latitudeArray = decimalToTimeConversion(Math.abs(latitude));
 
@@ -312,10 +279,10 @@ public class AddNewLocation extends AppCompatActivity {
         int latitudeSelectionIndex = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionDecimalLatitude)).getSelectedItemPosition();
 
         if (editing) {
-            if(lon < 0) {
+            if (lon < 0) {
                 longitudeSelectionIndex = 1;
             }
-            if(lat < 0) {
+            if (lat < 0) {
                 latitudeSelectionIndex = 1;
             }
         }
@@ -324,10 +291,7 @@ public class AddNewLocation extends AppCompatActivity {
         ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLongitude)).setSelection(longitudeSelectionIndex);
 
 
-
-
     }
-
 
     private int[] decimalToTimeConversion(double degree) {
         int[] result = new int[3];
