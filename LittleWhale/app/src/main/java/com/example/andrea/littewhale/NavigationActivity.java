@@ -98,7 +98,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     LocationManager locationManager;
 
     public static final double COORD_DEFAULT_VALUE = -1000.0;
-    public static final int WEATHER_MAX_AGE = 0; //1 * 60 * 60 * 1000;
+    public static final int WEATHER_MAX_AGE = 1 * 60 * 60 * 1000;
 
     private static double oldLat = COORD_DEFAULT_VALUE;
     private static double oldLon = COORD_DEFAULT_VALUE;

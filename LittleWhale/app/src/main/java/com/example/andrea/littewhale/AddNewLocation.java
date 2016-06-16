@@ -4,14 +4,18 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.example.andrea.model.LocationDb;
+import com.example.andrea.utils.InputFilterDouble;
+import com.example.andrea.utils.InputFilterInt;
 
 public class AddNewLocation extends AppCompatActivity {
 
@@ -146,6 +150,28 @@ public class AddNewLocation extends AppCompatActivity {
             }
         });
 
+        EditText editTextSecondLatitude = (EditText) findViewById(R.id.newLocation_editTextSecondLatitude);
+        EditText editTextSecondLongitude = (EditText) findViewById(R.id.newLocation_editTextSecondLongitude);
+
+        EditText editTextMinuteLatitude = (EditText) findViewById(R.id.newLocation_editTextMinuteLatitude);
+        EditText editTextMinuteLongitude = (EditText) findViewById(R.id.newLocation_editTextMinuteLongitude);
+
+        EditText editTextDegreeTimeLatitude = (EditText) findViewById(R.id.newLocation_editTextDegreeTimeLatitude);
+        EditText editTextDegreeTimeLongitude = (EditText) findViewById(R.id.newLocation_editTextDegreeTimeLongitude);
+
+        EditText editTextDegreeDecimalLatitude = (EditText) findViewById(R.id.newLocation_editTextDegreeDecimalLatitude);
+        EditText editTextDegreeDecimalLongitude = (EditText) findViewById(R.id.newLocation_editTextDegreeDecimalLongitude);
+
+        editTextSecondLatitude.setFilters(new InputFilter[]{new InputFilterInt(0, 60, editTextSecondLatitude)});
+        editTextSecondLongitude.setFilters(new InputFilter[]{new InputFilterInt(0, 60, editTextSecondLongitude)});
+        editTextMinuteLatitude.setFilters(new InputFilter[]{new InputFilterInt(0, 60, editTextMinuteLatitude)});
+        editTextMinuteLongitude.setFilters(new InputFilter[]{new InputFilterInt(0, 60, editTextMinuteLongitude)});
+
+        editTextDegreeTimeLatitude.setFilters(new InputFilter[]{new InputFilterInt(0, 90, editTextDegreeTimeLatitude)});
+        editTextDegreeTimeLongitude.setFilters(new InputFilter[]{new InputFilterInt(0, 180, editTextDegreeTimeLongitude)});
+
+        editTextDegreeDecimalLatitude.setFilters(new InputFilter[]{new InputFilterDouble(0, 90, editTextDegreeDecimalLatitude)});
+        editTextDegreeDecimalLongitude.setFilters(new InputFilter[]{new InputFilterDouble(0, 180, editTextDegreeDecimalLongitude)});
     }
 
     private int convertToInt(String numberString) {
