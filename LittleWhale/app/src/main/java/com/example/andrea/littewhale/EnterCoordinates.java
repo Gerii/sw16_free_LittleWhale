@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.InputFilter;
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -114,7 +115,7 @@ public class EnterCoordinates extends AppCompatActivity {
         editTextDegreeDecimalLatitude.setFilters(new InputFilter[]{new InputFilterDouble(0, 90, editTextDegreeDecimalLatitude)});
         editTextDegreeDecimalLongitude.setFilters(new InputFilter[]{new InputFilterDouble(0, 180, editTextDegreeDecimalLongitude)});
 
-        editTextSecondLongitude.setOnKeyListener(new View.OnKeyListener() {
+        View.OnKeyListener enterListener = new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
@@ -128,7 +129,9 @@ public class EnterCoordinates extends AppCompatActivity {
                     return false;
                 }
             }
-        });
+        };
+        editTextSecondLongitude.setOnKeyListener(enterListener);
+        editTextDegreeDecimalLongitude.setOnKeyListener(enterListener);
     }
 
     private void goToNavigation() {

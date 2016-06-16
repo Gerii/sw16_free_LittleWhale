@@ -101,9 +101,9 @@
                     android:layout_weight="0.2"
                     android:ems="10"
                     android:inputType="number"
-                    android:nextFocusRight="@+id/editTextMinuteLatitude"
+                    android:nextFocusDown="@+id/editTextMinuteLatitude"
                     android:nextFocusForward="@+id/editTextMinuteLatitude"
-                    android:nextFocusDown="@+id/editTextMinuteLatitude"/>
+                    android:nextFocusRight="@+id/editTextMinuteLatitude" />
 
                 <TextView
                     android:id="@+id/textViewDegreeTimeLatitude"
@@ -119,10 +119,9 @@
                     android:layout_weight="0.2"
                     android:ems="10"
                     android:inputType="number"
-                    android:nextFocusRight="@+id/editTextSecondLatitude"
-                    android:nextFocusForward="@+id/editTextSecondLatitude"
                     android:nextFocusDown="@+id/editTextSecondLatitude"
-                    />
+                    android:nextFocusForward="@+id/editTextSecondLatitude"
+                    android:nextFocusRight="@+id/editTextSecondLatitude" />
 
                 <TextView
                     android:id="@+id/textViewMinuteLatitude"
@@ -139,10 +138,9 @@
                     android:layout_weight="0.2"
                     android:ems="10"
                     android:inputType="number"
-                    android:nextFocusRight="@+id/editTextDegreeTimeLongitude"
-                    android:nextFocusForward="@+id/editTextDegreeTimeLongitude"
                     android:nextFocusDown="@+id/editTextDegreeTimeLongitude"
-                    />
+                    android:nextFocusForward="@+id/editTextDegreeTimeLongitude"
+                    android:nextFocusRight="@+id/editTextDegreeTimeLongitude" />
 
                 <TextView
                     android:id="@+id/textViewSecondLatitude"
@@ -174,10 +172,9 @@
                     android:layout_weight="0.2"
                     android:ems="10"
                     android:inputType="number"
-                    android:nextFocusRight="@+id/editTextMinuteLongitude"
-                    android:nextFocusForward="@+id/editTextMinuteLongitude"
                     android:nextFocusDown="@+id/editTextMinuteLongitude"
-                    />
+                    android:nextFocusForward="@+id/editTextMinuteLongitude"
+                    android:nextFocusRight="@+id/editTextMinuteLongitude" />
 
                 <TextView
                     android:id="@+id/textViewDegreeTimeLongitude"
@@ -194,10 +191,9 @@
                     android:layout_weight="0.2"
                     android:ems="10"
                     android:inputType="number"
-                    android:nextFocusRight="@+id/editTextSecondLongitude"
-                    android:nextFocusForward="@+id/editTextSecondLongitude"
                     android:nextFocusDown="@+id/editTextSecondLongitude"
-                    />
+                    android:nextFocusForward="@+id/editTextSecondLongitude"
+                    android:nextFocusRight="@+id/editTextSecondLongitude" />
 
                 <TextView
                     android:id="@+id/textViewMinuteLongitude"
@@ -213,8 +209,8 @@
                     android:layout_centerHorizontal="true"
                     android:layout_weight="0.2"
                     android:ems="10"
-                    android:inputType="number"
-                    android:imeOptions="actionGo" />
+                    android:imeOptions="actionGo"
+                    android:inputType="number" />
 
                 <TextView
                     android:id="@+id/textViewSecondLongitude"
@@ -259,7 +255,10 @@
                     android:layout_centerHorizontal="true"
                     android:layout_weight=".7"
                     android:ems="10"
-                    android:inputType="numberDecimal" />
+                    android:inputType="numberDecimal"
+                    android:nextFocusDown="@+id/editTextDegreeDecimalLongitude"
+                    android:nextFocusForward="@+id/editTextDegreeDecimalLongitude"
+                    android:nextFocusRight="@+id/editTextDegreeDecimalLongitude" />
 
                 <TextView
                     android:id="@+id/textView3"
@@ -296,6 +295,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_weight="0.7"
                     android:ems="10"
+                    android:imeOptions="actionGo"
                     android:inputType="numberDecimal" />
 
 
@@ -307,25 +307,17 @@
                     android:text="°"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <FrameLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".2">
-
-                    <Spinner
-                        android:id="@+id/spinnerCardinalDirectionDecimalLongitude"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:entries="@array/longitude" />
-                </FrameLayout>
+                <Spinner
+                    android:id="@+id/spinnerCardinalDirectionDecimalLongitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:entries="@array/longitude" />
             </LinearLayout>
 
 
         </LinearLayout>
 
-
         <!-- Buttons -->
-
 
         <LinearLayout
             android:id="@+id/buttonLayout"
