@@ -1,6 +1,7 @@
 package com.example.andrea.littewhale;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -9,9 +10,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.InputFilter;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -23,8 +26,6 @@ import com.example.andrea.utils.InputFilterDouble;
 import com.example.andrea.utils.InputFilterInt;
 
 public class EnterCoordinates extends AppCompatActivity {
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,42 +76,7 @@ public class EnterCoordinates extends AppCompatActivity {
         if (startNavigationButton != null)
             startNavigationButton.setOnClickListener(new Button.OnClickListener() {
                 public void onClick(View v) {
-                    Intent myIntent = new Intent(EnterCoordinates.this, NavigationActivity.class);
-                    double targetLatitude = 0;
-                    double targetLongitude = 0;
-
-                    RadioButton button = (RadioButton) findViewById(R.id.rbtnTimeNotation);
-                    RadioButton button2 = (RadioButton) findViewById(R.id.rbtnDecimalNotation);
-
-                    if (button != null && button.isChecked()) {
-                        double[] decimal = readTimeFormat();
-                        targetLatitude = decimal[0];
-                        targetLongitude = decimal[1];
-
-                    } else if (button2 != null && button2.isChecked()) {
-                        String latitude = ((TextView) findViewById(R.id.editTextDegreeDecimalLatitude)).getText().toString();
-                        String longitude = ((TextView) findViewById(R.id.editTextDegreeDecimalLongitude)).getText().toString();
-
-                        targetLatitude = Double.parseDouble(latitude);
-                        targetLongitude = Double.parseDouble(longitude);
-
-                    } else {
-                        Log.e("ERROR", "WTF?!?!?!");
-                    }
-
-                    double[] target = new double[2];
-
-                    target[0] = targetLatitude;
-                    target[1] = targetLongitude;
-
-                    String[] cardinalDirection = new String[2];
-
-                    cardinalDirection[0] = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLatitude)).getSelectedItem().toString();
-                    cardinalDirection[1] = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLongitude)).getSelectedItem().toString();
-                    myIntent.putExtra("TargetCoords", target);
-                    myIntent.putExtra("CardinalDirection", cardinalDirection);
-                    myIntent.putExtra("TargetCoords", target);
-                    EnterCoordinates.this.startActivity(myIntent);
+                    goToNavigation();
                 }
             });
 
@@ -147,8 +113,63 @@ public class EnterCoordinates extends AppCompatActivity {
 
         editTextDegreeDecimalLatitude.setFilters(new InputFilter[]{new InputFilterDouble(0, 90, editTextDegreeDecimalLatitude)});
         editTextDegreeDecimalLongitude.setFilters(new InputFilter[]{new InputFilterDouble(0, 180, editTextDegreeDecimalLongitude)});
+
+        editTextSecondLongitude.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                    goToNavigation();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
     }
 
+    private void goToNavigation() {
+        Log.i("NAV", "GOING TO NAVIGATION");
+        Intent myIntent = new Intent(EnterCoordinates.this, NavigationActivity.class);
+        double targetLatitude = 0;
+        double targetLongitude = 0;
+
+        RadioButton button = (RadioButton) findViewById(R.id.rbtnTimeNotation);
+        RadioButton button2 = (RadioButton) findViewById(R.id.rbtnDecimalNotation);
+
+        if (button != null && button.isChecked()) {
+            double[] decimal = readTimeFormat();
+            targetLatitude = decimal[0];
+            targetLongitude = decimal[1];
+
+        } else if (button2 != null && button2.isChecked()) {
+            String latitude = ((TextView) findViewById(R.id.editTextDegreeDecimalLatitude)).getText().toString();
+            String longitude = ((TextView) findViewById(R.id.editTextDegreeDecimalLongitude)).getText().toString();
+
+            targetLatitude = Double.parseDouble(latitude);
+            targetLongitude = Double.parseDouble(longitude);
+
+        } else {
+            Log.e("ERROR", "WTF?!?!?!");
+        }
+
+        double[] target = new double[2];
+
+        target[0] = targetLatitude;
+        target[1] = targetLongitude;
+
+        String[] cardinalDirection = new String[2];
+
+        cardinalDirection[0] = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLatitude)).getSelectedItem().toString();
+        cardinalDirection[1] = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLongitude)).getSelectedItem().toString();
+        myIntent.putExtra("TargetCoords", target);
+        myIntent.putExtra("CardinalDirection", cardinalDirection);
+        myIntent.putExtra("TargetCoords", target);
+        EnterCoordinates.this.startActivity(myIntent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -184,7 +205,6 @@ public class EnterCoordinates extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -240,7 +260,6 @@ public class EnterCoordinates extends AppCompatActivity {
 
     }
 
-
     private int convertToInt(String numberString) {
 
         try {
@@ -275,7 +294,6 @@ public class EnterCoordinates extends AppCompatActivity {
         return degree + ((double) minute / 60) + ((double) second / 3600);
     }
 
-
     private double[] readTimeFormat() {
         double[] decimal = new double[2];
         int degreesLatitude = convertToInt(((TextView) findViewById(R.id.editTextDegreeTimeLatitude)).getText().toString());
@@ -291,7 +309,6 @@ public class EnterCoordinates extends AppCompatActivity {
 
         return decimal;
     }
-
 
     private void setViewDecimalToTime(boolean parameters, double lon, double lat) {
         double longitude = 0;
@@ -338,7 +355,6 @@ public class EnterCoordinates extends AppCompatActivity {
 
 
     }
-
 
     private int[] decimalToTimeConversion(double degree) {
         int[] result = new int[3];
