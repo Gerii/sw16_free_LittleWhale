@@ -1,12 +1,15 @@
 package com.example.andrea.littewhale;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -85,18 +88,62 @@ public class AddNewLocation extends AppCompatActivity {
         Button saveLocation = (Button) findViewById(R.id.newLocation_buttonAddLocation);
         if (saveLocation != null)
             saveLocation.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-
-
-                TextView newLocationTextView = (TextView) findViewById(R.id.newLocation_locationName);
-                String newLocationName = newLocationTextView.getText().toString();
-
-                if(newLocationName.length() == 0 || newLocationName == "")
-                {
-                    newLocationTextView.setHintTextColor(Color.RED);
-                    Log.e("ERROR", "Name is empty");
-                    return;
+                public void onClick(View v) {
+                    saveLocationClicked();
                 }
+            });
+
+        EditText editTextSecondLatitude = (EditText) findViewById(R.id.newLocation_editTextSecondLatitude);
+        EditText editTextSecondLongitude = (EditText) findViewById(R.id.newLocation_editTextSecondLongitude);
+
+        EditText editTextMinuteLatitude = (EditText) findViewById(R.id.newLocation_editTextMinuteLatitude);
+        EditText editTextMinuteLongitude = (EditText) findViewById(R.id.newLocation_editTextMinuteLongitude);
+
+        EditText editTextDegreeTimeLatitude = (EditText) findViewById(R.id.newLocation_editTextDegreeTimeLatitude);
+        EditText editTextDegreeTimeLongitude = (EditText) findViewById(R.id.newLocation_editTextDegreeTimeLongitude);
+
+        EditText editTextDegreeDecimalLatitude = (EditText) findViewById(R.id.newLocation_editTextDegreeDecimalLatitude);
+        EditText editTextDegreeDecimalLongitude = (EditText) findViewById(R.id.newLocation_editTextDegreeDecimalLongitude);
+
+        editTextSecondLatitude.setFilters(new InputFilter[]{new InputFilterInt(0, 60, editTextSecondLatitude)});
+        editTextSecondLongitude.setFilters(new InputFilter[]{new InputFilterInt(0, 60, editTextSecondLongitude)});
+        editTextMinuteLatitude.setFilters(new InputFilter[]{new InputFilterInt(0, 60, editTextMinuteLatitude)});
+        editTextMinuteLongitude.setFilters(new InputFilter[]{new InputFilterInt(0, 60, editTextMinuteLongitude)});
+
+        editTextDegreeTimeLatitude.setFilters(new InputFilter[]{new InputFilterInt(0, 90, editTextDegreeTimeLatitude)});
+        editTextDegreeTimeLongitude.setFilters(new InputFilter[]{new InputFilterInt(0, 180, editTextDegreeTimeLongitude)});
+
+        editTextDegreeDecimalLatitude.setFilters(new InputFilter[]{new InputFilterDouble(0, 90, editTextDegreeDecimalLatitude)});
+        editTextDegreeDecimalLongitude.setFilters(new InputFilter[]{new InputFilterDouble(0, 180, editTextDegreeDecimalLongitude)});
+
+        View.OnKeyListener enterListener = new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                    saveLocationClicked();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        editTextSecondLongitude.setOnKeyListener(enterListener);
+        editTextDegreeDecimalLongitude.setOnKeyListener(enterListener);
+    }
+
+    private void saveLocationClicked() {
+        TextView newLocationTextView = (TextView) findViewById(R.id.newLocation_locationName);
+        String newLocationName = newLocationTextView.getText().toString();
+
+        if (newLocationName.length() == 0 || newLocationName == "") {
+            newLocationTextView.setError("Please enter a name");
+            Log.e("ERROR", "Name is empty");
+            return;
+        }
 
                 double targetLatitude = 0;
                 double targetLongitude = 0;
@@ -128,19 +175,24 @@ public class AddNewLocation extends AppCompatActivity {
                     Log.e("ERROR", "WTF?!?!?!");
                 }
 
-                if (cardinalDirection[0].equals("S")) {
-                    targetLatitude *= -1;
-                }
-
-                if(cardinalDirection[1].equals("W")) {
-                    targetLongitude *= -1;
-                }
-
-
                 double[] target = new double[2];
 
                 target[0] = targetLatitude;
                 target[1] = targetLongitude;
+
+                String[] cardinalDirection = new String[2];
+
+                cardinalDirection[0] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLatitude)).getSelectedItem().toString();
+                cardinalDirection[1] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLongitude)).getSelectedItem().toString();
+
+
+                if(cardinalDirection[1].equals("W")) {
+                    targetLongitude *= -1;
+                }
+                if (cardinalDirection[0].equals("S")) {
+                    targetLatitude *= -1;
+                }
+
 
                 LocationDb locationDbInstance = LocationDb.getInstance();
 
@@ -198,6 +250,7 @@ public class AddNewLocation extends AppCompatActivity {
         int latitudeSelectionIndex = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLatitude)).getSelectedItemPosition();
         ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionDecimalLatitude)).setSelection(latitudeSelectionIndex);
         ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionDecimalLongitude)).setSelection(longitudeSelectionIndex);
+
 
     }
 
