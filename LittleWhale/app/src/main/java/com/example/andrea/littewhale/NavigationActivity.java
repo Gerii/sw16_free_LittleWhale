@@ -3,6 +3,7 @@ package com.example.andrea.littewhale;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -97,7 +98,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     LocationManager locationManager;
 
     public static final double COORD_DEFAULT_VALUE = -1000.0;
-    public static final int WEATHER_MAX_AGE = 0; //1 * 60 * 60 * 1000;
+    public static final int WEATHER_MAX_AGE = 1 * 60 * 60 * 1000;
 
     private static double oldLat = COORD_DEFAULT_VALUE;
     private static double oldLon = COORD_DEFAULT_VALUE;
@@ -135,6 +136,12 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        waitDialog.setCancelable(true);
+        waitDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            public void onCancel(DialogInterface dialog) {
+                finish();
+            }
+        });
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
