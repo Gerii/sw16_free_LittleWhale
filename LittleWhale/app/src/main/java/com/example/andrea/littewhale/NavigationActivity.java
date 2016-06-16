@@ -1,8 +1,11 @@
 package com.example.andrea.littewhale;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,7 +16,9 @@ import android.hardware.GeomagneticField;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +37,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -131,6 +137,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     private ProgressDialog waitDialog;
 
     private double angle = 0;
+    boolean turnedToSettings = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,7 +167,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                     checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            } else {
+            }else{
                 startLocationParameters();
             }
         } else {
@@ -175,23 +182,131 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            startLocationParameters();
-        }
+        Log.e("Permissions", "onRequestPermissionsResult");
+        if(grantResults.length == 2) {
 
+
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                Log.e("Permissions", "both granted");
+                startLocationParameters();
+
+
+            } else if(grantResults[0] == PackageManager.PERMISSION_DENIED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                Log.e("Permissions", "storage granted");
+
+                new AlertDialog.Builder(this)
+                        .setTitle("Permission")
+                        .setCancelable(false)
+                        .setMessage("You cannot use the navigation if the app has no access to your location")
+                        .setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.fromParts("package", getPackageName(), null));
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                turnedToSettings = true;
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Deny", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .show();
+
+
+            } else if(grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_DENIED) {
+                Log.e("Permissions", "location granted");
+                new AlertDialog.Builder(this)
+                        .setCancelable(false)
+                        .setTitle("Permission")
+                        .setMessage("You will not be able to use the map without the storage permission ")
+                        .setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.fromParts("package", getPackageName(), null));
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                turnedToSettings = true;
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Continue anyway", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.e("Checking permissions","resetting map");
+                                startLocationParameters();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .show();
+
+            } else if(grantResults[0] == PackageManager.PERMISSION_DENIED &&
+                    grantResults[1] == PackageManager.PERMISSION_DENIED) {
+                Log.e("Permissions", "nothing granted");
+
+                new AlertDialog.Builder(this)
+                        .setTitle("Permission")
+                        .setCancelable(false)
+                        .setMessage("You cannot use the navigation if the app has no access to your location")
+                        .setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.fromParts("package", getPackageName(), null));
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                turnedToSettings = true;
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Deny", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        })
+
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .show();
+
+            }
+        }
     }
 
+
     private void startLocationParameters() {
-        if (Build.VERSION.SDK_INT >= 23 && !(
-                checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                        checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                        checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
-            return;
+
+        boolean storagePermission = false;
+
+        if (Build.VERSION.SDK_INT >= 23) {
+
+            if(!(checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                        checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
+                Log.e("ERROR", "NO LOCATION PERMISSION -> ABORTING");
+
+                return;
+            }
+
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                storagePermission = true;
+            } else {
+                Log.e("ERROR", "NO STORAGE PERMISSION! -> no map");
+
+            }
         }
 
+        if(!storagePermission) {
+            MapView mapView = (MapView) findViewById(R.id.mapView);
+            if(mapView != null) {
+                mapView.setVisibility(View.INVISIBLE);
+            }
+
+        }
+
+
+
+
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(final Location location) {
@@ -250,6 +365,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 }
 
                 MapView mapView = (MapView) findViewById(R.id.mapView);
+                //mapView = null;
                 if (mapView != null) {
                     MapController mMapController = (MapController) mapView.getController();
 
@@ -302,11 +418,32 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     @Override
     public void onResume() {
         super.onResume();
+        Log.e("NAV Act", "On resume");
+
+        if(turnedToSettings) {
+            Log.e("NAV Act", "was in settings");
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                int locationGranted = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+                int storageGranted = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+                this.onRequestPermissionsResult(1, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        new int[]{locationGranted, storageGranted});
+            } else {
+                startLocationParameters();
+            }
+            turnedToSettings = false;
+        }
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                if (locationManager != null)
+                if (locationManager != null) {
+                    Log.e("NAV Act", "On resume requeset update");
+
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
+                }
+
             }
         }
 
@@ -550,6 +687,10 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_navigation, container, false);
+
+
+
+
             return rootView;
         }
     }
@@ -696,8 +837,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            Log.e("MAP FRAGMENT", "On create");
             View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-
             Context context = getContext();
             final ITileSource seamarks = new XYTileSource("seamarks",
                     0,
@@ -708,23 +849,16 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context, seamarks);
             final TilesOverlay seamarksOverlay = new TilesOverlay(tileProvider, context);
             seamarksOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
-//            seamarksOverlay.setUseSafeCanvas(true);
 
             MapView mapView = (MapView) rootView.findViewById(R.id.mapView);
-
-            // mapView = new MapView(context, 256);
             mapView.setMultiTouchControls(true);
-            //  mapView.setUseSafeCanvas(true);
             mapView.getOverlays().add(seamarksOverlay);
-
-//            mapView.getController().setZoom(7);
 
             mapView.setTilesScaledToDpi(true);
             MapController mMapController = (MapController) mapView.getController();
             mMapController.setZoom(13);
             GeoPoint gPt = new GeoPoint(51500000, -150000);
             mMapController.setCenter(gPt);
-
             return rootView;
         }
     }
