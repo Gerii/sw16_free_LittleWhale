@@ -58,6 +58,16 @@ public class NavigationTest extends AndroidTestCase{
         assertTrue(assertDelta(0.001, 110.93025, angle));
     }
 
+    public void testCourse6() {
+        double angle = NavigationUtils.angleToTarget(-10, -10, 0, 0);
+        assertTrue(assertDelta(0.001, 45.4385485867424, angle));
+    }
+
+    public void testCourse7() {
+        double angle = NavigationUtils.angleToTarget(-10, 10, 5, -5);
+        assertTrue(assertDelta(0.001, 314.4492782292224, angle));
+    }
+
     public void testDistance1() {
         double dist = NavigationUtils.distanceInKm(47.070714, 15.439504, 46.95279, 15.88784);
         assertTrue(assertDelta(0.1, 36.43, dist));
