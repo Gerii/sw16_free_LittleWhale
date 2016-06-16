@@ -100,10 +100,15 @@ public class AddNewLocation extends AppCompatActivity {
                 RadioButton button = (RadioButton) findViewById(R.id.newLocation_rbtnTimeNotation);
                 RadioButton button2 = (RadioButton) findViewById(R.id.newLocation_rbtnDecimalNotation);
 
+                String[] cardinalDirection = new String[2];
+
                 if (button != null && button.isChecked()) {
                     double[] decimal = readTimeFormat();
                     targetLatitude = decimal[0];
                     targetLongitude = decimal[1];
+
+                    cardinalDirection[0] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLatitude)).getSelectedItem().toString();
+                    cardinalDirection[1] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLongitude)).getSelectedItem().toString();
 
                 } else if (button2 != null && button2.isChecked()) {
                     String latitude = ((TextView) findViewById(R.id.newLocation_editTextDegreeDecimalLatitude)).getText().toString();
@@ -112,20 +117,12 @@ public class AddNewLocation extends AppCompatActivity {
                     targetLatitude = Double.parseDouble(latitude);
                     targetLongitude = Double.parseDouble(longitude);
 
+                    cardinalDirection[0] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionDecimalLatitude)).getSelectedItem().toString();
+                    cardinalDirection[1] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionDecimalLongitude)).getSelectedItem().toString();
+
                 } else {
                     Log.e("ERROR", "WTF?!?!?!");
                 }
-
-                double[] target = new double[2];
-
-                target[0] = targetLatitude;
-                target[1] = targetLongitude;
-
-                String[] cardinalDirection = new String[2];
-
-                cardinalDirection[0] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLatitude)).getSelectedItem().toString();
-                cardinalDirection[1] = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLongitude)).getSelectedItem().toString();
-
 
                 if(cardinalDirection[1].equals("W")) {
                     targetLongitude *= -1;
@@ -134,6 +131,10 @@ public class AddNewLocation extends AppCompatActivity {
                     targetLatitude *= -1;
                 }
 
+                double[] target = new double[2];
+
+                target[0] = targetLatitude;
+                target[1] = targetLongitude;
 
                 LocationDb locationDbInstance = LocationDb.getInstance();
 
@@ -169,7 +170,6 @@ public class AddNewLocation extends AppCompatActivity {
         int latitudeSelectionIndex = ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionTimeLatitude)).getSelectedItemPosition();
         ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionDecimalLatitude)).setSelection(latitudeSelectionIndex);
         ((Spinner) findViewById(R.id.newLocation_spinnerCardinalDirectionDecimalLongitude)).setSelection(longitudeSelectionIndex);
-
 
     }
 

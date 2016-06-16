@@ -229,18 +229,32 @@ public class EnterCoordinates extends AppCompatActivity {
 
     private void setViewTimeToDecimal(boolean parameters, double[] coords) {
         double[] decimal = null;
+
+        int longitudeSelectionIndex;
+        int latitudeSelectionIndex;
+
         if(!parameters) {
             decimal = readTimeFormat();
+            longitudeSelectionIndex = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLongitude)).getSelectedItemPosition();
+            latitudeSelectionIndex = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLatitude)).getSelectedItemPosition();
         } else {
             decimal = coords;
+            longitudeSelectionIndex = 0;
+            latitudeSelectionIndex = 0;
+
+            if (decimal[0] < 0) {
+                decimal[0] *= -1;
+                latitudeSelectionIndex = 1;
+            }
+
+            if (decimal[1] < 0) {
+                decimal[1] *= -1;
+                longitudeSelectionIndex = 1;
+            }
         }
 
         ((TextView) findViewById(R.id.editTextDegreeDecimalLatitude)).setText(Double.toString(decimal[0]));
         ((TextView) findViewById(R.id.editTextDegreeDecimalLongitude)).setText(Double.toString(decimal[1]));
-
-
-        int longitudeSelectionIndex = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLongitude)).getSelectedItemPosition();
-        int latitudeSelectionIndex = ((Spinner) findViewById(R.id.spinnerCardinalDirectionTimeLatitude)).getSelectedItemPosition();
         ((Spinner) findViewById(R.id.spinnerCardinalDirectionDecimalLatitude)).setSelection(latitudeSelectionIndex);
         ((Spinner) findViewById(R.id.spinnerCardinalDirectionDecimalLongitude)).setSelection(longitudeSelectionIndex);
 
