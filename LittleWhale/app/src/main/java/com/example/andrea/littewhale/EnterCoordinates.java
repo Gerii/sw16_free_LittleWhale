@@ -187,6 +187,11 @@ public class EnterCoordinates extends AppCompatActivity {
         EnterCoordinates.this.startActivity(myIntent);
     }
 
+    private void goToInfo() {
+        Intent myIntent = new Intent(EnterCoordinates.this, AboutActivity.class);
+        EnterCoordinates.this.startActivity(myIntent);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -202,9 +207,8 @@ public class EnterCoordinates extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_about) {
-
-
-            new AlertDialog.Builder(this)
+            goToInfo();
+            /*new AlertDialog.Builder(this)
                     .setTitle("Little Whale")
                     .setMessage(Html.fromHtml("<b>" + "Developed by:" + "</b><br>" + " Clemens Hofer<br>Gerald Palfinger<br>" +
                             "Andrea Pferscher<br>Angela Promitzer"))
@@ -214,7 +218,7 @@ public class EnterCoordinates extends AppCompatActivity {
                         }
                     })
                     .setIcon(android.R.drawable.ic_dialog_info)
-                    .show();
+                    .show();*/
         }
 
         //noinspection SimplifiableIfStatement
@@ -315,8 +319,6 @@ public class EnterCoordinates extends AppCompatActivity {
         ((TextView) findViewById(R.id.editTextDegreeDecimalLongitude)).setText(Double.toString(decimal[1]));
         ((Spinner) findViewById(R.id.spinnerCardinalDirectionDecimalLatitude)).setSelection(latitudeSelectionIndex);
         ((Spinner) findViewById(R.id.spinnerCardinalDirectionDecimalLongitude)).setSelection(longitudeSelectionIndex);
-
-
     }
 
     private double timeToDecimalConversion(int degree, int minute, int second) {

@@ -137,7 +137,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     protected void onCreate(Bundle savedInstanceState) {
         waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
         waitDialog.setCancelable(true);
-        waitDialog.setCanceledOnTouchOutside(false);
+        waitDialog.setCancel
         waitDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             public void onCancel(DialogInterface dialog) {
                 finish();
