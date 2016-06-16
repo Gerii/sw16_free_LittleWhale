@@ -91,8 +91,9 @@
             <LinearLayout
                 android:id="@+id/linearLayoutTimeLatitude"
                 android:layout_width="match_parent"
-                android:layout_height="78dp"
-                android:layout_marginTop="65dp">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+                android:layout_marginTop="80dp">
 
                 <EditText
                     android:id="@+id/editTextDegreeTimeLatitude"
@@ -161,8 +162,7 @@
             <LinearLayout
                 android:id="@+id/linearLayoutTimeLongitude"
                 android:layout_width="match_parent"
-                android:layout_height="78dp"
-                android:layout_marginTop="0dp">
+                android:layout_height="wrap_content">
 
                 <EditText
                     android:id="@+id/editTextDegreeTimeLongitude"
@@ -236,7 +236,7 @@
         <LinearLayout
             android:id="@+id/linearLayoutDecimalCoords"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignTop="@id/radioGroup"
             android:orientation="vertical"
             android:visibility="gone">
@@ -245,8 +245,9 @@
             <LinearLayout
                 android:id="@+id/linearLayoutDecimalLatitude"
                 android:layout_width="match_parent"
-                android:layout_height="78dp"
-                android:layout_marginTop="65dp">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+                android:layout_marginTop="80dp">
 
                 <EditText
                     android:id="@+id/editTextDegreeDecimalLatitude"
@@ -262,23 +263,16 @@
 
                 <TextView
                     android:id="@+id/textView3"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".1"
                     android:text="°"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <FrameLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".2">
-
-                    <Spinner
-                        android:id="@+id/spinnerCardinalDirectionDecimalLatitude"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:entries="@array/latitude" />
-                </FrameLayout>
+                <Spinner
+                    android:id="@+id/spinnerCardinalDirectionDecimalLatitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:entries="@array/latitude" />
             </LinearLayout>
 
             <!-- decimal longitude-->
@@ -301,9 +295,8 @@
 
                 <TextView
                     android:id="@+id/textViewDegreeDecimalLongitude"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".1"
                     android:text="°"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
