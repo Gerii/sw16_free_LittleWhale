@@ -73,7 +73,8 @@ public class WeatherGetterWhatever extends AsyncTask<Double, Void, WeatherJSONs>
         } catch (Exception e) {
             //e.printStackTrace();
         }
+
+        if(mSectionsPagerAdapter != null)
         ((NavigationActivity.WeatherFragment) mSectionsPagerAdapter.weatherFragment).updateWeather(weatherStorage);
     }
-
 }

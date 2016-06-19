@@ -162,10 +162,6 @@ public class EnterCoordinates extends AppCompatActivity {
 
             cardinalDirection[0] = ((Spinner) findViewById(R.id.spinnerCardinalDirectionDecimalLatitude)).getSelectedItem().toString();
             cardinalDirection[1] = ((Spinner) findViewById(R.id.spinnerCardinalDirectionDecimalLongitude)).getSelectedItem().toString();
-
-
-        } else {
-            Log.e("ERROR", "WTF?!?!?!");
         }
 
         if (cardinalDirection[0].equals("S")) {

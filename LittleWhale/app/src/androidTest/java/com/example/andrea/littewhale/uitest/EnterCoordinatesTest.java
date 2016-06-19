@@ -45,17 +45,11 @@ public class EnterCoordinatesTest extends ActivityInstrumentationTestCase2 {
 
 
     public void testStartNavigation() throws Exception{
+        mySolo.clickOnRadioButton(0);
 
-        Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
-        PrintStream out = new PrintStream(socket.getOutputStream());
-        double latitude = 41.0;
-        double longitude = 17.0;
-        String str = "geo fix " + Double.toString(latitude) + " " +  Double.toString(longitude) + "\n";
-        out.print(str);
-        socket.close();
+        mySolo.clickOnView(mySolo.getView(R.id.buttonStartNavigating));
 
-        mySolo.goBack();
-        mySolo.waitForActivity("EnterCoordinates");
+        mySolo.waitForActivity("NavigationActivity");
     }
 
     public void testDecimalToTime() {
@@ -83,4 +77,5 @@ public class EnterCoordinatesTest extends ActivityInstrumentationTestCase2 {
        // assertEquals(1, ((Spinner) mySolo.getView(R.id.spinnerCardinalDirectionDecimalLongitude)).getSelectedItemPosition());
 
     }
+
 }

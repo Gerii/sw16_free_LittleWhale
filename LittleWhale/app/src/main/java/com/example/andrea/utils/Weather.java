@@ -155,7 +155,7 @@ public class Weather {
             this.windSpeed = Double.parseDouble(wind.get("speed").toString());
             this.windDirection = Double.parseDouble(wind.get("deg").toString());
             success = true;
-            Log.e("PARSING", Double.toString(this.temperature));
+            //Log.e("PARSING", Double.toString(this.temperature));
         } catch (JSONException e) {
             Log.e("Weather Parsing", e.toString());
             throw new WeatherParsingException();

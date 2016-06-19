@@ -5,24 +5,19 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.hardware.GeomagneticField;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
-import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -45,36 +40,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.security.Permission;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import com.example.andrea.utils.NavigationUtils;
 import com.example.andrea.utils.Weather;
 import com.example.andrea.utils.WeatherGetterWhatever;
-import com.example.andrea.utils.WeatherParsingException;
 import com.example.andrea.utils.WeatherStorage;
 
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.TilesOverlay;
-import org.osmdroid.*;
-import org.w3c.dom.Text;
 
 
 public class NavigationActivity extends AppCompatActivity implements SensorEventListener {
@@ -128,14 +111,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
-        waitDialog.setCancelable(true);
-        waitDialog.setCanceledOnTouchOutside(false);
-        waitDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            public void onCancel(DialogInterface dialog) {
-                finish();
-            }
-        });
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
@@ -172,6 +147,14 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetic = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
+        waitDialog = ProgressDialog.show(this, "Navigation", "Waiting for location…", true);
+        waitDialog.setCancelable(true);
+        waitDialog.setCanceledOnTouchOutside(false);
+        waitDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            public void onCancel(DialogInterface dialog) {
+                finish();
+            }
+        });
     }
 
     @Override
@@ -273,8 +256,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 Calendar now = Calendar.getInstance();
                 if (weatherAge == null || now.compareTo(weatherAge) >= WEATHER_MAX_AGE) {
                     Log.e("TAG", "Updating WEATHER");
-                    WeatherGetterWhatever wgw = new WeatherGetterWhatever(curLat, curLon, getApplicationContext(), mSectionsPagerAdapter);
-                    wgw.execute();
+                    //WeatherGetterWhatever wgw = new WeatherGetterWhatever(curLat, curLon, getApplicationContext(), mSectionsPagerAdapter);
+                    //wgw.execute();
                 }
             }
 
@@ -428,30 +411,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         } else if (deviation > 135 && deviation < 180) {
             //Log.e("DIRECTION", "DOWN RIGHT");
             ImageView arrow = ((ImageView) findViewById(R.id.downRightArrow));
-            if (arrow != null) {
-                arrow.setAlpha(1f);
-            }
-        } else if (deviation > 180 && deviation < 225) {
-            //Log.e("DIRECTION", "DOWN");
-            ImageView arrow = ((ImageView) findViewById(R.id.downArrow));
-            if (arrow != null) {
-                arrow.setAlpha(1f);
-            }
-        } else if (deviation > 225 && deviation < 270) {
-            //Log.e("DIRECTION", "DOWN LEFT");
-            ImageView arrow = ((ImageView) findViewById(R.id.downLeftArrow));
-            if (arrow != null) {
-                arrow.setAlpha(1f);
-            }
-        } else if (deviation > 270 && deviation < 315) {
-            //Log.e("DIRECTION", "LEFT");
-            ImageView arrow = ((ImageView) findViewById(R.id.leftArrow));
-            if (arrow != null) {
-                arrow.setAlpha(1f);
-            }
-        } else if (deviation > 315 && deviation < 360) {
-            //Log.e("DIRECTION", "UP LEFT");
-            ImageView arrow = ((ImageView) findViewById(R.id.upLeftArrow));
             if (arrow != null) {
                 arrow.setAlpha(1f);
             }

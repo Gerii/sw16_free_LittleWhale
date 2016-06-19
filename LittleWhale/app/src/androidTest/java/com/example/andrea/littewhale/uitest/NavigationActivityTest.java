@@ -53,6 +53,13 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
 
         mySolo = new Solo(getInstrumentation(), getActivity());
 
+        ((NavigationActivity) mySolo.getCurrentActivity()).runOnUiThread(new Runnable() {
+            @Override
+            public void run()  {
+                float values[] = {0.0f, 0.0f, 0.0f};
+                ((NavigationActivity) mySolo.getCurrentActivity()).updateCourse(Sensor.TYPE_ACCELEROMETER, values);
+            }
+        });
     }
 
     public void tearDown() throws Exception {
@@ -98,16 +105,148 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
 
         //float values[] = {0.064f, 0.1155f, 9.6576f};
         //((NavigationActivity) getActivity()).updateCourse(Sensor.TYPE_ACCELEROMETER, values);
+    }
 
+    public void testArrow1() throws Exception {
+        Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
+        PrintStream out = new PrintStream(socket.getOutputStream());
+        double latitude = 69.0;
+        double longitude = 10.0;
+        String str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
 
-        ((NavigationActivity) mySolo.getCurrentActivity()).runOnUiThread(new Runnable() {
-            @Override
-            public void run()  {
-                float values[] = {0.064f, 0.1155f, 9.6576f};
-                ((NavigationActivity) mySolo.getCurrentActivity()).updateCourse(Sensor.TYPE_ACCELEROMETER, values);
-            }
-        });
+        mySolo.sleep(500);
+    }
 
+    public void testArrow2() throws Exception {
+        Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
+        PrintStream out = new PrintStream(socket.getOutputStream());
+        double latitude = 69.0;
+        double longitude = 5.0;
+        String str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
 
+        mySolo.sleep(500);
+    }
+
+    public void testArrow3() throws Exception {
+        Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
+        PrintStream out = new PrintStream(socket.getOutputStream());
+        double latitude = 69.0;
+        double longitude = 15.0;
+        String str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        mySolo.sleep(500);
+    }
+
+    public void testArrow4() throws Exception {
+        Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
+        PrintStream out = new PrintStream(socket.getOutputStream());
+        double latitude = 70.0;
+        double longitude = 5.0;
+        String str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        mySolo.sleep(500);
+    }
+
+    public void testArrow5() throws Exception {
+        Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
+        PrintStream out = new PrintStream(socket.getOutputStream());
+        double latitude = 70.0;
+        double longitude = 15.0;
+        String str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        mySolo.sleep(500);
+    }
+
+    public void testArrow6() throws Exception {
+        Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
+        PrintStream out = new PrintStream(socket.getOutputStream());
+        double latitude = 71.0;
+        double longitude = 10.0;
+        String str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        mySolo.sleep(500);
+    }
+
+    public void testArrow7() throws Exception {
+        Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
+        PrintStream out = new PrintStream(socket.getOutputStream());
+        double latitude = 71.0;
+        double longitude = 5.0;
+        String str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        mySolo.sleep(500);
+    }
+
+    public void testArrow8() throws Exception {
+        Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
+        PrintStream out = new PrintStream(socket.getOutputStream());
+        double latitude = 71.0;
+        double longitude = 15.0;
+        String str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        mySolo.sleep(500);
+    }
+
+    public void testSpeed() throws Exception {
+        int updateIntervall = 500;
+
+        Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
+        PrintStream out = new PrintStream(socket.getOutputStream());
+        double latitude = 71.0;
+        double longitude = 15.0;
+        String str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        mySolo.sleep(updateIntervall);
+
+        latitude = 71.0;
+        longitude = 15.000;
+        str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        mySolo.sleep(updateIntervall);
+
+        latitude = 71.0;
+        longitude = 15.001;
+        str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        mySolo.sleep(updateIntervall);
+
+        latitude = 71.0;
+        longitude = 15.002;
+        str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        mySolo.sleep(updateIntervall);
+
+        latitude = 71.0;
+        longitude = 15.003;
+        str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        mySolo.sleep(updateIntervall);
+
+        latitude = 71.0;
+        longitude = 15.004;
+        str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        mySolo.sleep(updateIntervall);
+
+        latitude = 71.0;
+        longitude = 15.005;
+        str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        Assert.assertTrue(mySolo.searchText("kts"));
     }
 }
