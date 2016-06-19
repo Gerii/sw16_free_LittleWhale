@@ -56,6 +56,7 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void tearDown() throws Exception {
+        mySolo.finishOpenedActivities();
         super.tearDown();
 
     }

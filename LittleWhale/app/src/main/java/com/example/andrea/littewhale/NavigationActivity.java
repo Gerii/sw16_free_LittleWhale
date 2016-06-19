@@ -98,20 +98,13 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     LocationManager locationManager;
 
     public static final double COORD_DEFAULT_VALUE = -1000.0;
-    public static final int WEATHER_MAX_AGE = 1 * 60 * 60 * 1000;
+    public static final int WEATHER_MAX_AGE = 60 * 60 * 1000;
 
     private static double oldLat = COORD_DEFAULT_VALUE;
     private static double oldLon = COORD_DEFAULT_VALUE;
+
     private static WeatherStorage weatherStorage = null;
     private static Calendar weatherAge = null;
-
-    public static double getOldLon() {
-        return oldLon;
-    }
-
-    public static double getOldLat() {
-        return oldLat;
-    }
 
     private long timestampLastUpdateTimestamp = 0;
     private ArrayList<Pair<Long, Double>> speedHistory = new ArrayList<>();
@@ -615,8 +608,10 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             weatherStorage = weatherStore;
             weatherAge = Calendar.getInstance();
 
+            initFiveDayForecastList();
+
             if (weatherStorage != null && weatherStorage.isLoaded()) {
-                initFiveDayForecastList();
+
 
                 boolean currentWeatherDone = false;
                 Weather weather = weatherStore.get(0);
@@ -640,6 +635,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 ((TextView) rootView.findViewById(R.id.editTextWindDirValue)).setText(R.string.windDirIcon);
                 ((TextView) rootView.findViewById(R.id.editTextWindSpeedValue)).setText(R.string.windSpeedIcon);
                 mAdapter.replaceWeatherStorage(new WeatherStorage());
+
                 Context context = rootView.getContext().getApplicationContext();
                 CharSequence text;
                 if (weatherStorage != null) {

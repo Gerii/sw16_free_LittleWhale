@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.example.andrea.littewhale.EditLocations;
 import com.example.andrea.littewhale.EnterCoordinates;
-import com.example.andrea.littewhale.MainActivity;
 import com.example.andrea.littewhale.NavigationActivity;
 import com.example.andrea.littewhale.R;
 import com.robotium.solo.Solo;
@@ -40,13 +39,12 @@ public class EnterCoordinatesTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void tearDown() throws Exception {
+        mySolo.finishOpenedActivities();
         super.tearDown();
     }
 
 
     public void testStartNavigation() throws Exception{
-        mySolo.clickOnButton("Start Navigating");
-        mySolo.waitForActivity("");
 
         Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
         PrintStream out = new PrintStream(socket.getOutputStream());
