@@ -4,7 +4,9 @@ import android.app.Instrumentation;
 import android.support.design.widget.FloatingActionButton;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -106,6 +108,47 @@ public class EditLocationsTest extends ActivityInstrumentationTestCase2 {
         }
     }
 
+    public void testAddNewElementWithEnter()  {
+
+        ListView lv = (ListView) mySolo.getView(R.id.listView);
+        int oldCount = lv.getAdapter().getCount();
+
+        View fab = getActivity().findViewById(R.id.fabAdd);
+        mySolo.clickOnView(fab);
+        mySolo.waitForActivity("AddNewLocation");
+
+        if (mySolo.waitForActivity("AddNewLocation")) {
+            mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_locationName), "Feldbach");
+            mySolo.clickOnRadioButton(0);
+            mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextDegreeTimeLongitude), "15");
+            mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextMinuteLongitude), "0");
+            mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextSecondLongitude), "0");
+
+            mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextDegreeTimeLatitude), "20");
+            mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextMinuteLatitude), "0");
+            mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextSecondLatitude), "0");
+
+            if(mySolo.waitForActivity("EditLocations")) {
+                lv = (ListView) mySolo.getView(R.id.listView);
+                Assert.assertEquals(oldCount + 1, lv.getAdapter().getCount());
+
+
+                boolean newElementFound = false;
+
+                for(int i = 0; i < lv.getAdapter().getCount() ; i++) {
+                    if(lv.getItemAtPosition(i).toString().equals("{line2=15.0 N   20.0 E, line1=Feldbach}")) {
+                        newElementFound = true;
+                        break;
+                    }
+                }
+
+                Assert.assertTrue(newElementFound);
+            }
+
+
+        }
+    }
+
     public void testEditElement()  {
 
         ListView lv = (ListView) mySolo.getView(R.id.listView);
@@ -186,8 +229,6 @@ public class EditLocationsTest extends ActivityInstrumentationTestCase2 {
                 }
                 Assert.assertTrue(newElementFound);
             }
-
-
         }
 
     }
