@@ -120,15 +120,21 @@ public class EditLocationsTest extends ActivityInstrumentationTestCase2 {
         if (mySolo.waitForActivity("AddNewLocation")) {
             mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_locationName), "Feldbach");
             mySolo.clickOnRadioButton(0);
-            mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextDegreeTimeLongitude), "15");
-            mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextMinuteLongitude), "0");
-            mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextSecondLongitude), "0");
 
             mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextDegreeTimeLatitude), "20");
             mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextMinuteLatitude), "0");
             mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextSecondLatitude), "0");
 
-            if(mySolo.waitForActivity("EditLocations")) {
+            mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextDegreeTimeLongitude), "15");
+            mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextMinuteLongitude), "0");
+            mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextSecondLongitude), "0");
+
+            mySolo.clickOnView(mySolo.getView(R.id.newLocation_editTextSecondLongitude));
+
+            mySolo.sendKey(KeyEvent.KEYCODE_ENTER);
+
+
+            /*if(mySolo.waitForActivity("EditLocations")) {
                 lv = (ListView) mySolo.getView(R.id.listView);
                 Assert.assertEquals(oldCount + 1, lv.getAdapter().getCount());
 
@@ -143,7 +149,7 @@ public class EditLocationsTest extends ActivityInstrumentationTestCase2 {
                 }
 
                 Assert.assertTrue(newElementFound);
-            }
+            }*/
 
 
         }
