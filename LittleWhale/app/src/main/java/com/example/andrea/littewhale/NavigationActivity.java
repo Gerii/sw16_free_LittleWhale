@@ -635,6 +635,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     public static class WeatherFragment extends Fragment {
         private static final String ARG_SECTION_NUMBER = "section_number";
         private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
+        private static final DecimalFormat DECIMAL_FORMAT_NO_COMMA = new DecimalFormat("0");
         private RecyclerView mRecyclerView = null;
         private FiveDayWeatherListAdapter mAdapter = null;
         private RecyclerView.LayoutManager mLayoutManager = null;
@@ -678,13 +679,11 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             initFiveDayForecastList();
 
             if (weatherStorage != null && weatherStorage.isLoaded()) {
-
-
                 boolean currentWeatherDone = false;
                 Weather weather = weatherStore.get(0);
                 ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText(weather.getWeatherIcon());
                 ((TextView) rootView.findViewById(R.id.editTextDate)).setText(weather.getFormattedDate() + " " + weather.getFormattedTime());
-                ((TextView) rootView.findViewById(R.id.editTextPressureValue)).setText(DECIMAL_FORMAT.format(weather.getPressure()) + "hPa");
+                ((TextView) rootView.findViewById(R.id.editTextPressureValue)).setText(DECIMAL_FORMAT_NO_COMMA.format(weather.getPressure()) + "hPa");
                 ((TextView) rootView.findViewById(R.id.editTextHumidityValue)).setText(weather.getHumidity() + "%");
                 ((TextView) rootView.findViewById(R.id.editTextTemperatureValue)).setText(DECIMAL_FORMAT.format(weather.getTemperature()) + "°C");
                 ((TextView) rootView.findViewById(R.id.editTextCloudsValue)).setText(weather.getClouds() + "%");
@@ -695,20 +694,20 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             } else {
                 ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText(R.string.valueNotAvailable);
                 ((TextView) rootView.findViewById(R.id.editTextDate)).setText(R.string.weatherLoadingFailedText);
-                ((TextView) rootView.findViewById(R.id.editTextPressureValue)).setText(R.string.pressureIcon);
-                ((TextView) rootView.findViewById(R.id.editTextHumidityValue)).setText(R.string.humidityIcon);
-                ((TextView) rootView.findViewById(R.id.editTextTemperatureValue)).setText(R.string.temperatureIcon);
-                ((TextView) rootView.findViewById(R.id.editTextCloudsValue)).setText(R.string.cloudsIcon);
-                ((TextView) rootView.findViewById(R.id.editTextWindDirValue)).setText(R.string.windDirIcon);
-                ((TextView) rootView.findViewById(R.id.editTextWindSpeedValue)).setText(R.string.windSpeedIcon);
+                ((TextView) rootView.findViewById(R.id.editTextPressureValue)).setText(R.string.na_string);
+                ((TextView) rootView.findViewById(R.id.editTextHumidityValue)).setText(R.string.na_string);
+                ((TextView) rootView.findViewById(R.id.editTextTemperatureValue)).setText(R.string.na_string);
+                ((TextView) rootView.findViewById(R.id.editTextCloudsValue)).setText(R.string.na_string);
+                ((TextView) rootView.findViewById(R.id.editTextWindDirValue)).setText(R.string.na_string);
+                ((TextView) rootView.findViewById(R.id.editTextWindSpeedValue)).setText(R.string.na_string);
                 mAdapter.replaceWeatherStorage(new WeatherStorage());
                 Context context = rootView.getContext().getApplicationContext();
                 CharSequence text;
                 if (weatherStorage != null) {
                     String errorMessage = weatherStorage.getErrorMessage();
-                    text = R.string.weatherLoadingFailedText + ((errorMessage != null) ? ("\n" + R.string.weatherServerReturnText + " ") + errorMessage : "");
+                    text = this.getString(R.string.weatherLoadingFailedText) + ((errorMessage != null) ? ("\n" + this.getString(R.string.weatherServerReturnText) + " ") + errorMessage : "");
                 } else {
-                    text = R.string.weatherLoadingFailedText + "\n" + R.string.weatherCheckNetworkConnText;
+                    text = this.getString(R.string.weatherLoadingFailedText) + "\n" + this.getString(R.string.weatherCheckNetworkConnText);
                 }
                 Toast.makeText(context, text, Toast.LENGTH_LONG).show();
             }

@@ -25,7 +25,7 @@
     <string name="valueNotAvailable"></string>
     <string name="weatherLoadingFailedText">Could not load weather :(</string>
     <string name="weatherCheckNetworkConnText">Check your network connection and try again later.</string>
-    <string name="weatherServerReturnText">The server returned:</string>
+    <string name="weatherServerReturnText">Our weather provider returned:</string>
 
 
     <integer-array name="weatherid">
@@ -59,6 +59,7 @@
     <string name="author4">Gerald Palfinger</string>
     <string name="guideIntro">Arrrrr!</string>
     <string name="guideText">Here is our new App - „Little Whale“. With this app you can navigate your battleships through the seven seas and board the ships of helpless tourist boats! Haaa Haaa Haaa Haaaa….</string>
+    <string name="na_string">N/A</string>
 
 
 </resources>
