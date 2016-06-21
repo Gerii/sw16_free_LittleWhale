@@ -11,6 +11,9 @@ beginning of the course, everything works fine. Newer versions of AndroidStudio 
 Emulators can cause problems. Unfortunatly we weren't able to find a fix for the newer
 versions.
 
+3) since we use a free weather api, it is not 100 % reliable. For this reason it can happen
+that do not get the current weather. This leads to lower code coverage.
+
 Cheers
 Andrea, Angela, Clemens, Gerald
 
