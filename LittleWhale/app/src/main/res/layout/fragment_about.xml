@@ -41,10 +41,40 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView4"
-        android:text="@string/version"
+        android:id="@+id/textViewAuthor1"
+        android:text="@string/author1"
         android:textSize="@dimen/abc_text_size_medium_material"
         android:layout_below="@+id/textView2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewAuthor2"
+        android:text="@string/author2"
+        android:textSize="@dimen/abc_text_size_medium_material"
+        android:layout_below="@+id/textViewAuthor1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewAuthor3"
+        android:text="@string/author3"
+        android:textSize="@dimen/abc_text_size_medium_material"
+        android:layout_below="@+id/textViewAuthor2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewAuthor4"
+        android:text="@string/author4"
+        android:textSize="@dimen/abc_text_size_medium_material"
+        android:layout_below="@+id/textViewAuthor3"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
