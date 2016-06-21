@@ -2,6 +2,8 @@ package com.example.andrea.utils;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.example.andrea.littewhale.NavigationActivity;
 import com.example.andrea.littewhale.R;
@@ -40,13 +42,12 @@ class WeatherJSONs {
 public class WeatherGetterWhatever extends AsyncTask<Double, Void, WeatherJSONs> {
     private static final String API_KEY = "d1db7d9ac0033228ce578944c83ac06a";
     private String dailyURL, fiveDayURL;
-    private NavigationActivity.SectionsPagerAdapter mSectionsPagerAdapter;
     private Context context;
+    private NavigationActivity navigationActivity;
 
-
-    public WeatherGetterWhatever(double lat, double lon, Context context, NavigationActivity.SectionsPagerAdapter mSectionsPagerAdapter) {
+    public WeatherGetterWhatever(double lat, double lon, Context context, NavigationActivity navigationActivity) {
         this.context = context;
-        this.mSectionsPagerAdapter = mSectionsPagerAdapter;
+        this.navigationActivity = navigationActivity;
         dailyURL = "http://api.openweathermap.org/data/2.5/weather?lat=" + Double.toString(lat) + "&lon=" + Double.toString(lon) + "&appid=" + API_KEY;
         fiveDayURL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + Double.toString(lat) + "&lon=" + Double.toString(lon) + "&appid=" + API_KEY;
     }
@@ -74,7 +75,11 @@ public class WeatherGetterWhatever extends AsyncTask<Double, Void, WeatherJSONs>
             //e.printStackTrace();
         }
 
-        if(mSectionsPagerAdapter != null)
-        ((NavigationActivity.WeatherFragment) mSectionsPagerAdapter.weatherFragment).updateWeather(weatherStorage);
+        for(android.support.v4.app.Fragment fragment : navigationActivity.getSupportFragmentManager().getFragments()) {
+            if(fragment instanceof NavigationActivity.WeatherFragment) {
+                ((NavigationActivity.WeatherFragment)fragment).updateWeather(weatherStorage);
+                break;
+            }
+        }
     }
 }

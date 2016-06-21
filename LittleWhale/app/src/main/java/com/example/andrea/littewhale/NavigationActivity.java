@@ -171,9 +171,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                         checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
             return;
         }
-
+        final NavigationActivity navigationActivity = this;
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
 
         locationListener = new LocationListener() {
             @Override
@@ -255,7 +254,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 Calendar now = Calendar.getInstance();
                 if (weatherAge == null || now.compareTo(weatherAge) >= WEATHER_MAX_AGE) {
                     Log.e("TAG", "Updating WEATHER");
-                    WeatherGetterWhatever wgw = new WeatherGetterWhatever(curLat, curLon, getApplicationContext(), mSectionsPagerAdapter);
+                    WeatherGetterWhatever wgw = new WeatherGetterWhatever(curLat, curLon, getApplicationContext(), navigationActivity);
                     wgw.execute();
                 }
             }
@@ -513,7 +512,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         }
     }
 
-    public static class WeatherFragment extends Fragment {
+    public static class WeatherFragment extends  android.support.v4.app.Fragment {
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -562,6 +561,10 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         }
 
+        public String toString() {
+            return "WEATHER!!!!!!!!!!!!!";
+        }
+
         public void updateWeather(WeatherStorage weatherStore) {
             weatherStorage = weatherStore;
             weatherAge = Calendar.getInstance();
@@ -569,8 +572,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             initFiveDayForecastList();
 
             if (weatherStorage != null && weatherStorage.isLoaded()) {
-
-
                 boolean currentWeatherDone = false;
                 Weather weather = weatherStore.get(0);
                 ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText(weather.getWeatherIcon());
@@ -700,7 +701,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             super(fm);
         }
 
-        public WeatherFragment weatherFragment; //TODO this is probably maybe not best practice
+        //public WeatherFragment weatherFragment; //TODO this is probably maybe not best practice --> jup, it wasn't
 
         @Override
         public Fragment getItem(int position) {
@@ -708,8 +709,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 case 0:
                     return NavigationFragment.newInstance(position);
                 case 1:
-                    weatherFragment = WeatherFragment.newInstance(position);
-                    return weatherFragment;
+                    return WeatherFragment.newInstance(position);
                 case 2:
                     return MapFragment.newInstance(position);
             }
