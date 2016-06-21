@@ -3,6 +3,8 @@ package com.example.andrea.littewhale.uitest;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.test.ActivityInstrumentationTestCase2;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.andrea.littewhale.NavigationActivity;
@@ -66,6 +68,12 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
         mySolo.finishOpenedActivities();
         super.tearDown();
 
+    }
+
+    public void testWeatherTab() throws Exception{
+        ViewGroup tabs = (ViewGroup) mySolo.getView(R.id.tabs);
+        View weather = tabs.getChildAt(0);
+        mySolo.clickOnView(weather);
     }
 
     public void testCalculatedCourse() throws Exception{
@@ -244,6 +252,22 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
 
         latitude = 71.0;
         longitude = 15.005;
+        str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        Assert.assertTrue(mySolo.searchText("kts"));
+    }
+
+    public void testLocationReached() throws Exception {
+        Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
+        PrintStream out = new PrintStream(socket.getOutputStream());
+        double latitude = 70.0;
+        double longitude = 10.0001;
+        String str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
+        out.print(str);
+
+        latitude = 70.0;
+        longitude = 10.000;
         str = "geo fix " + Double.toString(longitude) + " " + Double.toString(latitude) + "\n";
         out.print(str);
 

@@ -112,19 +112,6 @@ public class Weather {
                 return;
             }
 
-            /*if (responseJSON.has("dt_txt")) {
-                try {
-                    timeText = (String) responseJSON.get("dt_txt");
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                    Date date = formatter.parse(timeText);
-                    timeText = formatter.format(date);
-                }
-                catch (ParseException pE) {
-                    Log.e("Weather Parsing", pE.toString());
-                    throw new WeatherParsingException();
-                }
-            }*/
-
             JSONArray weatherJSONArray = (JSONArray) responseJSON.get("weather");
             JSONObject firstWeatherJSON = (JSONObject) weatherJSONArray.get(0);
 
@@ -134,7 +121,7 @@ public class Weather {
 
             Calendar cal = Calendar.getInstance();
             int hourOfDay = cal.get(Calendar.HOUR_OF_DAY);
-            //TODO we could use sunrise and sunset data of the weather api
+
             this.weatherIcon = WEATHER_CODES.get((id == 800) ? ((hourOfDay >= 7 && hourOfDay < 20) ? id : 0) : id / 100);
 
             long time = Long.parseLong(responseJSON.get("dt").toString() + "000");
@@ -155,7 +142,6 @@ public class Weather {
             this.windSpeed = Double.parseDouble(wind.get("speed").toString());
             this.windDirection = Double.parseDouble(wind.get("deg").toString());
             success = true;
-            //Log.e("PARSING", Double.toString(this.temperature));
         } catch (JSONException e) {
             Log.e("Weather Parsing", e.toString());
             throw new WeatherParsingException();

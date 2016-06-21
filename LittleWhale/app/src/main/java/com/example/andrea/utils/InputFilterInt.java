@@ -43,4 +43,3 @@ public class InputFilterInt implements InputFilter {
         return b > a ? c >= a && c <= b : c >= b && c <= a;
     }
 }
-//End

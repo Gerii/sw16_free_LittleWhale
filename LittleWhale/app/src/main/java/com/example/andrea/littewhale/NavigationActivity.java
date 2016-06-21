@@ -1,9 +1,12 @@
 package com.example.andrea.littewhale;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -11,7 +14,9 @@ import android.hardware.GeomagneticField;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -47,7 +52,7 @@ import java.util.Calendar;
 
 import com.example.andrea.utils.NavigationUtils;
 import com.example.andrea.utils.Weather;
-import com.example.andrea.utils.WeatherGetterWhatever;
+import com.example.andrea.utils.WeatherGetter;
 import com.example.andrea.utils.WeatherStorage;
 
 import org.osmdroid.tileprovider.MapTileProviderBasic;
@@ -91,7 +96,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     private long timestampLastUpdateTimestamp = 0;
     private ArrayList<Pair<Long, Double>> speedHistory = new ArrayList<>();
 
-    //for compass orientation
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private Sensor mMagnetic;
@@ -107,6 +111,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     private ProgressDialog waitDialog;
 
     private double angle = 0;
+    boolean turnedToSettings = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,11 +120,9 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
+
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
 
         if (mViewPager != null)
@@ -141,7 +144,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         } else {
             startLocationParameters();
         }
-        //compass
+
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetic = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -158,22 +161,131 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            startLocationParameters();
-        }
+        Log.e("Permissions", "onRequestPermissionsResult");
+        if(grantResults.length == 2) {
 
+
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                Log.e("Permissions", "both granted");
+                startLocationParameters();
+
+
+            } else if(grantResults[0] == PackageManager.PERMISSION_DENIED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                Log.e("Permissions", "storage granted");
+
+                new AlertDialog.Builder(this)
+                        .setTitle("Permission")
+                        .setCancelable(false)
+                        .setMessage("You cannot use the navigation if the app has no access to your location")
+                        .setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.fromParts("package", getPackageName(), null));
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                turnedToSettings = true;
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Deny", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .show();
+
+
+            } else if(grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_DENIED) {
+                Log.e("Permissions", "location granted");
+                new AlertDialog.Builder(this)
+                        .setCancelable(false)
+                        .setTitle("Permission")
+                        .setMessage("You will not be able to use the map without the storage permission ")
+                        .setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.fromParts("package", getPackageName(), null));
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                turnedToSettings = true;
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Continue anyway", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.e("Checking permissions","resetting map");
+                                startLocationParameters();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .show();
+
+            } else if(grantResults[0] == PackageManager.PERMISSION_DENIED &&
+                    grantResults[1] == PackageManager.PERMISSION_DENIED) {
+                Log.e("Permissions", "nothing granted");
+
+                new AlertDialog.Builder(this)
+                        .setTitle("Permission")
+                        .setCancelable(false)
+                        .setMessage("You cannot use the navigation if the app has no access to your location")
+                        .setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.fromParts("package", getPackageName(), null));
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                turnedToSettings = true;
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Deny", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        })
+
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .show();
+
+            }
+        }
     }
 
-    private void startLocationParameters() {
-        if (Build.VERSION.SDK_INT >= 23 && !(
-                checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                        checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                        checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
-            return;
-        }
-        final NavigationActivity navigationActivity = this;
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+    private void startLocationParameters() {
+
+        boolean storagePermission = false;
+
+        if (Build.VERSION.SDK_INT >= 23) {
+
+            if(!(checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                        checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
+                Log.e("ERROR", "NO LOCATION PERMISSION -> ABORTING");
+
+                return;
+            }
+
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                storagePermission = true;
+            } else {
+                Log.e("ERROR", "NO STORAGE PERMISSION! -> no map");
+
+            }
+        }
+
+        if(!storagePermission) {
+            MapView mapView = (MapView) findViewById(R.id.mapView);
+            if(mapView != null) {
+                mapView.setVisibility(View.INVISIBLE);
+            }
+
+        }
+
+
+
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(final Location location) {
@@ -219,8 +331,11 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 TextView tvCourseAngle = ((TextView) findViewById(R.id.editTextBearing));
 
                 if (tvDistance != null && tvSpeed != null && tvCourseAngle != null && tvCurrlon != null && tvCurrlat != null) {
+
+                    double distanceNM = NavigationUtils.distanceInNauticalMiles(curLat, curLon, targetLat, targetLon);
+
                     String tvSpeedStr = formatter.format(getCurrentSpeedNm(curLat, curLon)) + " kts";
-                    String tvDistanceStr = formatter.format(NavigationUtils.distanceInNauticalMiles(curLat, curLon, targetLat, targetLon)) + " NM";
+                    String tvDistanceStr = formatter.format(distanceNM) + " NM";
                     String tvCurrlonStr = formatter.format(curLon) + " °";
                     String tvCurrlatStr = formatter.format(curLat) + " °";
                     String tvCourseAngleStr = formatter.format(angle) + " °";
@@ -229,6 +344,19 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                     tvCurrlon.setText(tvCurrlonStr);
                     tvCurrlat.setText(tvCurrlatStr);
                     tvCourseAngle.setText(tvCourseAngleStr);
+
+                    if(distanceNM < 0.005) {
+                        new AlertDialog.Builder(NavigationActivity.this)
+                                .setTitle("Congratulations! ")
+                                .setMessage("You reached your final destination!")
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                })
+                                .setIcon(R.drawable.boat)
+                                .show();
+                    }
                 }
 
                 MapView mapView = (MapView) findViewById(R.id.mapView);
@@ -254,7 +382,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 Calendar now = Calendar.getInstance();
                 if (weatherAge == null || now.compareTo(weatherAge) >= WEATHER_MAX_AGE) {
                     Log.e("TAG", "Updating WEATHER");
-                    WeatherGetterWhatever wgw = new WeatherGetterWhatever(curLat, curLon, getApplicationContext(), navigationActivity);
+                    WeatherGetter wgw = new WeatherGetter(curLat, curLon, getApplicationContext(), mSectionsPagerAdapter);
                     wgw.execute();
                 }
             }
@@ -284,11 +412,32 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     @Override
     public void onResume() {
         super.onResume();
+        Log.e("NAV Act", "On resume");
+
+        if(turnedToSettings) {
+            Log.e("NAV Act", "was in settings");
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                int locationGranted = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+                int storageGranted = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+                this.onRequestPermissionsResult(1, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        new int[]{locationGranted, storageGranted});
+            } else {
+                startLocationParameters();
+            }
+            turnedToSettings = false;
+        }
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                if (locationManager != null)
+                if (locationManager != null) {
+                    Log.e("NAV Act", "On resume requeset update");
+
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 10, locationListener);
+                }
+
             }
         }
 
@@ -318,7 +467,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         //http://www.ssaurel.com/blog/learn-how-to-make-a-compass-application-for-android/
         boolean accelOrMagnetic = false;
 
-        // get accelerometer data
         if (sensorType == Sensor.TYPE_ACCELEROMETER) {
             gravity[0] = alpha * gravity[0] + (1 - alpha) * values[0];
             gravity[1] = alpha * gravity[1] + (1 - alpha) * values[1];
@@ -355,7 +503,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             tvHeading.setText(tvHeadingText);
         }
 
-        //set text field left-right properly
         TextView tvTurnLeftRight = ((TextView) findViewById(R.id.editTextTurnDegree));
 
         double turnLeftRight = angle - bearing;
@@ -377,7 +524,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             tvTurnLeftRight.setText(turnDegreeLeftRight);
         }
 
-        //set arrows properly
         resetAllArrows();
 
         double deviation = angle - bearing;
@@ -386,52 +532,42 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         deviation += (2 * 360);
         deviation = deviation % 360;
 
-        // Log.e("Deviation", deviation);
-
         if (deviation > 0 && deviation < 45) {
-            //Log.e("DIRECTION", "UP");
             ImageView arrow = ((ImageView) findViewById(R.id.upArrow));
             if (arrow != null) {
                 arrow.setAlpha(1f);
             }
         } else if (deviation > 45 && deviation < 90) {
-            //Log.e("DIRECTION", "UP RIGHT");
             ImageView arrow = ((ImageView) findViewById(R.id.upRightArrow));
             if (arrow != null) {
                 arrow.setAlpha(1f);
             }
         } else if (deviation > 90 && deviation < 135) {
-            //Log.e("DIRECTION", "RIGHT");
             ImageView arrow = ((ImageView) findViewById(R.id.rightArrow));
             if (arrow != null) {
                 arrow.setAlpha(1f);
             }
         } else if (deviation > 135 && deviation < 180) {
-            //Log.e("DIRECTION", "DOWN RIGHT");
             ImageView arrow = ((ImageView) findViewById(R.id.downRightArrow));
             if (arrow != null) {
                 arrow.setAlpha(1f);
             }
         } else if (deviation > 180 && deviation < 225) {
-            //Log.e("DIRECTION", "DOWN");
             ImageView arrow = ((ImageView) findViewById(R.id.downArrow));
             if (arrow != null) {
                 arrow.setAlpha(1f);
             }
         } else if (deviation > 225 && deviation < 270) {
-            //Log.e("DIRECTION", "DOWN LEFT");
             ImageView arrow = ((ImageView) findViewById(R.id.downLeftArrow));
             if (arrow != null) {
                 arrow.setAlpha(1f);
             }
         } else if (deviation > 270 && deviation < 315) {
-            //Log.e("DIRECTION", "LEFT");
             ImageView arrow = ((ImageView) findViewById(R.id.leftArrow));
             if (arrow != null) {
                 arrow.setAlpha(1f);
             }
         } else if (deviation > 315 && deviation < 360) {
-            //Log.e("DIRECTION", "UP LEFT");
             ImageView arrow = ((ImageView) findViewById(R.id.upLeftArrow));
             if (arrow != null) {
                 arrow.setAlpha(1f);
@@ -440,10 +576,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     }
 
     public void onSensorChanged(SensorEvent event) {
-        //System.out.println("values changed");
-        //System.out.println(event.values[0]);
-        //System.out.println(event.values[1]);
-        //System.out.println(event.values[2]);
         updateCourse(event.sensor.getType(), event.values);
     }
 
@@ -467,35 +599,24 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_navigation, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         return super.onOptionsItemSelected(item);
     }
 
     public static class NavigationFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         public NavigationFragment() {
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
         public static NavigationFragment newInstance(int sectionNumber) {
             NavigationFragment fragment = new NavigationFragment();
             Bundle args = new Bundle();
@@ -512,11 +633,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         }
     }
 
-    public static class WeatherFragment extends  android.support.v4.app.Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+    public static class WeatherFragment extends Fragment {
         private static final String ARG_SECTION_NUMBER = "section_number";
         private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
         private RecyclerView mRecyclerView = null;
@@ -529,10 +646,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         public WeatherFragment() {
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
         public static WeatherFragment newInstance(int sectionNumber) {
             WeatherFragment fragment = new WeatherFragment();
             Bundle args = new Bundle();
@@ -544,14 +657,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         private void initFiveDayForecastList() {
             if (mRecyclerView == null) {
-                //setContentView(R.layout.my_activity);
                 mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
 
-                // use this setting to improve performance if you know that changes
-                // in content do not change the layout size of the RecyclerView
-                //mRecyclerView.setHasFixedSize(true);
-
-                // use a linear layout manager
                 mLayoutManager = new LinearLayoutManager(rootView.getContext());
                 mRecyclerView.setLayoutManager(mLayoutManager);
 
@@ -572,6 +679,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             initFiveDayForecastList();
 
             if (weatherStorage != null && weatherStorage.isLoaded()) {
+
+
                 boolean currentWeatherDone = false;
                 Weather weather = weatherStore.get(0);
                 ((TextView) rootView.findViewById(R.id.editTextCurWeatherIcon)).setText(weather.getWeatherIcon());
@@ -634,19 +743,12 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
     }
 
     public static class MapFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         public MapFragment() {
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
         public static MapFragment newInstance(int sectionNumber) {
             MapFragment fragment = new MapFragment();
             Bundle args = new Bundle();
@@ -658,6 +760,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            Log.e("MAP FRAGMENT", "On create");
             View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
             Context context = getContext();
@@ -670,16 +773,10 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
             final MapTileProviderBasic tileProvider = new MapTileProviderBasic(context, seamarks);
             final TilesOverlay seamarksOverlay = new TilesOverlay(tileProvider, context);
             seamarksOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
-//            seamarksOverlay.setUseSafeCanvas(true);
 
             MapView mapView = (MapView) rootView.findViewById(R.id.mapView);
-
-            // mapView = new MapView(context, 256);
             mapView.setMultiTouchControls(true);
-            //  mapView.setUseSafeCanvas(true);
             mapView.getOverlays().add(seamarksOverlay);
-
-//            mapView.getController().setZoom(7);
 
             mapView.setTilesScaledToDpi(true);
             MapController mMapController = (MapController) mapView.getController();
@@ -691,17 +788,13 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         }
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
-        //public WeatherFragment weatherFragment; //TODO this is probably maybe not best practice --> jup, it wasn't
+        public WeatherFragment weatherFragment;
 
         @Override
         public Fragment getItem(int position) {
@@ -718,7 +811,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return 3;
         }
 
@@ -760,7 +852,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
         oldLon = curLon;
         timestampLastUpdateTimestamp = currentTimestamp;
 
-        //calculate avg speed from last positions
         long cumulatedTimeSpan = 0;
         double cumulatedSpeeds = 0;
 

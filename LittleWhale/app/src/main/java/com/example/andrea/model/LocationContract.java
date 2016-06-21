@@ -11,7 +11,6 @@ public final class LocationContract {
     /* Inner class that defines the table contents */
     public static abstract class LocationEntry implements BaseColumns {
         public static final String TABLE_NAME = "locations";
-        // public static final String COLUMN_NAME_ENTRY_ID = "locationid";
         public static final String COLUMN_NAME_NAME = "name";
         public static final String COLUMN_NAME_LONGITUDE = "longitude";
         public static final String COLUMN_NAME_LADITUDE = "laditude";

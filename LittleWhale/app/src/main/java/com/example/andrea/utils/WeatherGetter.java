@@ -39,13 +39,14 @@ class WeatherJSONs {
     }
 }
 
-public class WeatherGetterWhatever extends AsyncTask<Double, Void, WeatherJSONs> {
+public class WeatherGetter extends AsyncTask<Double, Void, WeatherJSONs> {
     private static final String API_KEY = "d1db7d9ac0033228ce578944c83ac06a";
     private String dailyURL, fiveDayURL;
     private Context context;
     private NavigationActivity navigationActivity;
 
-    public WeatherGetterWhatever(double lat, double lon, Context context, NavigationActivity navigationActivity) {
+
+    public WeatherGetter(double lat, double lon, Context context, NavigationActivity.SectionsPagerAdapter mSectionsPagerAdapter) {
         this.context = context;
         this.navigationActivity = navigationActivity;
         dailyURL = "http://api.openweathermap.org/data/2.5/weather?lat=" + Double.toString(lat) + "&lon=" + Double.toString(lon) + "&appid=" + API_KEY;
@@ -72,7 +73,7 @@ public class WeatherGetterWhatever extends AsyncTask<Double, Void, WeatherJSONs>
                 weatherStorage.parseWeather(weatherJSONs.getCurrentWeatherJSON(), weatherJSONs.getFiveDayWeatherJSON(), context);
             }
         } catch (Exception e) {
-            //e.printStackTrace();
+
         }
 
         for(android.support.v4.app.Fragment fragment : navigationActivity.getSupportFragmentManager().getFragments()) {
