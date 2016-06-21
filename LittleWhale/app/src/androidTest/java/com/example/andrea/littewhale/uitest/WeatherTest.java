@@ -62,6 +62,6 @@ public class WeatherTest extends ActivityInstrumentationTestCase2 {
         String str = "geo fix " + Double.toString(latitude) + " " +  Double.toString(longitude) + "\n";
         out.print(str);
         socket.close();
-        mySolo.sleep(4000);
+        mySolo.sleep(2000);
     }
 }

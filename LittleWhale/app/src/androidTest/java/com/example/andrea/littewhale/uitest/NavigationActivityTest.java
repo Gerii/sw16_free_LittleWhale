@@ -73,6 +73,13 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void testWeatherTab() throws Exception{
+        mySolo.sleep(2000);
+        Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
+        PrintStream out = new PrintStream(socket.getOutputStream());
+        double latitude = 41.0;
+        double longitude = 17.0;
+        String str = "geo fix " + Double.toString(latitude) + " " +  Double.toString(longitude) + "\n";
+        out.print(str);
         ViewGroup tabs = (ViewGroup) mySolo.getView(R.id.tabs);
         View weather = tabs.getChildAt(0);
         mySolo.clickOnView(weather);
@@ -235,7 +242,7 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void testSpeed() throws Exception {
-        int updateIntervall = 500;
+        int updateIntervall = 2000;
 
         mySolo.sleep(2000);
         Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
