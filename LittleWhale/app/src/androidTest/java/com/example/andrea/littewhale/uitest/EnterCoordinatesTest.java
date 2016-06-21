@@ -16,6 +16,8 @@ import com.example.andrea.littewhale.NavigationActivity;
 import com.example.andrea.littewhale.R;
 import com.robotium.solo.Solo;
 
+import junit.framework.Assert;
+
 import org.w3c.dom.Text;
 
 import java.io.PrintStream;
@@ -76,6 +78,52 @@ public class EnterCoordinatesTest extends ActivityInstrumentationTestCase2 {
      //   assertEquals(1, ((Spinner) mySolo.getView(R.id.spinnerCardinalDirectionDecimalLatitude)).getSelectedItemPosition());
        // assertEquals(1, ((Spinner) mySolo.getView(R.id.spinnerCardinalDirectionDecimalLongitude)).getSelectedItemPosition());
 
+    }
+
+    public void testUseNewActivity() {
+
+        mySolo.clickOnButton("Use existing location");
+
+        if (mySolo.waitForActivity("EditLocations")) {
+
+            ListView lv = (ListView) mySolo.getCurrentActivity().findViewById(R.id.listView);
+            int oldCount = lv.getAdapter().getCount();
+
+            View fab = mySolo.getCurrentActivity().findViewById(R.id.fabAdd);
+            mySolo.clickOnView(fab);
+
+            if (mySolo.waitForActivity("AddNewLocation")) {
+                mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_locationName), "Graz");
+                mySolo.clickOnRadioButton(0);
+
+                mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextDegreeTimeLatitude), "50");
+                mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextMinuteLatitude), "0");
+                mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextSecondLatitude), "0");
+
+                mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextDegreeTimeLongitude), "30");
+                mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextMinuteLongitude), "0");
+                mySolo.enterText((EditText) mySolo.getView(R.id.newLocation_editTextSecondLongitude), "0");
+
+                mySolo.clickOnButton("Save Location");
+                if (mySolo.waitForActivity("EditLocations")) {
+                    lv = (ListView) mySolo.getCurrentActivity().findViewById(R.id.listView);
+                    Assert.assertEquals(oldCount + 1, lv.getAdapter().getCount());
+                    boolean newElementFound = false;
+                    int position_of_new_element = 0;
+                    for (int i = 0; i < lv.getAdapter().getCount(); i++) {
+                        System.out.println(lv.getItemAtPosition(i).toString());
+                        if (lv.getItemAtPosition(i).toString().equals("{line2=50.00 N   30.00 E, line1=Graz}")) {
+                            newElementFound = true;
+                            position_of_new_element = i;
+                            break;
+                        }
+                    }
+                    Assert.assertTrue(newElementFound);
+
+
+                }
+            }
+        }
     }
 
 }
