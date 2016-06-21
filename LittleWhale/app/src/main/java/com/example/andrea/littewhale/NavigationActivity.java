@@ -85,7 +85,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
     private static double oldLat = COORD_DEFAULT_VALUE;
     private static double oldLon = COORD_DEFAULT_VALUE;
-
     private static WeatherStorage weatherStorage = null;
     private static Calendar weatherAge = null;
 
@@ -594,7 +593,6 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 ((TextView) rootView.findViewById(R.id.editTextWindDirValue)).setText(R.string.windDirIcon);
                 ((TextView) rootView.findViewById(R.id.editTextWindSpeedValue)).setText(R.string.windSpeedIcon);
                 mAdapter.replaceWeatherStorage(new WeatherStorage());
-
                 Context context = rootView.getContext().getApplicationContext();
                 CharSequence text;
                 if (weatherStorage != null) {

@@ -39,7 +39,7 @@
         <item>0</item>
     </integer-array>
 
-    <string-array translatable="false" name="weathericoncode">
+    <string-array name="weathericoncode" translatable="false">
         <item name="sunny">&#xf00d;</item>
         <item name="cloudy">&#xf013;</item>
         <item name="thunder">&#xf01e;</item>
@@ -49,6 +49,10 @@
         <item name="foggy">&#xf014;</item>
         <item name="clearnight">&#xf02e;</item>
     </string-array>
+    <string name="title_activity_about">About</string>
+    <string name="version">1.0</string>
+    <string name="author">Authors</string>
+    <string name="version_str">Version</string>
 
 
 </resources>
