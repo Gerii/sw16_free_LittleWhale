@@ -10,35 +10,35 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_whale"
         android:label="@string/app_name"
-        android:supportsRtl="true"
+        android:screenOrientation="portrait"
+        android:supportsRtl="false"
         android:theme="@style/AppTheme">
-        <activity android:name=".EnterCoordinates"
-            android:theme="@style/AppTheme.NoActionBar"
-            >
-
-
+        <activity
+            android:name=".EnterCoordinates"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".EditLocations"
             android:label="@string/title_activity_edit_locations"
-            android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="standard"
-
-            />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".NavigationActivity"
             android:label="@string/title_activity_navigation"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
-        <activity android:name=".AddNewLocation"
-            android:launchMode="standard"/>
+        <activity
+            android:name=".AddNewLocation"
+            android:launchMode="standard"
+            android:screenOrientation="portrait" />
     </application>
 
 
