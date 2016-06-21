@@ -282,8 +282,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
 
         }
 
-
-
+        final NavigationActivity navigationActivity = this;
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
@@ -382,7 +381,7 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 Calendar now = Calendar.getInstance();
                 if (weatherAge == null || now.compareTo(weatherAge) >= WEATHER_MAX_AGE) {
                     Log.e("TAG", "Updating WEATHER");
-                    WeatherGetter wgw = new WeatherGetter(curLat, curLon, getApplicationContext(), mSectionsPagerAdapter);
+                    WeatherGetter wgw = new WeatherGetter(curLat, curLon, getApplicationContext(), navigationActivity);
                     wgw.execute();
                 }
             }

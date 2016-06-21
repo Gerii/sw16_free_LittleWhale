@@ -46,7 +46,7 @@ public class WeatherGetter extends AsyncTask<Double, Void, WeatherJSONs> {
     private NavigationActivity navigationActivity;
 
 
-    public WeatherGetter(double lat, double lon, Context context, NavigationActivity.SectionsPagerAdapter mSectionsPagerAdapter) {
+    public WeatherGetter(double lat, double lon, Context context, NavigationActivity navigationActivity) {
         this.context = context;
         this.navigationActivity = navigationActivity;
         dailyURL = "http://api.openweathermap.org/data/2.5/weather?lat=" + Double.toString(lat) + "&lon=" + Double.toString(lon) + "&appid=" + API_KEY;
