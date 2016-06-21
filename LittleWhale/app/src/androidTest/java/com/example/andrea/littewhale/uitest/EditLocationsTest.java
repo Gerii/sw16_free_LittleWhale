@@ -133,25 +133,6 @@ public class EditLocationsTest extends ActivityInstrumentationTestCase2 {
 
             mySolo.sendKey(KeyEvent.KEYCODE_ENTER);
 
-
-            /*if(mySolo.waitForActivity("EditLocations")) {
-                lv = (ListView) mySolo.getView(R.id.listView);
-                Assert.assertEquals(oldCount + 1, lv.getAdapter().getCount());
-
-
-                boolean newElementFound = false;
-
-                for(int i = 0; i < lv.getAdapter().getCount() ; i++) {
-                    if(lv.getItemAtPosition(i).toString().equals("{line2=15.0 N   20.0 E, line1=Feldbach}")) {
-                        newElementFound = true;
-                        break;
-                    }
-                }
-
-                Assert.assertTrue(newElementFound);
-            }*/
-
-
         }
     }
 

@@ -1,6 +1,8 @@
 package com.example.andrea.littewhale.uitest;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
@@ -76,7 +78,28 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
         mySolo.clickOnView(weather);
     }
 
+    public void testPermissionHandling() throws Exception {
+
+        ((NavigationActivity) mySolo.getCurrentActivity()).runOnUiThread(new Runnable() {
+            @Override
+            public void run()  {
+                int request_code = 1;
+                String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                int[] grantResults = {PackageManager.PERMISSION_GRANTED, PackageManager.PERMISSION_GRANTED};
+                ((NavigationActivity) mySolo.getCurrentActivity()).onRequestPermissionsResult(request_code, permissions, grantResults);
+                int[] grantResults2 = {PackageManager.PERMISSION_DENIED, PackageManager.PERMISSION_GRANTED};
+                ((NavigationActivity) mySolo.getCurrentActivity()).onRequestPermissionsResult(request_code, permissions, grantResults2);
+                int[] grantResults3 = {PackageManager.PERMISSION_GRANTED, PackageManager.PERMISSION_DENIED};
+                ((NavigationActivity) mySolo.getCurrentActivity()).onRequestPermissionsResult(request_code, permissions, grantResults3);
+                int[] grantResults4 = {PackageManager.PERMISSION_DENIED, PackageManager.PERMISSION_DENIED};
+                ((NavigationActivity) mySolo.getCurrentActivity()).onRequestPermissionsResult(request_code, permissions, grantResults4);
+
+            }
+        });
+    }
+
     public void testCalculatedCourse() throws Exception{
+        mySolo.sleep(2000);
         Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
         PrintStream out = new PrintStream(socket.getOutputStream());
         double latitude = 41.0;
@@ -116,6 +139,7 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void testArrow1() throws Exception {
+        mySolo.sleep(2000);
         Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
         PrintStream out = new PrintStream(socket.getOutputStream());
         double latitude = 69.0;
@@ -127,6 +151,7 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void testArrow2() throws Exception {
+        mySolo.sleep(2000);
         Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
         PrintStream out = new PrintStream(socket.getOutputStream());
         double latitude = 69.0;
@@ -138,6 +163,7 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void testArrow3() throws Exception {
+        mySolo.sleep(2000);
         Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
         PrintStream out = new PrintStream(socket.getOutputStream());
         double latitude = 69.0;
@@ -149,6 +175,7 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void testArrow4() throws Exception {
+        mySolo.sleep(2000);
         Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
         PrintStream out = new PrintStream(socket.getOutputStream());
         double latitude = 70.0;
@@ -160,6 +187,7 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void testArrow5() throws Exception {
+        mySolo.sleep(2000);
         Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
         PrintStream out = new PrintStream(socket.getOutputStream());
         double latitude = 70.0;
@@ -171,6 +199,7 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void testArrow6() throws Exception {
+        mySolo.sleep(2000);
         Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
         PrintStream out = new PrintStream(socket.getOutputStream());
         double latitude = 71.0;
@@ -182,6 +211,7 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void testArrow7() throws Exception {
+        mySolo.sleep(2000);
         Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
         PrintStream out = new PrintStream(socket.getOutputStream());
         double latitude = 71.0;
@@ -193,6 +223,7 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void testArrow8() throws Exception {
+        mySolo.sleep(2000);
         Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
         PrintStream out = new PrintStream(socket.getOutputStream());
         double latitude = 71.0;
@@ -206,6 +237,7 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
     public void testSpeed() throws Exception {
         int updateIntervall = 500;
 
+        mySolo.sleep(2000);
         Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
         PrintStream out = new PrintStream(socket.getOutputStream());
         double latitude = 71.0;
@@ -259,6 +291,7 @@ public class NavigationActivityTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void testLocationReached() throws Exception {
+        mySolo.sleep(2000);
         Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
         PrintStream out = new PrintStream(socket.getOutputStream());
         double latitude = 70.0;

@@ -54,14 +54,14 @@ public class WeatherTest extends ActivityInstrumentationTestCase2 {
 
 
     public void testInvalidWeather() throws Exception{
-
+        mySolo.sleep(2000);
         Socket socket = new Socket("10.0.2.2", 5554); // usually 5554
         PrintStream out = new PrintStream(socket.getOutputStream());
-        double latitude = 190.0;
-        double longitude = 17.0;
+        double latitude = 180.0;
+        double longitude = 180.0;
         String str = "geo fix " + Double.toString(latitude) + " " +  Double.toString(longitude) + "\n";
         out.print(str);
         socket.close();
-
+        mySolo.sleep(4000);
     }
 }
