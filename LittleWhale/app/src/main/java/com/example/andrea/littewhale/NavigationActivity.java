@@ -256,8 +256,8 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 Calendar now = Calendar.getInstance();
                 if (weatherAge == null || now.compareTo(weatherAge) >= WEATHER_MAX_AGE) {
                     Log.e("TAG", "Updating WEATHER");
-                    //WeatherGetterWhatever wgw = new WeatherGetterWhatever(curLat, curLon, getApplicationContext(), mSectionsPagerAdapter);
-                    //wgw.execute();
+                    WeatherGetterWhatever wgw = new WeatherGetterWhatever(curLat, curLon, getApplicationContext(), mSectionsPagerAdapter);
+                    wgw.execute();
                 }
             }
 
