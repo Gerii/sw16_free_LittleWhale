@@ -22,11 +22,7 @@ public class FiveDayWeatherListAdapter extends RecyclerView.Adapter<FiveDayWeath
     private WeatherStorage weatherStorage;
     private static DecimalFormat decimalFormat;
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
         public LinearLayout weatherItemLayout;
         public Map<Integer, TextView> textViews = new HashMap<Integer, TextView>();
 
@@ -78,22 +74,16 @@ public class FiveDayWeatherListAdapter extends RecyclerView.Adapter<FiveDayWeath
         this.decimalFormat = decimalFormat;
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
     public FiveDayWeatherListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                                    int viewType) {
-        // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.five_day_weather_list_item, parent, false);
-        // set the view's size, margins, paddings and layout parameters
         ViewHolder vh = new ViewHolder((LinearLayout) v);
         return vh;
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
         int storagePosition = position + 1; // 0 is current weather
         if (storagePosition < weatherStorage.size()) {
             holder.updateWeather(weatherStorage.get(storagePosition));
@@ -114,7 +104,6 @@ public class FiveDayWeatherListAdapter extends RecyclerView.Adapter<FiveDayWeath
         notifyItemRangeInserted(0, weatherStorage.size());
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return weatherStorage.size();
