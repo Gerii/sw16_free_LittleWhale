@@ -220,8 +220,11 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                 TextView tvCourseAngle = ((TextView) findViewById(R.id.editTextBearing));
 
                 if (tvDistance != null && tvSpeed != null && tvCourseAngle != null && tvCurrlon != null && tvCurrlat != null) {
+
+                    double distanceNM = NavigationUtils.distanceInNauticalMiles(curLat, curLon, targetLat, targetLon);
+
                     String tvSpeedStr = formatter.format(getCurrentSpeedNm(curLat, curLon)) + " kts";
-                    String tvDistanceStr = formatter.format(NavigationUtils.distanceInNauticalMiles(curLat, curLon, targetLat, targetLon)) + " NM";
+                    String tvDistanceStr = formatter.format(distanceNM) + " NM";
                     String tvCurrlonStr = formatter.format(curLon) + " °";
                     String tvCurrlatStr = formatter.format(curLat) + " °";
                     String tvCourseAngleStr = formatter.format(angle) + " °";
@@ -230,6 +233,10 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                     tvCurrlon.setText(tvCurrlonStr);
                     tvCurrlat.setText(tvCurrlatStr);
                     tvCourseAngle.setText(tvCourseAngleStr);
+
+                    if(distanceNM < 0.005) {
+
+                    }
                 }
 
                 MapView mapView = (MapView) findViewById(R.id.mapView);
