@@ -126,18 +126,17 @@ public class LocationDb {
                 LocationContract.LocationEntry.COLUMN_NAME_LONGITUDE,
         };
 
-        // How you want the results sorted in the resulting Cursor
         String sortOrder =
                 LocationContract.LocationEntry.COLUMN_NAME_NAME + " ASC";
 
         Cursor c = db.query(
-                LocationContract.LocationEntry.TABLE_NAME,  // The table to query
-                projection,                               // The columns to return
-                null,                                // The columns for the WHERE clause
-                null,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
+                LocationContract.LocationEntry.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                sortOrder
         );
 
         while(c.moveToNext()){

@@ -9,13 +9,6 @@ public class Location {
     public Double latitude;
     public Double longitude;
 
-    Location (String name, Double lat, Double lon){
-        this.id = Long.valueOf(0);
-        this.placeName = name;
-        this.latitude = lat;
-        this.longitude = lon;
-    }
-
     Location (Long id, String name, Double lat, Double lon){
         this.id = id;
         this.placeName = name;
