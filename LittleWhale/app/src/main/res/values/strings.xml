@@ -50,7 +50,7 @@
         <item name="clearnight">&#xf02e;</item>
     </string-array>
     <string name="title_activity_about">About</string>
-    <string name="version">1.0</string>
+    <string name="version">2.0</string>
     <string name="author">Authors</string>
     <string name="version_str">Version</string>
     <string name="author1">Clemens Hofer</string>

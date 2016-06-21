@@ -25,6 +25,7 @@
         android:layout_below="@+id/section_label"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_marginBottom="16dp"
         android:text="@string/version"
         android:textSize="@dimen/abc_text_size_medium_material" />
 
