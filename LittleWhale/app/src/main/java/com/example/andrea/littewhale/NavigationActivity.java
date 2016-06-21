@@ -351,7 +351,16 @@ public class NavigationActivity extends AppCompatActivity implements SensorEvent
                     tvCourseAngle.setText(tvCourseAngleStr);
 
                     if(distanceNM < 0.005) {
+                        new AlertDialog.Builder(NavigationActivity.this)
+                                .setTitle("Congratulations! ")
+                                .setMessage("You reached your final destination!")
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
 
+                                    }
+                                })
+                                .setIcon(R.drawable.boat)
+                                .show();
                     }
                 }
 
