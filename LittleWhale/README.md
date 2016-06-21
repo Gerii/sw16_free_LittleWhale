@@ -7,8 +7,9 @@ Then you have to run the command once more.
 
 2) it's quite difficult to set new locations in unit tests. Since we have a navigation-app
 this is necessary. If you use the version of AndroidStudio, which was current at the 
-beginning of the course, works fine. Newer versions of AndroidStudio and Emulators can
-cause problems. Unfortunatly we weren't able to find a fix for the newer versions.
+beginning of the course, everything works fine. Newer versions of AndroidStudio and 
+Emulators can cause problems. Unfortunatly we weren't able to find a fix for the newer
+versions.
 
 Cheers
 Andrea, Angela, Clemens, Gerald
