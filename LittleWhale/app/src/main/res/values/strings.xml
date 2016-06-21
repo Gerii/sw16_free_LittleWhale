@@ -53,6 +53,12 @@
     <string name="version">1.0</string>
     <string name="author">Authors</string>
     <string name="version_str">Version</string>
+    <string name="author1">Clemens Hofer</string>
+    <string name="author2">Andrea Maria Pferscher</string>
+    <string name="author3">Angela Promitzer</string>
+    <string name="author4">Gerald Palfinger</string>
+    <string name="guideIntro">Arrrrr!</string>
+    <string name="guideText">Here is our new App - „Little Whale“. With this app you can navigate your battleships through the seven seas and board the ships of helpless tourist boats! Haaa Haaa Haaa Haaaa….</string>
 
 
 </resources>
