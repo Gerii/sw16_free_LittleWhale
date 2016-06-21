@@ -126,4 +126,15 @@ public class EnterCoordinatesTest extends ActivityInstrumentationTestCase2 {
         }
     }
 
+    public void testAbout() {
+        View aboutButton = mySolo.getCurrentActivity().findViewById(R.id.action_about);
+        mySolo.clickOnView(aboutButton);
+        mySolo.waitForActivity("AboutActivity");
+        mySolo.searchText("Authors");
+
+        mySolo.scrollToSide(Solo.RIGHT);
+
+        mySolo.searchText("Arrrrr!");
+    }
+
 }
